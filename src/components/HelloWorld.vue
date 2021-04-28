@@ -1,45 +1,75 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-router" target="_blank" rel="noopener">router</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-vuex" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-typescript" target="_blank" rel="noopener">typescript</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+    <h1>{{ msg }} {{ naam }}</h1>
+    <input type="text" :value="upperValue" @input="value = $event.target.value"/>
+    <Keyboard :input="upperValue" @onChange="change"/>
+
+    <table>
+      <tr v-for="persoon in personen" :key="persoon.socCieId" :id="'persoon' + persoon.socCieId">
+        <td>{{ persoon.bijnaam }}</td>
+        <td>{{ persoon.naam }}</td>
+        <td :class="(persoon.saldo < 0 ? 'bg-danger' : 'bg-success')">
+          {{ saldoStr(persoon.saldo) }}
+        </td>
+      </tr>
+    </table>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import Keyboard from '@/components/Keyboard.vue';
+import { Persoon } from '@/model';
 
 export default defineComponent({
   name: 'HelloWorld',
+  components: { Keyboard },
   props: {
     msg: String,
+  },
+  data: () => ({
+    value: '',
+  }),
+  created(): void {
+    if (this.$store.state.token) {
+      this.$store.dispatch('listUsers');
+    }
+  },
+  computed: {
+    upperValue(): string {
+      return this.value.toUpperCase();
+    },
+    naam(): string | null {
+      return this.$store.state.profiel?.displayName;
+    },
+    personen(): Persoon[] {
+      const personen: Persoon[] = this.$store.state.personen.slice();
+      personen.sort((a, b) => b.recent - a.recent);
+      return personen.filter((persoon) => persoon.deleted === '0').filter(this.filterPersoon);
+    },
+  },
+  methods: {
+    change(value: string) {
+      this.value = value;
+    },
+    filterPersoon(persoon: Persoon) {
+      return persoon.bijnaam.toUpperCase().match(this.value)
+        || persoon.naam.toUpperCase().match(this.value);
+    },
+    saldoStr(saldo: number) {
+      let achterKomma = String(Math.abs(saldo % 100));
+      if (achterKomma === '0') {
+        achterKomma = '00';
+      } else if (Number(achterKomma) < 10) {
+        achterKomma = `0${achterKomma}`;
+      }
+
+      if (saldo > -100 && saldo < 0) return `€-0,${achterKomma}`;
+
+      const string = `€${(saldo - (saldo % 100)) / 100},${achterKomma}`;
+
+      return string.replace('€-', '-€');
+    },
   },
 });
 </script>
@@ -49,14 +79,17 @@ export default defineComponent({
 h3 {
   margin: 40px 0 0;
 }
+
 ul {
   list-style-type: none;
   padding: 0;
 }
+
 li {
   display: inline-block;
   margin: 0 10px;
 }
+
 a {
   color: #42b983;
 }
