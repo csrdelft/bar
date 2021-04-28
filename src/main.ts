@@ -1,8 +1,11 @@
 import { createApp } from 'vue';
+import axios from 'axios';
 import csrAuth from '@/auth/csrAuth';
+import ElementPlus from 'element-plus';
 import App from './App.vue';
 import router from './router';
 import store from './store';
+import './assets/scss/element-variables.scss';
 
 declare global {
   interface Window {
@@ -10,27 +13,25 @@ declare global {
   }
 }
 
+/**
+ * Wordt aangeroepen vanuit een popup in /auth/callback.
+ * @param uri
+ */
 window.oauth2Callback = (uri: string) => {
   csrAuth.token.getToken(uri)
-    .then((user) => {
-      store.commit('setUser', user);
+    .then((token) => {
+      store.commit('setToken', token);
 
-      // Make a request to the github API for the current user.
-      const {
-        url,
-        ...args
-      } = user.sign({
-        method: 'get',
+      return axios(token.sign({
+        method: 'get' as const,
         url: `${process.env.VUE_APP_REMOTE_URL}/api/v3/profiel`,
-      });
-
-      return fetch(url, args)
-        .then((res) => res.json())
-        .then((res) => store.commit('setProfiel', res));
+      }))
+        .then((res) => store.commit('setProfiel', res.data));
     });
 };
 
 createApp(App)
+  .use(ElementPlus)
   .use(store)
   .use(router)
   .mount('#app');

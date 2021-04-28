@@ -12,3 +12,13 @@ export interface Persoon {
   recent: number
   deleted: string
 }
+
+export interface Product {
+  productId: string
+  prijs: string
+  beheer: string
+  beschrijving: string
+  prioriteit: string
+  status: string
+  cie: string
+}
