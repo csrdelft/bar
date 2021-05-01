@@ -1,7 +1,6 @@
 <template>
   <div class="hello">
-    <el-input type="text" :value="upperValue" @input="value = $event.target.value"/>
-    <Keyboard :input="upperValue" @onChange="change"/>
+    <Keyboard v-model.uppercase="value"/>
     <LedenTable/>
   </div>
 </template>
@@ -12,16 +11,14 @@ import Keyboard from '@/components/Keyboard.vue';
 import LedenTable from '@/components/LedenTable.vue';
 
 export default defineComponent({
-  name: 'Overzicht',
-  components: { LedenTable, Keyboard },
+  name: 'Personen',
+  components: {
+    LedenTable,
+    Keyboard,
+  },
   data: () => ({
     value: '',
   }),
-  created(): void {
-    if (this.$store.state.token) {
-      this.$store.dispatch('listUsers');
-    }
-  },
   computed: {
     upperValue(): string {
       return this.value.toUpperCase();
@@ -30,16 +27,21 @@ export default defineComponent({
       return this.$store.state.profiel?.displayName;
     },
   },
+  watch: {
+    value(val) {
+      console.log(val);
+      this.$store.commit('setZoeken', val);
+    },
+  },
   methods: {
     change(value: string) {
       this.value = value;
-      this.$store.commit('setZoeken', value);
     },
   },
 });
 </script>
 
-<style >
+<style>
 h3 {
   margin: 40px 0 0;
 }
@@ -57,6 +59,7 @@ li {
 a {
   color: #42b983;
 }
+
 .el-table .error-row td:last-child {
   background: #f2dede;
 }

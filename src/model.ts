@@ -22,3 +22,8 @@ export interface Product {
   status: string
   cie: string
 }
+
+export interface BestellingInhoud {
+  product: Product
+  aantal: number
+}

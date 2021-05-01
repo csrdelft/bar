@@ -1,14 +1,21 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
-import Home from '../views/Home.vue';
 import Authorize from '../views/auth/Authorize.vue';
 import AuthCallback from '../views/auth/AuthCallback.vue';
 import Bestelling from '../views/Bestelling.vue';
+import Login from '../views/Login.vue';
+import Logout from '../views/auth/Logout.vue';
+import Personen from '../views/Personen.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'Home',
-    component: Home,
+    component: Login,
+  },
+  {
+    path: '/personen',
+    name: 'Persoonselectie',
+    component: Personen,
   },
   {
     path: '/about',
@@ -19,9 +26,10 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import(/* webpackChunkName: "about" */ '../views/About.vue'),
   },
   {
-    path: '/bestelling/:uid',
+    path: '/bestelling/:socCieId',
     name: 'Bestelling',
     component: Bestelling,
+    props: true,
   },
   {
     path: '/auth/csr',
@@ -33,11 +41,31 @@ const routes: Array<RouteRecordRaw> = [
     name: 'AuthCallback',
     component: AuthCallback,
   },
+  {
+    path: '/auth/logout',
+    name: 'Logout',
+    component: Logout,
+  },
 ];
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  if (!(to.path === '/' || to.path.startsWith('/auth'))) {
+    const vuexState = localStorage.getItem('vuex');
+    if (vuexState) {
+      const { token } = JSON.parse(vuexState);
+      if (!token) {
+        next({ path: '/' });
+        return;
+      }
+    }
+  }
+
+  next();
 });
 
 export default router;
