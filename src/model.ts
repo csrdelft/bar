@@ -27,3 +27,14 @@ export interface BestellingInhoud {
   product: Product
   aantal: number
 }
+
+export interface Bestelling {
+  // Record<productId, aantal>
+  bestelLijst: Record<string, string>
+  bestelTotaal: string
+  persoon: string
+  tijd: string
+  bestelId: string
+  deleted: boolean
+  oud: boolean
+}

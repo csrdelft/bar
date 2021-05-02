@@ -1,14 +1,14 @@
 <template>
   <div v-loading="loading">
-    <div v-if="loggedIn" id="nav">
+    <div id="nav">
       <el-affix>
         <el-menu :default-active="currentRoute" mode="horizontal" :router="true">
           <el-menu-item index="/personen">
             Persoonselectie
           </el-menu-item>
-<!--          <el-menu-item index="/bestellingen">-->
-<!--            Bestellingen-->
-<!--          </el-menu-item>-->
+          <el-menu-item index="/bestellingen">
+            Bestellingen
+          </el-menu-item>
           <el-menu-item index="/auth/logout">
             Logout
           </el-menu-item>
@@ -21,6 +21,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { getToken } from '@/token';
 
 export default defineComponent({
   name: 'App',
@@ -29,7 +30,7 @@ export default defineComponent({
   }),
   computed: {
     loggedIn(): boolean {
-      return Boolean(this.$store.state.token);
+      return Boolean(getToken());
     },
     currentRoute(): string {
       return this.$router.currentRoute.value.fullPath;

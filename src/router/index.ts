@@ -1,10 +1,12 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
-import Authorize from '../views/auth/Authorize.vue';
-import AuthCallback from '../views/auth/AuthCallback.vue';
-import Bestelling from '../views/Bestelling.vue';
-import Login from '../views/Login.vue';
-import Logout from '../views/auth/Logout.vue';
-import Personen from '../views/Personen.vue';
+import Authorize from '@/views/auth/Authorize.vue';
+import AuthCallback from '@/views/auth/AuthCallback.vue';
+import Bestelling from '@/views/Bestelling.vue';
+import Login from '@/views/Login.vue';
+import Logout from '@/views/auth/Logout.vue';
+import Personen from '@/views/Personen.vue';
+import Bestellingen from '@/views/Bestellingen.vue';
+import { getToken } from '@/token';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -32,6 +34,11 @@ const routes: Array<RouteRecordRaw> = [
     props: true,
   },
   {
+    path: '/bestellingen',
+    name: 'Bestellingen',
+    component: Bestellingen,
+  },
+  {
     path: '/auth/csr',
     name: 'Authorize',
     component: Authorize,
@@ -55,13 +62,10 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   if (!(to.path === '/' || to.path.startsWith('/auth'))) {
-    const vuexState = localStorage.getItem('vuex');
-    if (vuexState) {
-      const { token } = JSON.parse(vuexState);
-      if (!token) {
-        next({ path: '/' });
-        return;
-      }
+    const token = getToken();
+    if (!token) {
+      next({ path: '/' });
+      return;
     }
   }
 

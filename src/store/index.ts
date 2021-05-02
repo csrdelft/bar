@@ -3,10 +3,10 @@ import {
   BestellingInhoud, Persoon, Product, Profiel,
 } from '@/model';
 import { Data, Token } from 'client-oauth2';
-import axios, { AxiosError, AxiosPromise, AxiosRequestConfig } from 'axios';
 import VuexPersist from 'vuex-persist';
-import csrAuth from '@/auth/csrAuth';
-import { isOudlid, sum, throwError } from '@/util';
+import { isOudlid, sum } from '@/util';
+import bestelling from '@/store/bestellingen';
+import { fetchAuthorized } from '@/token';
 
 const vuexLocalStorage = new VuexPersist<{ token: Data | null }>({
   key: 'vuex',
@@ -14,33 +14,6 @@ const vuexLocalStorage = new VuexPersist<{ token: Data | null }>({
   // Alleen token opslaan in localStorage
   reducer: ({ token }) => ({ token }),
 });
-
-/**
- * Deze variant van fetch stopt de token in iedere request en gooit de token weg als er iets
- * mis gaat.
- * @param state
- * @param commit
- */
-const getFetch = (state: { token: Data | null }, commit: (action: string) => unknown) => {
-  const token = (state.token ? new Token(csrAuth, state.token) : throwError('Geen token'));
-
-  return <T>(requestObj: AxiosRequestConfig & { url: string }): AxiosPromise<T> => axios(
-    token.sign({
-      ...requestObj,
-      url: process.env.VUE_APP_REMOTE_URL + requestObj.url,
-    }),
-  )
-    .catch((response: AxiosError<T>) => {
-      // Status 500 of 401
-      if (response.response) {
-        commit('invalidateToken');
-        return response.response;
-      }
-
-      // Waarschijnlijk 'Network Error'
-      throw new Error(response.message);
-    });
-};
 
 export default createStore({
   plugins: [vuexLocalStorage.plugin],
@@ -77,65 +50,50 @@ export default createStore({
   },
   actions: {
     async listUsers({
-      state,
       commit,
     }): Promise<void> {
-      const fetch = getFetch(state, commit);
-      const response = await fetch<Persoon[]>({
+      const response = await fetchAuthorized<Persoon[]>({
         url: '/api/v3/bar/personen',
         method: 'POST',
       });
 
-      const personen = Object.values(response.data);
+      const personen = Object.values(response);
       const personenRecord = Object.fromEntries(personen.map((p) => [p.socCieId, p]));
 
       commit('setPersonen', personenRecord);
     },
     async listProducten({
-      state,
       commit,
     }): Promise<void> {
-      const fetch = getFetch(state, commit);
-      const response = await fetch<Product[]>({
+      const response = await fetchAuthorized<Product[]>({
         url: '/api/v3/bar/producten',
         method: 'POST',
       });
 
-      const producten = Object.values(response.data);
+      const producten = Object.values(response);
       const productenRecord = Object.fromEntries(producten.map((p) => [p.productId, p]));
 
       commit('setProducten', productenRecord);
     },
     async fetchProfiel({
-      state,
       commit,
     }): Promise<void> {
-      const fetch = getFetch(state, commit);
-
-      const response = await fetch<Profiel>({
+      const profiel = await fetchAuthorized<Profiel>({
         url: '/api/v3/profiel',
         method: 'GET',
       });
 
-      commit('setProfiel', response.data);
+      commit('setProfiel', profiel);
     },
     async postLogin({
       dispatch,
-      commit,
-    }, token?: Token): Promise<void> {
-      if (token) {
-        commit('setToken', token);
-      }
-
+    }): Promise<void> {
       // Dit allemaal tegelijk geeft timing issues op windows...
       await dispatch('fetchProfiel');
       await dispatch('listUsers');
       await dispatch('listProducten');
     },
-    async plaatsBestelling({
-      state,
-      commit,
-    }, {
+    async plaatsBestelling(context, {
       persoon,
       inhoud,
       oudeInhoud,
@@ -143,12 +101,10 @@ export default createStore({
       persoon: Persoon
       inhoud: Record<string, BestellingInhoud>
       oudeInhoud: Record<string, BestellingInhoud>
-    }):
-      Promise<void> {
-      const fetch = getFetch(state, commit);
+    }): Promise<void> {
       const warningGiven = false;
 
-      const oudlid = isOudlid(persoon);
+      const oudLid = isOudlid(persoon);
       const totaal = sum(...Object.values(inhoud)
         .map((i) => i.aantal * Number(i.product.prijs)));
 
@@ -168,7 +124,7 @@ export default createStore({
 
       const emptyOrder = Object.values(inhoud).length === 0;
 
-      if (oudlid && toRed) {
+      if (oudLid && toRed) {
         throw new Error('Oudleden kunnen niet rood staan, inleg vereist!');
       } else if (persoon && !emptyOrder) {
         if (!warningGiven && toRed) {
@@ -185,20 +141,16 @@ export default createStore({
             oudeBestelling: oudeInhoud,
           };
 
-          try {
-            const response = await fetch({
-              url: '/api/v3/bar/bestelling',
-              method: 'POST',
-              data: {
-                bestelling: JSON.stringify(result),
-              },
-            });
+          const response = await fetchAuthorized<boolean>({
+            url: '/api/v3/bar/bestelling',
+            method: 'POST',
+            data: {
+              bestelling: JSON.stringify(result),
+            },
+          });
 
-            if (response.data !== true) {
-              throw new Error(`Er ging iets mis! "${response.data}"`);
-            }
-          } catch (e) {
-            throw new Error(e.message);
+          if (!response) {
+            throw new Error(`Er ging iets mis! "${response}"`);
           }
         }
       } else if (emptyOrder) {
@@ -206,5 +158,7 @@ export default createStore({
       }
     },
   },
-  modules: {},
+  modules: {
+    bestelling,
+  },
 });

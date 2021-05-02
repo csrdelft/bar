@@ -10,6 +10,7 @@
 
 import { defineComponent } from 'vue';
 import store from '@/store';
+import { getToken, setToken } from '@/token';
 import csrAuth from '../../auth/csrAuth';
 
 /**
@@ -31,7 +32,7 @@ export default defineComponent({
     },
   },
   created(): void {
-    if (!this.$store.state.token) {
+    if (!getToken()) {
       window.open(csrAuth.token.getUri());
 
       this.loading = true;
@@ -42,9 +43,11 @@ export default defineComponent({
 
         const token = await csrAuth.token.getToken(uri);
 
+        setToken(token);
+
         await this.setLoading('Profiel laden...');
 
-        await store.dispatch('postLogin', token);
+        await store.dispatch('postLogin');
 
         this.loading = false;
 
