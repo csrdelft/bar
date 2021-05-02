@@ -39,7 +39,7 @@ export const fetchAuthorized = async <T>(requestObj: AxiosRequestConfig & {url: 
     return response.data;
   } catch (e) {
     if (e.response) {
-      removeToken();
+      // removeToken();
 
       // Een 500 of 401
       return e.response.data;

@@ -21,12 +21,21 @@
       label="Opties">
       <template #default="scope">
         <el-button
+          v-if="scope.row.deleted === '0'"
           size="mini"
           @click="handleEdit(scope.$index, scope.row)">Bewerk</el-button>
         <el-button
+          v-if="scope.row.deleted === '0'"
           size="mini"
           type="danger"
-          @click="handleDelete(scope.$index, scope.row)">Verwijder</el-button>
+          :loading="scope.row.bestelId in verwijderLaden"
+          @click="handleVerwijder(scope.$index, scope.row)">Verwijder</el-button>
+        <el-button
+          v-if="scope.row.deleted === '1'"
+          size="mini"
+          type="warning"
+          :loading="scope.row.bestelId in herstelLaden"
+          @click="handleHerstel(scope.$index, scope.row)">Herstel</el-button>
       </template>
     </el-table-column>
   </el-table>
@@ -44,6 +53,10 @@ export default defineComponent({
       return Object.values(this.$store.state.bestelling.bestellingen);
     },
   },
+  data: () => ({
+    verwijderLaden: {} as Record<string, boolean>,
+    herstelLaden: {} as Record<string, boolean>,
+  }),
   methods: {
     naamFormatter(row: Bestelling): string {
       return this.getPersoon(row.persoon).naam;
@@ -59,10 +72,27 @@ export default defineComponent({
     },
     formatBedrag,
     handleEdit(index: number, row: Bestelling) {
-      // noop
+      // TODO: Naar edit ding
+      this.$message.error('Not implemented');
+      this.$router.push(`/bestelling/${row.persoon}`);
     },
-    handleDelete(index: number, row: Bestelling) {
-      // noop
+    async handleVerwijder(index: number, row: Bestelling) {
+      this.verwijderLaden[row.bestelId] = true;
+      try {
+        await this.$store.dispatch('verwijderBestelling', row);
+      } catch (e) {
+        this.$message.error(e.message);
+      }
+      delete this.verwijderLaden[row.bestelId];
+    },
+    async handleHerstel(index: number, row: Bestelling) {
+      this.herstelLaden[row.bestelId] = true;
+      try {
+        await this.$store.dispatch('herstelBestelling', row);
+      } catch (e) {
+        this.$message.error(e.message);
+      }
+      delete this.verwijderLaden[row.bestelId];
     },
   },
   created() {

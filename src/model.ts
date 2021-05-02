@@ -35,6 +35,6 @@ export interface Bestelling {
   persoon: string
   tijd: string
   bestelId: string
-  deleted: boolean
+  deleted: string
   oud: boolean
 }
