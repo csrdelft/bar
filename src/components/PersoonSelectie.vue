@@ -9,19 +9,31 @@ export default defineComponent({
   name: 'PersoonSelectie',
   computed: {
     naam() {
-      const persoon = this.$store.state.selectie;
+      const { selectie } = this.$store.state;
 
-      if (persoon) {
-        return persoon.naam;
+      if (!selectie) {
+        return 'Geen persoon geselecteerd';
       }
 
-      return 'Geen persoon geselecteerd';
-    },
-    kleur() {
-      const persoon = this.$store.state.selectie;
+      const persoon = this.$store.state.personen[selectie];
 
       if (!persoon) {
+        return 'Laden';
+      }
+
+      return persoon.naam;
+    },
+    kleur() {
+      const { selectie } = this.$store.state;
+
+      if (!selectie) {
         return '#bce8f1';
+      }
+
+      const persoon = this.$store.state.personen[selectie];
+
+      if (!persoon) {
+        return '';
       }
 
       if (Number(persoon.saldo) < 0) {

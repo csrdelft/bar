@@ -26,7 +26,7 @@ export const fetchAuthorized = async <T>(requestObj: FetchConfig): Promise<T> =>
 
     return response.data;
   } catch (e) {
-    if (e.response.status === 401) {
+    if (e.response && e.response.status === 401) {
       await router.push('/auth/logout');
 
       throw new Error('Niet ingelogd!');

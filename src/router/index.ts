@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import Authorize from '@/views/auth/Authorize.vue';
 import AuthCallback from '@/views/auth/AuthCallback.vue';
-import Bestelling from '@/views/Bestelling.vue';
+import Invoer from '@/views/Invoer.vue';
 import Login from '@/views/Login.vue';
 import Logout from '@/views/auth/Logout.vue';
 import Personen from '@/views/Personen.vue';
@@ -28,9 +28,9 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import(/* webpackChunkName: "about" */ '../views/About.vue'),
   },
   {
-    path: '/bestelling/:socCieId',
-    name: 'Bestelling',
-    component: Bestelling,
+    path: '/invoer/:socCieId',
+    name: 'Invoer',
+    component: Invoer,
     props: true,
   },
   {

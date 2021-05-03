@@ -1,14 +1,13 @@
 import { createStore, Store } from 'vuex';
-import {
-  BestellingInhoud, Persoon, Product, Profiel,
-} from '@/model';
-import { isOudlid, sum } from '@/util';
-import bestelling from '@/store/bestellingen';
+import { Persoon, Product, Profiel } from '@/model';
+import bestelling from '@/store/bestelling';
 import { fetchAuthorized } from '@/fetch';
 import { Data as OAuth2Data } from 'client-oauth2';
 import {
   createToken, getTokenData, removeToken, setToken,
 } from '@/token';
+import invoer from '@/store/invoer';
+import { State } from '@/store/state';
 
 /**
  * Stop de token uit de cookie in de state en update de cookie als de state veranderd.
@@ -32,13 +31,13 @@ const saveTokenPlugin = (setTokenMutation: string) => <S>(store: Store<S>) => {
   });
 };
 
-export default createStore({
+export default createStore<State>({
   plugins: [saveTokenPlugin('setToken')],
   state: () => ({
     profiel: null as Profiel | null,
     personen: {} as Record<string, Persoon>,
     producten: {} as Record<string, Product>,
-    selectie: null as Persoon | null,
+    selectie: null as string | null,
     tokenData: null as OAuth2Data | null,
   }),
   getters: {
@@ -48,6 +47,8 @@ export default createStore({
       .filter((persoon: Persoon) => persoon.deleted === '0')
       .sort((a, b) => b.recent - a.recent),
     token: (state) => createToken(state.tokenData),
+    huidigePersoon:
+      (state): Persoon|null => (state.selectie ? state.personen[state.selectie] : null),
   },
   mutations: {
     setToken(state, token: OAuth2Data) {
@@ -62,8 +63,8 @@ export default createStore({
     setProducten(state, producten: Record<string, Product>) {
       state.producten = producten;
     },
-    setSelectie(state, persoon: Persoon) {
-      state.selectie = persoon;
+    setSelectie(state, persoonId: string) {
+      state.selectie = persoonId;
     },
   },
   actions: {
@@ -111,72 +112,9 @@ export default createStore({
       await dispatch('listUsers');
       await dispatch('listProducten');
     },
-    async plaatsBestelling(context, {
-      persoon,
-      inhoud,
-      oudeInhoud,
-    }: {
-      persoon: Persoon
-      inhoud: Record<string, BestellingInhoud>
-      oudeInhoud: Record<string, BestellingInhoud>
-    }): Promise<void> {
-      const warningGiven = false;
-
-      const oudLid = isOudlid(persoon);
-      const totaal = sum(...Object.values(inhoud)
-        .map((i) => i.aantal * Number(i.product.prijs)));
-
-      let toRed;
-      if (oudeInhoud) {
-        const oudTotaal = sum(...Object.values(oudeInhoud)
-          .map((i) => i.aantal * Number(i.product.prijs)));
-        toRed = persoon.saldo + oudTotaal - totaal < 0;
-      } else {
-        toRed = persoon.saldo - totaal < 0;
-      }
-
-      // noinspection PointlessBooleanExpressionJS
-      if (totaal <= 0 || persoon.status === 'S_NOBODY' || /* TODO: beheer */ false) {
-        toRed = false;
-      }
-
-      const emptyOrder = Object.values(inhoud).length === 0;
-
-      if (oudLid && toRed) {
-        throw new Error('Oudleden kunnen niet rood staan, inleg vereist!');
-      } else if (persoon && !emptyOrder) {
-        if (!warningGiven && toRed) {
-          // TODO: Timeout!
-          throw new Error('Laat lid inleggen. Saldo wordt negatief.');
-        } else {
-          // Set submitting state on true
-
-          const result = {
-            persoon,
-            bestelTotaal: totaal,
-            bestelLijst: Object.fromEntries(Object.values(inhoud)
-              .map((i) => [i.product.productId, i.aantal])),
-            oudeBestelling: oudeInhoud,
-          };
-
-          const response = await fetchAuthorized<boolean>({
-            url: '/api/v3/bar/bestelling',
-            method: 'POST',
-            data: {
-              bestelling: JSON.stringify(result),
-            },
-          });
-
-          if (!response) {
-            throw new Error(`Er ging iets mis! "${response}"`);
-          }
-        }
-      } else if (emptyOrder) {
-        throw new Error('Geen bestelling ingevoerd!');
-      }
-    },
   },
   modules: {
     bestelling,
+    invoer,
   },
 });

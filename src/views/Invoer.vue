@@ -2,20 +2,24 @@
   <div v-if="persoon">
     <el-row>
       <el-col :span="18">
-        <el-row>
+        <el-row class="bestelling-inhoud">
           <el-col
-            :span="4"
+            :span="6"
             v-for="bestelling in bestellingInhoud"
             :key="bestelling.product.productId"
           >
-            <div class="product">{{bestelling.aantal}} {{ bestelling.product.beschrijving }}</div>
+            <div class="product" @click="verwijderInvoer(bestelling.product.productId)">
+              {{ bestelling.aantal }}
+              {{ bestelling.product.beschrijving }}
+              <span class="el-icon-close"/>
+            </div>
           </el-col>
         </el-row>
 
         <el-button
           class="btn-product"
           v-for="product in producten" :key="product.productId"
-          @click="selecteerProduct(product)"
+          @click="selecteerInvoer(product)"
         >
           <div>{{ product.beschrijving }}</div>
           <div>{{ formatBedrag(product.prijs) }}</div>
@@ -44,7 +48,12 @@
             @click="plaatsBestelling"
             :loading="bestellingLaden"
           />
-          <el-button type="danger" icon="el-icon-close" @click="annuleer"/>
+          <el-button
+            type="danger"
+            icon="el-icon-close"
+            @click="annuleer"
+            :disabled="bestellingLaden"
+          />
         </div>
       </el-col>
     </el-row>
@@ -64,15 +73,11 @@ export default defineComponent({
     socCieId: String,
   },
   data: () => ({
-    bestellingInhoud: {} as Record<string, BestellingInhoud>,
     aantal: '',
     bestellingLaden: false,
   }),
   created() {
-    this.$store.commit('setSelectie', this.$store.state.personen[this.socCieId]);
-  },
-  beforeUnmount() {
-    this.$store.commit('setSelectie', null);
+    this.$store.commit('setSelectie', this.socCieId);
   },
   computed: {
     producten(): Product[] {
@@ -84,28 +89,21 @@ export default defineComponent({
     totaal(): number {
       const inhoud = Object.values(this.bestellingInhoud);
       return sum(...inhoud
-        .map((b) => Number(this.getProduct(b.product.productId).prijs) * b.aantal));
+        .map((b) => Number(b.product.prijs) * b.aantal));
+    },
+    bestellingInhoud(): Record<string, BestellingInhoud> {
+      return this.$store.state.invoer.inhoud;
     },
   },
   methods: {
     formatBedrag,
-    getProduct(productId: string): Product {
-      return this.$store.state.producten[productId];
+    verwijderInvoer(productId: string): void {
+      this.$store.commit('verwijderInvoer', productId);
     },
-    selecteerProduct(product: Product): void {
-      if (!(product.productId in this.bestellingInhoud)) {
-        this.bestellingInhoud[product.productId] = {
-          product,
-          aantal: 0,
-        };
-      }
+    selecteerInvoer(product: Product): void {
+      this.$store.commit('selecteerInvoer', { product, aantal: this.aantal });
 
-      this.bestellingInhoud[product.productId].aantal += Number(this.aantal) || 1;
       this.aantal = '';
-
-      if (this.bestellingInhoud[product.productId].aantal === 0) {
-        delete this.bestellingInhoud[product.productId];
-      }
     },
     async plaatsBestelling(): Promise<void> {
       this.bestellingLaden = true;
@@ -115,17 +113,21 @@ export default defineComponent({
           persoon: this.persoon,
         });
 
-        this.bestellingLaden = false;
         await this.$store.dispatch('postLogin');
-        this.$router.replace('/personen');
+
+        this.bestellingLaden = false;
+        this.$store.commit('clearInvoer');
+        this.$store.commit('setSelectie', null);
+        await this.$router.replace('/personen');
       } catch (e) {
         this.$message.error(e.message);
         this.bestellingLaden = false;
       }
     },
     annuleer(): void {
-      this.bestellingInhoud = {};
+      this.$store.commit('clearInvoer');
       this.aantal = '';
+      this.$store.commit('setSelectie', null);
       this.$router.replace('/personen');
     },
   },
@@ -136,6 +138,20 @@ export default defineComponent({
 .btn-product {
   padding: 2em;
   margin: 1em;
+}
+
+.bestelling-inhoud {
+  height: 200px;
+  margin: 20px;
+  overflow: hidden;
+  overflow-y: auto;
+  font-size: 30px;
+  align-content: start;
+}
+
+.product {
+  padding-bottom: .3em;
+  padding-top: .3em;
 }
 
 </style>

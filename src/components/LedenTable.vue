@@ -37,7 +37,7 @@ export default defineComponent({
   methods: {
     formatBedrag,
     rowClick(row: Persoon) {
-      this.$router.push(`/bestelling/${row.socCieId}`);
+      this.$router.push(`/invoer/${row.socCieId}`);
     },
     tableRowClassName({ row }: { row: Persoon }) {
       return row.saldo < 0 ? 'error-row' : 'success-row';

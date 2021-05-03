@@ -1,10 +1,11 @@
 import { Bestelling } from '@/model';
 import { Module } from 'vuex';
 import { fetchAuthorized } from '@/fetch';
+import { BestellingState, State } from '@/store/state';
 
 const defineModule = <T, R = unknown>(tree: Module<T, R>): Module<T, R> => tree;
 
-export default defineModule({
+export default defineModule<BestellingState, State>({
   state: () => ({
     bestellingen: {} as Record<string, Bestelling>,
   }),
@@ -20,7 +21,7 @@ export default defineModule({
   actions: {
     async fetchBestellingen(
       { state },
-      data: {aantal: number, begin: Date, eind: Date, productType?: number[]},
+      data: { aantal: number, begin: Date, eind: Date, productType?: number[] },
     ): Promise<void> {
       state.bestellingen = await fetchAuthorized<Record<string, Bestelling>>({
         url: '/api/v3/bar/laadLaatste',

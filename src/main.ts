@@ -1,5 +1,6 @@
 import { createApp } from 'vue';
 import ElementPlus from 'element-plus';
+import locale from 'element-plus/lib/locale/lang/nl';
 import App from './App.vue';
 import router from './router';
 import store from './store';
@@ -12,7 +13,7 @@ declare global {
 }
 
 createApp(App)
-  .use(ElementPlus)
+  .use(ElementPlus, { locale })
   .use(store)
   .use(router)
   .mount('#app');
