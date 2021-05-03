@@ -1,5 +1,5 @@
 <template>
-  <el-container v-loading="loading">
+  <el-container v-loading.fullscreen.lock="loading">
     <el-header v-if="loggedIn" height="auto">
       <el-affix>
         <el-menu :default-active="currentRoute.fullPath" mode="horizontal" :router="true">

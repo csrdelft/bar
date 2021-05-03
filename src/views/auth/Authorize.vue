@@ -1,6 +1,6 @@
 <template>
   <div
-    v-loading.fullScreen.lock="loading"
+    v-loading.fullscreen.lock="loading"
     :element-loading-text="msg"
   >
   </div>

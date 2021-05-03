@@ -5,5 +5,6 @@ declare module '@vue/runtime-core' {
     $store: Store;
     $loading: (...args: any[]) => any
     $message: ((...args: unknown[]) => unknown) & {error: (...args: unknown[]) => unknown}
+    $notify: (...args: unknown[]) => unknown
   }
 }
