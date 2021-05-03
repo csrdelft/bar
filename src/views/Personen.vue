@@ -1,7 +1,7 @@
 <template>
   <div class="hello">
     <Keyboard v-model.uppercase="value"/>
-    <LedenTable/>
+    <LedenTable :zoeken="value"/>
   </div>
 </template>
 
@@ -22,15 +22,6 @@ export default defineComponent({
   computed: {
     upperValue(): string {
       return this.value.toUpperCase();
-    },
-    naam(): string | null {
-      return this.$store.state.profiel?.displayName;
-    },
-  },
-  watch: {
-    value(val) {
-      console.log(val);
-      this.$store.commit('setZoeken', val);
     },
   },
   methods: {

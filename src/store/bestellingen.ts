@@ -1,6 +1,6 @@
 import { Bestelling } from '@/model';
 import { Module } from 'vuex';
-import { fetchAuthorized } from '@/token';
+import { fetchAuthorized } from '@/fetch';
 
 const defineModule = <T, R = unknown>(tree: Module<T, R>): Module<T, R> => tree;
 

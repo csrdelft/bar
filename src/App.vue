@@ -1,6 +1,7 @@
 <template>
-  <div v-loading="loading">
-    <div id="nav">
+  <el-container v-if="loggedIn" v-loading="loading">
+
+    <el-header height="auto">
       <el-affix>
         <el-menu :default-active="currentRoute" mode="horizontal" :router="true">
           <el-menu-item index="/personen">
@@ -13,18 +14,29 @@
             Logout
           </el-menu-item>
         </el-menu>
+        <PersoonSelectie/>
       </el-affix>
-    </div>
-    <router-view/>
-  </div>
+    </el-header>
+    <el-main>
+      <router-view/>
+    </el-main>
+  </el-container>
+  <el-container v-else>
+    <el-main>
+      <router-link to="/auth/csr">Login</router-link>
+      <router-view/>
+    </el-main>
+  </el-container>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { getToken } from '@/token';
+import PersoonSelectie from '@/components/PersoonSelectie.vue';
 
 export default defineComponent({
   name: 'App',
+  components: { PersoonSelectie },
   data: () => ({
     loading: true,
   }),

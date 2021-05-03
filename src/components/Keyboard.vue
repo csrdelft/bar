@@ -29,7 +29,6 @@ export default defineComponent({
   },
   methods: {
     emitValue(value: string) {
-      console.log(value, this.modelModifiers);
       let val = value;
       if ('uppercase' in this.modelModifiers) {
         val = val.toUpperCase();

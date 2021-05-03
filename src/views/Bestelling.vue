@@ -1,6 +1,5 @@
 <template>
   <div v-if="persoon">
-    {{ persoon.naam }}
     <el-row>
       <el-col :span="18">
         <el-row>
@@ -9,7 +8,7 @@
             v-for="bestelling in bestellingInhoud"
             :key="bestelling.product.productId"
           >
-            {{ bestelling.product.beschrijving }} x {{ bestelling.aantal }}
+            <div class="product">{{bestelling.aantal}} {{ bestelling.product.beschrijving }}</div>
           </el-col>
         </el-row>
 
@@ -69,6 +68,12 @@ export default defineComponent({
     aantal: '',
     bestellingLaden: false,
   }),
+  created() {
+    this.$store.commit('setSelectie', this.$store.state.personen[this.socCieId]);
+  },
+  beforeUnmount() {
+    this.$store.commit('setSelectie', null);
+  },
   computed: {
     producten(): Product[] {
       return this.$store.getters.zichtbareProducten;
@@ -112,7 +117,7 @@ export default defineComponent({
 
         this.bestellingLaden = false;
         await this.$store.dispatch('postLogin');
-        this.$router.replace('/');
+        this.$router.replace('/personen');
       } catch (e) {
         this.$message.error(e.message);
         this.bestellingLaden = false;
@@ -121,7 +126,7 @@ export default defineComponent({
     annuleer(): void {
       this.bestellingInhoud = {};
       this.aantal = '';
-      this.$router.replace('/');
+      this.$router.replace('/personen');
     },
   },
 });

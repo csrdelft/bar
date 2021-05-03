@@ -2,41 +2,27 @@ import { createStore } from 'vuex';
 import {
   BestellingInhoud, Persoon, Product, Profiel,
 } from '@/model';
-import { Data, Token } from 'client-oauth2';
-import VuexPersist from 'vuex-persist';
 import { isOudlid, sum } from '@/util';
 import bestelling from '@/store/bestellingen';
-import { fetchAuthorized } from '@/token';
-
-const vuexLocalStorage = new VuexPersist<{ token: Data | null }>({
-  key: 'vuex',
-  storage: window.localStorage,
-  // Alleen token opslaan in localStorage
-  reducer: ({ token }) => ({ token }),
-});
+import { fetchAuthorized } from '@/fetch';
 
 export default createStore({
-  plugins: [vuexLocalStorage.plugin],
   state: () => ({
-    zoeken: '',
     profiel: null as Profiel | null,
-    token: null as Data | null,
     personen: {} as Record<string, Persoon>,
     producten: {} as Record<string, Product>,
+    selectie: null as Persoon | null,
   }),
   getters: {
     zichtbareProducten: (state) => Object.values(state.producten)
       .filter((p) => p.beheer === '0' && p.status === '1'),
+    personenWeergave: (state) => Object.values<Persoon>(state.personen)
+      .filter((persoon: Persoon) => persoon.deleted === '0')
+      .sort((a, b) => b.recent - a.recent),
   },
   mutations: {
-    setZoeken(state, value: string) {
-      state.zoeken = value;
-    },
     setProfiel(state, profiel: Profiel) {
       state.profiel = profiel;
-    },
-    setToken(state, token: Token) {
-      state.token = token.data;
     },
     setPersonen(state, personen: Record<string, Persoon>) {
       state.personen = personen;
@@ -44,8 +30,8 @@ export default createStore({
     setProducten(state, producten: Record<string, Product>) {
       state.producten = producten;
     },
-    invalidateToken(state) {
-      state.token = null;
+    setSelectie(state, persoon: Persoon) {
+      state.selectie = persoon;
     },
   },
   actions: {

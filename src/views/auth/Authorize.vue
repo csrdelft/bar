@@ -27,6 +27,7 @@ export default defineComponent({
     async setLoading(msg: string): Promise<void> {
       this.loading = false;
       this.msg = msg;
+      // NextTick om er voor te zorgen dat loading update
       await this.$nextTick();
       this.loading = true;
     },
@@ -41,9 +42,7 @@ export default defineComponent({
       window.oauth2Callback = async (uri: string) => {
         await this.setLoading('Token laden...');
 
-        const token = await csrAuth.token.getToken(uri);
-
-        setToken(token);
+        setToken(await csrAuth.token.getToken(uri));
 
         await this.setLoading('Profiel laden...');
 

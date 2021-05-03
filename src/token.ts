@@ -1,7 +1,6 @@
 import Cookies, { CookieAttributes } from 'js-cookie';
 import { Token } from 'client-oauth2';
 import csrAuth from '@/auth/csrAuth';
-import axios, { AxiosRequestConfig } from 'axios';
 
 const TOKEN_OPTIONS: CookieAttributes = { sameSite: 'strict' };
 
@@ -16,35 +15,4 @@ export const getToken = (): Token|null => {
   }
 
   return null;
-};
-
-export const fetchAuthorized = async <T>(requestObj: AxiosRequestConfig & {url: string}):
-  Promise<T> => {
-  const token = getToken();
-
-  if (!token) {
-    throw new Error('Geen token');
-  }
-
-  try {
-    const response = await axios(token.sign({
-      ...requestObj,
-      headers: {
-        ...requestObj.headers,
-        'Content-Type': 'application/json',
-      },
-      url: process.env.VUE_APP_REMOTE_URL + requestObj.url,
-    }));
-
-    return response.data;
-  } catch (e) {
-    if (e.response) {
-      // removeToken();
-
-      // Een 500 of 401
-      return e.response.data;
-    }
-
-    throw new Error(e.message);
-  }
 };
