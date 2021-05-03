@@ -4,12 +4,11 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { getToken } from '@/token';
 
 export default defineComponent({
   name: 'Login',
   created(): void {
-    if (getToken()) {
+    if (this.$store.state.token) {
       this.$router.push('/personen');
     }
   },

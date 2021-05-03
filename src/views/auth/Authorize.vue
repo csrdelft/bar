@@ -9,8 +9,6 @@
 <script lang="ts">
 
 import { defineComponent } from 'vue';
-import store from '@/store';
-import { getToken, setToken } from '@/token';
 import csrAuth from '../../auth/csrAuth';
 
 /**
@@ -33,7 +31,7 @@ export default defineComponent({
     },
   },
   created(): void {
-    if (!getToken()) {
+    if (!this.$store.state.token) {
       window.open(csrAuth.token.getUri());
 
       this.loading = true;
@@ -42,11 +40,11 @@ export default defineComponent({
       window.oauth2Callback = async (uri: string) => {
         await this.setLoading('Token laden...');
 
-        setToken(await csrAuth.token.getToken(uri));
+        await this.$store.commit('setToken', (await csrAuth.token.getToken(uri)).data);
 
         await this.setLoading('Profiel laden...');
 
-        await store.dispatch('postLogin');
+        await this.$store.dispatch('postLogin');
 
         this.loading = false;
 

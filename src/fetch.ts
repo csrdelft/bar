@@ -8,6 +8,7 @@ export const fetchAuthorized = async <T>(requestObj: FetchConfig): Promise<T> =>
   const token = getToken();
 
   if (!token) {
+    console.error('Kan niet!', requestObj);
     await router.push('/auth/logout');
 
     throw new Error('Geen token');

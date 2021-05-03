@@ -1,7 +1,6 @@
 <template>
-  <el-container v-if="loggedIn" v-loading="loading">
-
-    <el-header height="auto">
+  <el-container v-loading="loading">
+    <el-header v-if="loggedIn" height="auto">
       <el-affix>
         <el-menu :default-active="currentRoute" mode="horizontal" :router="true">
           <el-menu-item index="/personen">
@@ -21,17 +20,10 @@
       <router-view/>
     </el-main>
   </el-container>
-  <el-container v-else>
-    <el-main>
-      <router-link to="/auth/csr">Login</router-link>
-      <router-view/>
-    </el-main>
-  </el-container>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { getToken } from '@/token';
 import PersoonSelectie from '@/components/PersoonSelectie.vue';
 
 export default defineComponent({
@@ -42,7 +34,7 @@ export default defineComponent({
   }),
   computed: {
     loggedIn(): boolean {
-      return Boolean(getToken());
+      return Boolean(this.$store.getters.token);
     },
     currentRoute(): string {
       return this.$router.currentRoute.value.fullPath;
@@ -52,6 +44,9 @@ export default defineComponent({
     if (this.loggedIn) {
       this.$store.dispatch('postLogin')
         .then((): void => {
+          this.loading = false;
+        })
+        .catch(() => {
           this.loading = false;
         });
     } else {

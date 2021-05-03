@@ -1,17 +1,45 @@
-import { createStore } from 'vuex';
+import { createStore, Store } from 'vuex';
 import {
   BestellingInhoud, Persoon, Product, Profiel,
 } from '@/model';
 import { isOudlid, sum } from '@/util';
 import bestelling from '@/store/bestellingen';
 import { fetchAuthorized } from '@/fetch';
+import { Data as OAuth2Data } from 'client-oauth2';
+import {
+  createToken, getTokenData, removeToken, setToken,
+} from '@/token';
+
+/**
+ * Stop de token uit de cookie in de state en update de cookie als de state veranderd.
+ * @param setTokenMutation
+ */
+const saveTokenPlugin = (setTokenMutation: string) => <S>(store: Store<S>) => {
+  const token = getTokenData();
+
+  if (token) {
+    store.commit(setTokenMutation, token);
+  }
+
+  store.subscribe((mutation) => {
+    if (mutation.type === setTokenMutation) {
+      if (mutation.payload) {
+        setToken(mutation.payload);
+      } else {
+        removeToken();
+      }
+    }
+  });
+};
 
 export default createStore({
+  plugins: [saveTokenPlugin('setToken')],
   state: () => ({
     profiel: null as Profiel | null,
     personen: {} as Record<string, Persoon>,
     producten: {} as Record<string, Product>,
     selectie: null as Persoon | null,
+    tokenData: null as OAuth2Data | null,
   }),
   getters: {
     zichtbareProducten: (state) => Object.values(state.producten)
@@ -19,8 +47,12 @@ export default createStore({
     personenWeergave: (state) => Object.values<Persoon>(state.personen)
       .filter((persoon: Persoon) => persoon.deleted === '0')
       .sort((a, b) => b.recent - a.recent),
+    token: (state) => createToken(state.tokenData),
   },
   mutations: {
+    setToken(state, token: OAuth2Data) {
+      state.tokenData = token;
+    },
     setProfiel(state, profiel: Profiel) {
       state.profiel = profiel;
     },

@@ -1,15 +1,14 @@
 <template>
-  <div><h1>Uitgelogd</h1><router-link to="/auth/csr">Login</router-link></div>
+  <div><h1>Niet ingelogd</h1><router-link to="/auth/csr">Login</router-link></div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { removeToken } from '@/token';
 
 export default defineComponent({
   name: 'Logout',
   created(): void {
-    removeToken();
+    this.$store.commit('setToken', null);
   },
 });
 </script>
