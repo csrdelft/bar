@@ -57,15 +57,13 @@ export default defineComponent({
       return null;
     },
   },
-  created() {
+  async created() {
     if (this.loggedIn) {
-      this.$store.dispatch('postLogin')
-        .then((): void => {
-          this.loading = false;
-        })
-        .catch(() => {
-          this.loading = false;
-        });
+      try {
+        await this.$store.dispatch('postLogin');
+      } finally {
+        this.loading = false;
+      }
     } else {
       this.loading = false;
     }
