@@ -38,3 +38,14 @@ $--font-line-height-secondary: 16px !default;
 .el-checkbox {
   overflow: hidden;
 }
+
+.hg-button {
+  @extend .el-button;
+  margin: 0.2em;
+  flex: 1;
+}
+
+.hg-row {
+  display: flex;
+  justify-content: stretch;
+}

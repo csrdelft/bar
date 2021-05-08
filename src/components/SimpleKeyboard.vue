@@ -51,6 +51,7 @@ export default defineComponent({
       onChange: this.onChange,
       onKeyPress: this.onKeyPress,
       display: this.display,
+      theme: '',
       layout: { default: this.layout },
     });
   },
@@ -99,6 +100,9 @@ export default defineComponent({
 });
 </script>
 
-<style scoped>
+<style>
+.simple-keyboard {
+  margin-bottom: 1em;
+}
 
 </style>

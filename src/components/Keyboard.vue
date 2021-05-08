@@ -44,18 +44,18 @@ export default defineComponent({
   justify-content: center;
 }
 
-.full-keyboard.hg-theme-default .hg-button {
+.full-keyboard .hg-button {
   font-size: 2em;
   flex-grow: 0;
   padding: 1em;
 }
 
-.full-keyboard.hg-theme-default .hg-button.hg-standardBtn {
-  width: 80px;
-  height: 80px;
+.full-keyboard .hg-button.hg-standardBtn {
+  height: 100%;
 }
 
-.full-keyboard.hg-theme-default .hg-button.hg-functionBtn {
-  height: 80px;
+.full-keyboard .hg-button.hg-functionBtn {
+  height: 100%;
 }
+
 </style>

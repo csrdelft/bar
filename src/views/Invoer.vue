@@ -1,6 +1,6 @@
 <template>
   <div v-if="persoon">
-    <el-row>
+    <el-row :gutter="20">
       <el-col :span="18">
         <el-row class="bestelling-inhoud">
           <el-col
@@ -16,29 +16,52 @@
           </el-col>
         </el-row>
 
-        <el-button
-          class="btn-product"
-          v-for="product in producten" :key="product.productId"
-          @click="selecteerInvoer(product)"
-        >
-          <div>{{ product.beschrijving }}</div>
-          <div>{{ formatBedrag(product.prijs) }}</div>
-        </el-button>
+        <el-row :gutter="20">
+          <el-col :span="4"
+                  v-for="product in producten" :key="product.productId"
+          >
+            <el-button
+              class="btn-product"
+              @click="selecteerInvoer(product)"
+            >
+              <div>{{ product.beschrijving }}</div>
+              <div>{{ formatBedrag(product.prijs) }}</div>
+            </el-button>
+          </el-col>
+        </el-row>
       </el-col>
       <el-col :span="6">
         <Numpad default-value="1" v-model="aantal"/>
 
+        <el-descriptions :column="1" border>
+          <el-descriptions-item label="Huidig saldo">
+            {{ formatBedrag(persoon.saldo) }}
+          </el-descriptions-item>
+          <el-descriptions-item label="Totaal bestelling">
+            {{ formatBedrag(totaal) }}
+          </el-descriptions-item>
+          <el-descriptions-item label="Nieuw saldo">
+            {{ formatBedrag(persoon.saldo - totaal) }}
+          </el-descriptions-item>
+        </el-descriptions>
+        <el-divider/>
+        <div>
+          <span>
+          Huidig saldo:
+          </span>
+          <span :style="{float: 'right'}">
+            {{ formatBedrag(persoon.saldo) }}
+          </span>
+        </div>
         <el-divider/>
         <span>
-          Huidig saldo: {{ formatBedrag(persoon.saldo) }}
+          Totaal bestelling:
+          <span :style="{float: 'right'}">{{ formatBedrag(totaal) }}</span>
         </span>
         <el-divider/>
         <span>
-          Totaal bestelling: {{ formatBedrag(totaal) }}
-        </span>
-        <el-divider/>
-        <span>
-          Nieuw Saldo: {{ formatBedrag(persoon.saldo - totaal) }}
+          Nieuw Saldo:
+          <span :style="{float: 'right'}">{{ formatBedrag(persoon.saldo - totaal) }}</span>
         </span>
         <el-divider/>
         <div>
@@ -64,7 +87,7 @@
 import { defineComponent } from 'vue';
 import { BestellingInhoud, Persoon, Product } from '@/model';
 import Numpad from '@/components/Numpad.vue';
-import { formatBedrag, sum } from '@/util';
+import { formatBedrag, SaldoError, sum } from '@/util';
 
 export default defineComponent({
   name: 'Bestelling',
@@ -75,6 +98,7 @@ export default defineComponent({
   data: () => ({
     aantal: '',
     bestellingLaden: false,
+    forceBestelling: false,
   }),
   created() {
     this.$store.commit('setSelectie', this.socCieId);
@@ -101,7 +125,10 @@ export default defineComponent({
       this.$store.commit('verwijderInvoer', productId);
     },
     selecteerInvoer(product: Product): void {
-      this.$store.commit('selecteerInvoer', { product, aantal: this.aantal });
+      this.$store.commit('selecteerInvoer', {
+        product,
+        aantal: this.aantal,
+      });
 
       this.aantal = '';
     },
@@ -111,7 +138,9 @@ export default defineComponent({
         await this.$store.dispatch('plaatsBestelling', {
           inhoud: this.bestellingInhoud,
           persoon: this.persoon,
+          force: this.forceBestelling,
         });
+        this.forceBestelling = false;
 
         await this.$store.dispatch('postLogin');
 
@@ -120,13 +149,22 @@ export default defineComponent({
         this.$store.commit('setSelectie', null);
         await this.$router.replace('/personen');
       } catch (e) {
+        if (e instanceof SaldoError) {
+          setTimeout(() => {
+            this.forceBestelling = true;
+            this.bestellingLaden = false;
+          }, 3000);
+        } else {
+          this.bestellingLaden = false;
+        }
+
         this.$message.error(e.message);
-        this.bestellingLaden = false;
       }
     },
     annuleer(): void {
       this.$store.commit('clearInvoer');
       this.aantal = '';
+      this.forceBestelling = false;
       this.$store.commit('setSelectie', null);
       this.$router.replace('/personen');
     },
@@ -136,8 +174,9 @@ export default defineComponent({
 
 <style scoped>
 .btn-product {
-  padding: 2em;
-  margin: 1em;
+  width: 100%;
+  padding: 1em 0;
+  margin: 10px 0;
 }
 
 .bestelling-inhoud {

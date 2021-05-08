@@ -23,3 +23,5 @@ export const formatBedrag = (bedrag: number): string => {
 export const sum = (...args: number[]): number => args.reduce((a, b) => a + b, 0);
 
 export const isOudlid = (persoon: Persoon): boolean => persoon.status !== 'S_LID' && persoon.status !== 'S_GASTLID' && persoon.status !== 'S_NOVIET';
+
+export class SaldoError extends Error {}

@@ -1,7 +1,7 @@
 import { BestellingInhoud, Persoon, Product } from '@/model';
 import { Module } from 'vuex';
 import { fetchAuthorized } from '@/fetch';
-import { isOudlid, sum } from '@/util';
+import { isOudlid, SaldoError, sum } from '@/util';
 import { InvoerState, State } from '@/store/state';
 
 const defineModule = <T, R>(tree: Module<T, R>): Module<T, R> => tree;
@@ -42,11 +42,13 @@ export default defineModule<InvoerState, State>({
   actions: {
     async plaatsBestelling({ state, rootGetters }, {
       oudeInhoud,
+      force = false,
     }: {
       persoon: Persoon
       oudeInhoud: Record<string, BestellingInhoud>
+      force: boolean
     }): Promise<void> {
-      const warningGiven = false;
+      const warningGiven = force;
 
       const persoon = rootGetters.huidigePersoon;
 
@@ -75,7 +77,7 @@ export default defineModule<InvoerState, State>({
       } else if (persoon && !emptyOrder) {
         if (!warningGiven && toRed) {
           // TODO: Timeout!
-          throw new Error('Laat lid inleggen. Saldo wordt negatief.');
+          throw new SaldoError('Laat lid inleggen. Saldo wordt negatief.');
         } else {
           // Set submitting state on true
 
