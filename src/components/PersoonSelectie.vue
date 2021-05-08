@@ -48,7 +48,7 @@ export default defineComponent({
 
 <style scoped>
 .persoon-selectie {
-  padding: 2em;
+  padding: 1em 2em;
   margin: 0;
 }
 </style>

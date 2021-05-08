@@ -43,6 +43,11 @@ $--font-line-height-secondary: 16px !default;
   @extend .el-button;
   margin: 0.2em;
   flex: 1;
+
+  span {
+    display: block;
+    min-width: 1em;
+  }
 }
 
 .hg-row {
