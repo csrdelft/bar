@@ -15,9 +15,9 @@
           <el-menu-item index="/auth/logout">
             Logout
           </el-menu-item>
-          <el-menu-item class="klok">
-            <Clock/>
-          </el-menu-item>
+          <span class="klok">
+          <Clock/>
+          </span>
         </el-menu>
         <PersoonSelectie/>
       </el-affix>
@@ -48,7 +48,7 @@ export default defineComponent({
       return this.$router.currentRoute.value;
     },
     bestellingUrl(): string|null {
-      const { selectie } = this.$store.state;
+      const { selectie } = this.$store.state.user;
 
       if (selectie) {
         return `/invoer/${selectie}`;
@@ -93,7 +93,11 @@ body {
   color: #909399;
 }
 
-.el-menu--horizontal > .el-menu-item.klok {
+.el-menu--horizontal > .klok {
   float: right;
+  height: 60px;
+  line-height: 60px;
+  color: #909399;
+  font-size: 20px;
 }
 </style>

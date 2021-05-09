@@ -9,7 +9,7 @@ export default defineComponent({
   name: 'PersoonSelectie',
   computed: {
     naam() {
-      const { selectie } = this.$store.state;
+      const { selectie } = this.$store.state.user;
 
       if (!selectie) {
         return 'Geen persoon geselecteerd';
@@ -24,7 +24,7 @@ export default defineComponent({
       return persoon.naam;
     },
     kleur() {
-      const { selectie } = this.$store.state;
+      const { selectie } = this.$store.state.user;
 
       if (!selectie) {
         return '#bce8f1';

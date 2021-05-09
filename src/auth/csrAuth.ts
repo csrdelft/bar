@@ -5,7 +5,7 @@ const csrAuth = new ClientOAuth2({
   authorizationUri: `${process.env.VUE_APP_REMOTE_URL}/authorize`,
   accessTokenUri: `${process.env.VUE_APP_REMOTE_URL}/api/v3/token`,
   redirectUri: `${window.location.origin}/auth/callback`,
-  scopes: ['BAR:NORMAAL', 'BAR:BEHEER'],
+  scopes: ['BAR:NORMAAL', 'BAR:BEHEER', 'BAR:TRUST'],
 });
 
 export default csrAuth;

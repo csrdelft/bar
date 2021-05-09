@@ -13,7 +13,7 @@ import { defineComponent } from 'vue';
 export default defineComponent({
   name: 'Login',
   created(): void {
-    if (this.$store.state.token) {
+    if (this.$store.state.user.token) {
       this.$router.push('/personen');
     }
   },

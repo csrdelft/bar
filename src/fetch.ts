@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig } from 'axios';
 import router from '@/router';
-import { getToken } from '@/token';
+import { getLocatieToken, getToken } from '@/token';
 
 type FetchConfig = AxiosRequestConfig & {url: string}
 
@@ -20,6 +20,7 @@ export const fetchAuthorized = async <T>(requestObj: FetchConfig): Promise<T> =>
       headers: {
         ...requestObj.headers,
         'Content-Type': 'application/json',
+        'X-Bar-Token': getLocatieToken(),
       },
       url: process.env.VUE_APP_REMOTE_URL + requestObj.url,
     }));

@@ -1,6 +1,7 @@
 export interface Profiel {
   id: string
   displayName: string
+  scopes: 'BAR:NORMAAL' | 'BAR:BEHEER' | 'BAR:TRUST'
 }
 
 export interface Persoon {
@@ -37,4 +38,9 @@ export interface Bestelling {
   bestelId: string
   deleted: string
   oud: boolean
+}
+
+export interface BarLocatie {
+  sleutel: string
+  naam: string
 }

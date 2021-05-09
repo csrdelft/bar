@@ -1,23 +1,36 @@
 import { createStore, Store } from 'vuex';
-import { Persoon, Product, Profiel } from '@/model';
+import {
+  BarLocatie, Persoon, Product, Profiel,
+} from '@/model';
 import bestelling from '@/store/bestelling';
 import { fetchAuthorized } from '@/fetch';
-import { Data as OAuth2Data } from 'client-oauth2';
 import {
-  createToken, getTokenData, removeToken, setToken,
+  getLocatieToken,
+  getTokenData,
+  removeLocatieToken,
+  removeToken,
+  setLocatieToken,
+  setToken,
 } from '@/token';
 import invoer from '@/store/invoer';
 import { State } from '@/store/state';
+import user from '@/store/user';
 
 /**
  * Stop de token uit de cookie in de state en update de cookie als de state veranderd.
  * @param setTokenMutation
+ * @param setLocatieTokenMutation
  */
-const saveTokenPlugin = (setTokenMutation: string) => <S>(store: Store<S>) => {
+// eslint-disable-next-line max-len
+const saveTokenPlugin = (setTokenMutation: string, setLocatieTokenMutation: string) => <S>(store: Store<S>) => {
   const token = getTokenData();
-
   if (token) {
     store.commit(setTokenMutation, token);
+  }
+
+  const locatieToken = getLocatieToken();
+  if (locatieToken) {
+    store.commit(setLocatieTokenMutation, locatieToken);
   }
 
   store.subscribe((mutation) => {
@@ -28,17 +41,22 @@ const saveTokenPlugin = (setTokenMutation: string) => <S>(store: Store<S>) => {
         removeToken();
       }
     }
+    if (mutation.type === setLocatieTokenMutation) {
+      if (mutation.payload) {
+        setLocatieToken(mutation.payload);
+      } else {
+        removeLocatieToken();
+      }
+    }
   });
 };
 
 export default createStore<State>({
-  plugins: [saveTokenPlugin('setToken')],
+  plugins: [saveTokenPlugin('setToken', 'setLocatieToken')],
   state: () => ({
     profiel: null as Profiel | null,
     personen: {} as Record<string, Persoon>,
     producten: {} as Record<string, Product>,
-    selectie: null as string | null,
-    tokenData: null as OAuth2Data | null,
   }),
   getters: {
     zichtbareProducten: (state) => Object.values(state.producten)
@@ -46,25 +64,13 @@ export default createStore<State>({
     personenWeergave: (state) => Object.values<Persoon>(state.personen)
       .filter((persoon: Persoon) => persoon.deleted === '0')
       .sort((a, b) => b.recent - a.recent),
-    token: (state) => createToken(state.tokenData),
-    huidigePersoon:
-      (state): Persoon|null => (state.selectie ? state.personen[state.selectie] : null),
   },
   mutations: {
-    setToken(state, token: OAuth2Data) {
-      state.tokenData = token;
-    },
-    setProfiel(state, profiel: Profiel) {
-      state.profiel = profiel;
-    },
     setPersonen(state, personen: Record<string, Persoon>) {
       state.personen = personen;
     },
     setProducten(state, producten: Record<string, Product>) {
       state.producten = producten;
-    },
-    setSelectie(state, persoonId: string) {
-      state.selectie = persoonId;
     },
   },
   actions: {
@@ -94,16 +100,6 @@ export default createStore<State>({
 
       commit('setProducten', productenRecord);
     },
-    async fetchProfiel({
-      commit,
-    }): Promise<void> {
-      const profiel = await fetchAuthorized<Profiel>({
-        url: '/api/v3/profiel',
-        method: 'GET',
-      });
-
-      commit('setProfiel', profiel);
-    },
     async postLogin({
       dispatch,
     }): Promise<void> {
@@ -112,9 +108,19 @@ export default createStore<State>({
       await dispatch('listUsers');
       await dispatch('listProducten');
     },
+    async vertrouwLocatie({ commit }, naam: string) {
+      const barLocatie = await fetchAuthorized<BarLocatie>({
+        url: '/api/v3/bar/trust',
+        method: 'POST',
+        data: JSON.stringify({ naam }),
+      });
+
+      commit('setLocatieToken', barLocatie);
+    },
   },
   modules: {
     bestelling,
     invoer,
+    user,
   },
 });

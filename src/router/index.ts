@@ -7,6 +7,7 @@ import Logout from '@/views/auth/Logout.vue';
 import Personen from '@/views/Personen.vue';
 import Bestellingen from '@/views/Bestellingen.vue';
 import { getToken } from '@/token';
+import PostLogin from '@/views/PostLogin.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -52,6 +53,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/auth/logout',
     name: 'Logout',
     component: Logout,
+  },
+  {
+    path: '/auth/post-login',
+    name: 'Welcome',
+    component: PostLogin,
   },
 ];
 

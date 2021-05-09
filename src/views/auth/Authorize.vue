@@ -31,7 +31,7 @@ export default defineComponent({
     },
   },
   created(): void {
-    if (!this.$store.state.token) {
+    if (!this.$store.state.user.token) {
       window.open(csrAuth.token.getUri());
 
       this.loading = true;
@@ -41,7 +41,9 @@ export default defineComponent({
         await this.setLoading('Token laden...');
 
         try {
-          await this.$store.commit('setToken', (await csrAuth.token.getToken(uri)).data);
+          const token = await csrAuth.token.getToken(uri);
+          console.log(token);
+          await this.$store.commit('setToken', token.data);
         } catch (e) {
           this.$notify({ message: e.message });
         }
@@ -52,10 +54,10 @@ export default defineComponent({
 
         this.loading = false;
 
-        await this.$router.push('/personen');
+        await this.$router.push('/auth/post-login');
       };
     } else {
-      this.$router.push('/personen');
+      this.$router.push('/auth/post-login');
     }
   },
 });
