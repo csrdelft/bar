@@ -40,7 +40,11 @@ export default defineComponent({
       window.oauth2Callback = async (uri: string) => {
         await this.setLoading('Token laden...');
 
-        await this.$store.commit('setToken', (await csrAuth.token.getToken(uri)).data);
+        try {
+          await this.$store.commit('setToken', (await csrAuth.token.getToken(uri)).data);
+        } catch (e) {
+          this.$notify({ message: e.message });
+        }
 
         await this.setLoading('Profiel laden...');
 

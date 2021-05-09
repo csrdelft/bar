@@ -1,5 +1,10 @@
 <template>
-  <h1><router-link to="/auth/csr">Login</router-link></h1>
+  <el-container>
+    <el-main>
+      <h1>Barsysteem C.S.R.</h1>
+      <el-button @click="$router.push('/auth/csr')">Login</el-button>
+    </el-main>
+  </el-container>
 </template>
 
 <script lang="ts">
