@@ -1,6 +1,6 @@
 <template>
   <h1>
-    Welkom in het bar systeem!
+    Welkom in het bar systeem! {{profielNaam}}
   </h1>
 
   <div v-if="isAdmin">
@@ -42,6 +42,9 @@ export default defineComponent({
     naam: '',
   }),
   computed: {
+    profielNaam() : string {
+      return this.$store.state.user.profiel?.displayName;
+    },
     vertrouwd(): BarLocatie {
       return this.$store.state.user.locatieToken;
     },

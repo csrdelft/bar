@@ -16,22 +16,17 @@
           </el-col>
         </el-row>
 
-        <el-row :gutter="20">
-          <el-col :span="4"
-                  v-for="product in producten" :key="product.productId"
-          >
-            <el-button
-              class="btn-product"
-              @click="selecteerInvoer(product)"
-            >
-              <div>{{ product.beschrijving }}</div>
-              <div>{{ formatBedrag(product.prijs) }}</div>
-            </el-button>
-          </el-col>
-        </el-row>
+        <ProductWeergave :producten="producten" @selecteer="selecteerInvoer"/>
       </el-col>
       <el-col :span="6">
         <Numpad default-value="1" v-model="aantal"/>
+        <BestellingSamenvatting
+          :bestelling-laden="bestellingLaden"
+          :persoon="persoon"
+          :totaal="totaal"
+          :annuleer="annuleer"
+          :plaatsBestelling="plaatsBestelling"
+        />
 
         <el-descriptions :column="1" border>
           <el-descriptions-item label="Huidig saldo">
@@ -88,12 +83,22 @@ import { defineComponent } from 'vue';
 import { BestellingInhoud, Persoon, Product } from '@/model';
 import Numpad from '@/components/Numpad.vue';
 import { formatBedrag, SaldoError, sum } from '@/util';
+import ProductWeergave from '@/components/bestellingen/ProductWeergave.vue';
+import BestellingSamenvatting from '@/components/bestellingen/BestellingSamenvatting.vue';
 
 export default defineComponent({
   name: 'Bestelling',
-  components: { Numpad },
+  components: {
+    BestellingSamenvatting,
+    ProductWeergave,
+    Numpad,
+  },
   props: {
     socCieId: String,
+    bestellingId: {
+      type: String,
+      default: '',
+    },
   },
   data: () => ({
     aantal: '',

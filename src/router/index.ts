@@ -35,6 +35,12 @@ const routes: Array<RouteRecordRaw> = [
     props: true,
   },
   {
+    path: '/invoer/:socCieId/bewerken/:bestellingId',
+    name: 'Invoer bewerken',
+    component: Invoer,
+    props: true,
+  },
+  {
     path: '/bestellingen',
     name: 'Bestellingen',
     component: Bestellingen,

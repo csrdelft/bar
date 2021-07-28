@@ -189,9 +189,7 @@ export default defineComponent({
       this.isIndeterminate = false;
     },
     handleEdit(index: number, row: Bestelling) {
-      // TODO: Naar edit ding
-      this.$message.error('Not implemented');
-      this.$router.push(`/invoer/${row.persoon}`);
+      this.$router.push(`/invoer/${row.persoon}/bewerken/${row.bestelId}`);
     },
     async handleVerwijder(index: number, row: Bestelling) {
       this.verwijderLaden[row.bestelId] = true;

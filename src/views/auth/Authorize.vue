@@ -42,7 +42,6 @@ export default defineComponent({
 
         try {
           const token = await csrAuth.token.getToken(uri);
-          console.log(token);
           await this.$store.commit('setToken', token.data);
         } catch (e) {
           this.$notify({ message: e.message });
