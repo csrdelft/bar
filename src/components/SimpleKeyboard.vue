@@ -1,9 +1,11 @@
 <template>
-  <el-input
-    :modelValue="modelValue"
-    :placeholder="defaultValue"
-    @update:modelValue="onChange"
-  />
+  <div class="simple-keyboard-input">
+    <el-input
+      :modelValue="modelValue"
+      :placeholder="defaultValue"
+      @update:modelValue="onChange"
+    />
+  </div>
   <div :class="keyboardClass"></div>
 </template>
 
@@ -104,5 +106,7 @@ export default defineComponent({
 .simple-keyboard {
   margin-bottom: 1em;
 }
-
+.simple-keyboard-input {
+  margin: 0.2em;
+}
 </style>
