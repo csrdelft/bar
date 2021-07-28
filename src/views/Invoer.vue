@@ -123,8 +123,8 @@ export default defineComponent({
     producten(): Product[] {
       return this.$store.getters.zichtbareProducten;
     },
-    persoon(): Persoon {
-      return this.$store.state.personen[this.socCieId];
+    persoon(): Persoon | null {
+      return this.socCieId ? this.$store.state.personen[this.socCieId] : null;
     },
     totaal(): number {
       const inhoud = Object.values(this.bestellingInhoud);

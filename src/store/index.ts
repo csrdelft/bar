@@ -52,6 +52,7 @@ const saveTokenPlugin = (setTokenMutation: string, setLocatieTokenMutation: stri
 };
 
 export default createStore<State>({
+  devtools: true,
   plugins: [saveTokenPlugin('setToken', 'setLocatieToken')],
   state: () => ({
     profiel: null as Profiel | null,
