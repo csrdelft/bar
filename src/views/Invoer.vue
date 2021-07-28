@@ -8,18 +8,21 @@
             v-for="bestelling in bestellingInhoud"
             :key="bestelling.product.productId"
           >
-            <div class="product" @click="verwijderInvoer(bestelling.product.productId)">
+            <div
+              class="product"
+              @click="verwijderInvoer(bestelling.product.productId)"
+            >
               {{ bestelling.aantal }}
               {{ bestelling.product.beschrijving }}
-              <span class="el-icon-close"/>
+              <span class="el-icon-close" />
             </div>
           </el-col>
         </el-row>
 
-        <ProductWeergave :producten="producten" @selecteer="selecteerInvoer"/>
+        <ProductWeergave :producten="producten" @selecteer="selecteerInvoer" />
       </el-col>
       <el-col :span="6">
-        <Numpad default-value="1" v-model="aantal"/>
+        <Numpad default-value="1" v-model="aantal" />
         <BestellingSamenvatting
           :bestelling-laden="bestellingLaden"
           :persoon="persoon"
@@ -39,26 +42,26 @@
             {{ formatBedrag(persoon.saldo - totaal) }}
           </el-descriptions-item>
         </el-descriptions>
-        <el-divider/>
+        <el-divider />
         <div>
-          <span>
-          Huidig saldo:
-          </span>
-          <span :style="{float: 'right'}">
+          <span> Huidig saldo: </span>
+          <span :style="{ float: 'right' }">
             {{ formatBedrag(persoon.saldo) }}
           </span>
         </div>
-        <el-divider/>
+        <el-divider />
         <span>
           Totaal bestelling:
-          <span :style="{float: 'right'}">{{ formatBedrag(totaal) }}</span>
+          <span :style="{ float: 'right' }">{{ formatBedrag(totaal) }}</span>
         </span>
-        <el-divider/>
+        <el-divider />
         <span>
           Nieuw Saldo:
-          <span :style="{float: 'right'}">{{ formatBedrag(persoon.saldo - totaal) }}</span>
+          <span :style="{ float: 'right' }">{{
+            formatBedrag(persoon.saldo - totaal)
+          }}</span>
         </span>
-        <el-divider/>
+        <el-divider />
         <div>
           <el-button
             type="success"
@@ -107,6 +110,14 @@ export default defineComponent({
   }),
   created() {
     this.$store.commit('setSelectie', this.socCieId);
+
+    if (this.bestellingId) {
+      const { producten } = this.$store.state;
+
+      this.$store.commit('setInvoer', Object.entries(
+        this.$store.state.bestelling.bestellingen[this.bestellingId].bestelLijst,
+      ).map(([id, aantal]) => ({ aantal, product: producten[id] })));
+    }
   },
   computed: {
     producten(): Product[] {
@@ -117,8 +128,7 @@ export default defineComponent({
     },
     totaal(): number {
       const inhoud = Object.values(this.bestellingInhoud);
-      return sum(...inhoud
-        .map((b) => Number(b.product.prijs) * b.aantal));
+      return sum(...inhoud.map((b) => Number(b.product.prijs) * b.aantal));
     },
     bestellingInhoud(): Record<string, BestellingInhoud> {
       return this.$store.state.invoer.inhoud;
@@ -194,8 +204,7 @@ export default defineComponent({
 }
 
 .product {
-  padding-bottom: .3em;
-  padding-top: .3em;
+  padding-bottom: 0.3em;
+  padding-top: 0.3em;
 }
-
 </style>
