@@ -211,7 +211,7 @@ export default defineComponent({
     },
     zoeken() {
       this.$store.dispatch('fetchBestellingen', {
-        aantal: this.zoekInAlles ? 'alles' : this.$store.state.selectie,
+        aantal: this.zoekInAlles ? 'alles' : this.$store.state.user.selectie,
         begin: this.datum[0]?.toISOString(),
         eind: this.datum[1]?.toISOString(),
         productType: this.selectedProducten,

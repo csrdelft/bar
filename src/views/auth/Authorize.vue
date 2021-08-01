@@ -31,7 +31,7 @@ export default defineComponent({
     },
   },
   created(): void {
-    if (!this.$store.state.user.token) {
+    if (!this.$store.state.user.tokenData) {
       window.open(csrAuth.token.getUri());
 
       this.loading = true;

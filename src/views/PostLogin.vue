@@ -1,35 +1,35 @@
 <template>
-  <h1>
-    Welkom in het bar systeem! {{profielNaam}}
-  </h1>
+  <h1>Welkom in het bar systeem! {{ profielNaam }}</h1>
 
   <div v-if="isAdmin">
     <div v-if="vertrouwd">
-      <p>
-      Deze locatie is vertrouwd: {{ vertrouwd.naam }}
-      </p>
+      <p>Deze locatie is vertrouwd: {{ vertrouwd.naam }}</p>
 
-      <el-button @click="stopVertrouwen">Deze locatie niet langer vertrouwen.</el-button>
+      <el-button @click="stopVertrouwen"
+        >Deze locatie niet langer vertrouwen.</el-button
+      >
     </div>
 
     <div v-else>
       <p>
-        Door een locatie te vertrouwen wordt het mogelijk voor leden om in te loggen in het
-        bar systeem. Gebruik deze functie alleen op vertrouwde plekken.
+        Door een locatie te vertrouwen wordt het mogelijk voor leden om in te
+        loggen in het bar systeem. Gebruik deze functie alleen op vertrouwde
+        plekken.
       </p>
       <p>
         <el-form @submit.prevent @submit="vertrouw">
           <el-form-item label="Naam van deze locatie">
-            <el-input v-model="naam"/>
+            <el-input v-model="naam" />
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="vertrouw">Vertrouw deze locatie</el-button>
+            <el-button type="primary" @click="vertrouw"
+              >Vertrouw deze locatie</el-button
+            >
           </el-form-item>
         </el-form>
       </p>
     </div>
   </div>
-
 </template>
 
 <script lang="ts">
@@ -42,14 +42,14 @@ export default defineComponent({
     naam: '',
   }),
   computed: {
-    profielNaam() : string {
-      return this.$store.state.user.profiel?.displayName;
+    profielNaam(): string {
+      return this.$store.state.user.profiel?.displayName ?? '';
     },
-    vertrouwd(): BarLocatie {
+    vertrouwd(): BarLocatie | null {
       return this.$store.state.user.locatieToken;
     },
     isAdmin(): boolean {
-      return this.$store.state.user.profiel?.scopes.includes('BAR:TRUST');
+      return this.$store.state.user.profiel?.scopes.includes('BAR:TRUST') ?? false;
     },
   },
   methods: {
@@ -64,5 +64,4 @@ export default defineComponent({
 </script>
 
 <style scoped>
-
 </style>
