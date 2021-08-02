@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/prefer-default-export
 import { Persoon } from '@/model';
 
 export const throwError = (msg: string): never => {

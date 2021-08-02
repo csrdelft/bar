@@ -18,6 +18,9 @@
           <span class="klok">
           <Clock/>
           </span>
+          <span v-if="vertrouwd" class="locatie">
+            {{vertrouwd.naam}}
+          </span>
         </el-menu>
         <PersoonSelectie/>
       </el-affix>
@@ -33,6 +36,7 @@ import { defineComponent } from 'vue';
 import PersoonSelectie from '@/components/PersoonSelectie.vue';
 import { RouteLocationNormalizedLoaded } from 'vue-router';
 import Clock from '@/components/Clock.vue';
+import { BarLocatie } from '@/model';
 
 export default defineComponent({
   name: 'App',
@@ -55,6 +59,9 @@ export default defineComponent({
       }
 
       return null;
+    },
+    vertrouwd(): BarLocatie | null {
+      return this.$store.state.user.locatieToken;
     },
   },
   async created() {
@@ -93,11 +100,12 @@ body {
   color: #909399;
 }
 
-.el-menu--horizontal > .klok {
+.el-menu--horizontal > .klok, .el-menu--horizontal > .locatie {
   float: right;
   height: 60px;
   line-height: 60px;
   color: #909399;
   font-size: 20px;
+  margin: 0 0.5em;
 }
 </style>

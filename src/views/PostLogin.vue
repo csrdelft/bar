@@ -5,19 +5,19 @@
     <div v-if="vertrouwd">
       <p>Deze locatie is vertrouwd: {{ vertrouwd.naam }}</p>
 
-      <el-button @click="stopVertrouwen"
-        >Deze locatie niet langer vertrouwen.</el-button
-      >
+      <el-button @click="stopVertrouwen">
+        Deze locatie niet langer vertrouwen.
+      </el-button>
     </div>
 
     <div v-else>
       <p>
-        Door een locatie te vertrouwen wordt het mogelijk voor leden om in te
+        Door een locatie te vertrouwen wordt het mogelijk voor alle leden om in te
         loggen in het bar systeem. Gebruik deze functie alleen op vertrouwde
         plekken.
       </p>
       <p>
-        <el-form @submit.prevent @submit="vertrouw">
+        <el-form :inline="true" @submit.prevent @submit="vertrouw">
           <el-form-item label="Naam van deze locatie">
             <el-input v-model="naam" />
           </el-form-item>
