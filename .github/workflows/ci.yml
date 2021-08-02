@@ -27,10 +27,7 @@ jobs:
         id: yarn-cache
         uses: actions/cache@v2
         with:
-          path: |
-            .yarn
-            .pnp.js
-            !.yarn/.cache
+          path: node_modules
           # De cache wordt alleen naderhand opgeslagen als yarn.lock veranderd is
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
           # De cache wordt opgehaald als os hetzelfde is (altijd)
@@ -39,15 +36,6 @@ jobs:
       - name: Install yarn dependencies
         if: steps.yarn-cache.outputs.cache-hit != 'true'
         run: yarn install --immutable
-
-      - name: 🗃 Cache cache-loader
-        uses: actions/cache@v2
-        with:
-          path: .yarn/.cache
-          # De cache wordt alleen naderhand opgeslagen als yarn.lock + alle assets zijn veranderd
-          key: ${{ runner.os }}-cache-loader-${{ hashFiles('**/yarn.lock') }}-${{ hashFiles('assets/**') }}
-          # De cache wordt opgehaald als yarn.lock niet veranderd is
-          restore-keys: ${{ runner.os }}-cache-loader-${{ hashFiles('**/yarn.lock') }}-
 
       - name: 🔧 Run yarn build
         run: yarn run build
