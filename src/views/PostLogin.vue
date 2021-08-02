@@ -1,13 +1,14 @@
 <template>
+<div>
   <h1>Welkom in het bar systeem! {{ profielNaam }}</h1>
 
   <div v-if="isAdmin">
     <div v-if="vertrouwd">
       <p>Deze locatie is vertrouwd: {{ vertrouwd.naam }}</p>
 
-      <el-button @click="stopVertrouwen">
+      <v-btn color="primary" @click="stopVertrouwen">
         Deze locatie niet langer vertrouwen.
-      </el-button>
+      </v-btn>
     </div>
 
     <div v-else>
@@ -17,26 +18,19 @@
         plekken.
       </p>
       <p>
-        <el-form :inline="true" @submit.prevent @submit="vertrouw">
-          <el-form-item label="Naam van deze locatie">
-            <el-input v-model="naam" />
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="vertrouw"
-              >Vertrouw deze locatie</el-button
-            >
-          </el-form-item>
-        </el-form>
+        <v-text-field v-model="naam" label="Naam van deze locatie" />
+        <v-btn color="primary" @click="vertrouw">Vertrouw deze locatie</v-btn>
       </p>
     </div>
+  </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { BarLocatie } from '@/model';
+import Vue from 'vue';
+import { BarLocatie } from '../model';
 
-export default defineComponent({
+export default Vue.extend({
   name: 'PostLogin',
   data: () => ({
     naam: '',

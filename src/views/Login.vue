@@ -1,18 +1,18 @@
 <template>
-  <el-container>
-    <el-main class="login-main">
+  <v-container>
+    <v-main class="login-main">
       <h1>Barsysteem C.S.R.</h1>
       <p>Welkom <span v-if="vertrouwd">terug</span>
        bij het barsysteem, gebruik je stek account om in te loggen.</p>
-      <el-button @click="$router.push('/auth/csr')">Login</el-button>
-    </el-main>
-  </el-container>
+      <v-btn @click="$router.push('/auth/csr')">Login</v-btn>
+    </v-main>
+  </v-container>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import Vue from 'vue';
 
-export default defineComponent({
+export default Vue.extend({
   name: 'Login',
   computed: {
     vertrouwd() {

@@ -1,56 +1,63 @@
 <template>
-  <el-descriptions :column="1" border>
-    <el-descriptions-item label="Huidig saldo">
-      {{ formatBedrag(persoon.saldo) }}
-    </el-descriptions-item>
-    <el-descriptions-item label="Totaal bestelling">
-      {{ formatBedrag(totaal) }}
-    </el-descriptions-item>
-    <el-descriptions-item label="Nieuw saldo">
-      {{ formatBedrag(persoon.saldo - totaal) }}
-    </el-descriptions-item>
-  </el-descriptions>
-  <el-divider />
-  <div>
+<div>
+  <v-list two-line>
+    <v-list-item>
+      <v-list-item-title>Huidig saldo</v-list-item-title>
+      <v-list-item-subtitle>{{ formatBedrag(persoon.saldo) }}</v-list-item-subtitle>
+    </v-list-item>
+    <v-list-item>
+      <v-list-item-title>Totaal bestelling</v-list-item-title>
+      <v-list-item-subtitle>{{ formatBedrag(totaal) }}</v-list-item-subtitle>
+    </v-list-item>
+    <v-list-item>
+      <v-list-item-title>Nieuw saldo</v-list-item-title>
+      <v-list-item-subtitle>{{ formatBedrag(persoon.saldo - totaal) }}</v-list-item-subtitle>
+    </v-list-item>
+  </v-list>
+  <v-divider />
+  <!-- <div>
     <span> Huidig saldo: </span>
     <span :style="{ float: 'right' }">
       {{ formatBedrag(persoon.saldo) }}
     </span>
   </div>
-  <el-divider />
+  <v-divider />
   <span>
     Totaal bestelling:
     <span :style="{ float: 'right' }">{{ formatBedrag(totaal) }}</span>
   </span>
-  <el-divider />
+  <v-divider />
   <span>
     Nieuw Saldo:
     <span :style="{ float: 'right' }">{{
       formatBedrag(persoon.saldo - totaal)
     }}</span>
   </span>
-  <el-divider />
+  <v-divider /> -->
   <div>
-    <el-button
-      type="success"
-      icon="el-icon-check"
+    <v-btn
+      color="success"
       @click="plaatsBestelling"
       :loading="bestellingLaden"
-    />
-    <el-button
-      type="danger"
-      icon="el-icon-close"
+    >
+    <v-icon dark>mbi-check</v-icon>
+    </v-btn>
+    <v-btn
+      color="error"
       @click="annuleer"
       :disabled="bestellingLaden"
-    />
+    >
+    <v-icon dark>mbi-close</v-icon>
+    </v-btn>
+  </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import Vue from 'vue';
 import { formatBedrag } from '../../util';
 
-export default defineComponent({
+export default Vue.extend({
   name: 'BestellingSamenvatting',
   props: {
     bestellingLaden: Boolean,

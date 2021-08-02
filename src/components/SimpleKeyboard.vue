@@ -1,21 +1,26 @@
 <template>
+<div>
   <div class="simple-keyboard-input">
-    <el-input
-      :modelValue="modelValue"
+    <v-text-field
+      :value="modelValue"
       :placeholder="defaultValue"
-      @update:modelValue="onChange"
+      @input="onChange"
     />
   </div>
-  <div :class="keyboardClass"></div>
+  <div :class="keyboardClass + ' hg-theme-default'"></div>
+  </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
+import Vue, { PropType } from 'vue';
 import Keyboard from 'simple-keyboard';
 
-export default defineComponent({
+export default Vue.extend({
   name: 'SimpleKeyboard',
-  emits: ['update:modelValue', 'keypress'],
+  model: {
+    prop: 'modelValue',
+    event: 'update:modelValue'
+  },
   props: {
     layout: {
       default: () => [
@@ -53,7 +58,7 @@ export default defineComponent({
       onChange: this.onChange,
       onKeyPress: this.onKeyPress,
       display: this.display,
-      theme: '',
+      // theme: '',
       layout: { default: this.layout },
     });
   },

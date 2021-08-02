@@ -1,27 +1,25 @@
 <template>
 
-  <el-table
-    :data="personen"
+  <v-data-table
+  :headers="headers"
+    :items="personen"
     :row-class-name="tableRowClassName"
-    @row-click="rowClick"
+    @click:row="rowClick"
     row-key="socCieId"
   >
-    <el-table-column prop="bijnaam" label="Bijnaam"/>
-    <el-table-column prop="naam" label="Naam"/>
-    <el-table-column prop="saldo" label="Saldo">
-      <template #default="scope">
-        {{ formatBedrag(scope.row.saldo) }}
+
+      <template v-slot:item.saldo="{ item }">
+        {{ formatBedrag(item.saldo)}}
       </template>
-    </el-table-column>
-  </el-table>
+  </v-data-table>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import Vue from 'vue';
 import { Persoon } from '@/model';
 import { formatBedrag } from '@/util';
 
-export default defineComponent({
+export default Vue.extend({
   name: 'LedenTable',
   props: {
     zoeken: String,
@@ -33,6 +31,22 @@ export default defineComponent({
         // Laden van de hele dataset zorgt voor traagheid
         .slice(0, 50);
     },
+    headers() {
+      return [
+        {
+          text: "Bijnaam",
+          value: "bijnaam",
+        },
+        {
+          text: "Naam",
+          value: "naam"
+        },
+        {
+          text: "Saldo",
+          value: "saldo",
+        }
+      ]
+    }
   },
   methods: {
     formatBedrag,

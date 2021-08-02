@@ -6,6 +6,10 @@ import { Data as OAuth2Data } from 'client-oauth2';
 export interface State {
   personen: Record<string, Persoon>
   producten: Record<string, Product>
+
+  bestelling: BestellingState
+  invoer: InvoerState
+  user: UserState
 }
 
 export interface BestellingState {

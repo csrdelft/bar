@@ -1,63 +1,97 @@
 <template>
-  <el-container v-loading.fullscreen.lock="loading">
-    <el-header v-if="loggedIn" height="auto">
-      <el-affix>
-        <el-menu :default-active="currentRoute.fullPath" mode="horizontal" :router="true">
-          <el-menu-item index="/personen">
-            Persoonselectie
-          </el-menu-item>
-          <el-menu-item :disabled="bestellingUrl == null" :index="bestellingUrl">
-            Invoer
-          </el-menu-item>
-          <el-menu-item index="/bestellingen">
-            Bestellingen
-          </el-menu-item>
-          <el-menu-item index="/auth/logout">
-            Logout
-          </el-menu-item>
-          <span class="klok">
-          <Clock/>
-          </span>
-          <span v-if="vertrouwd" class="locatie">
-            {{vertrouwd.naam}}
-          </span>
-        </el-menu>
-        <PersoonSelectie/>
-      </el-affix>
-    </el-header>
-    <el-main>
-      <router-view/>
-    </el-main>
-  </el-container>
+<v-app>
+  <v-navigation-drawer app v-model="drawer">
+<v-list
+        nav
+        dense
+      >
+        <v-list-item-group act>
+          <v-list-item to="/personen">
+            <v-list-item-icon>
+              <v-icon>mdi-home</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>Personen</v-list-item-title>
+          </v-list-item>
+
+          <v-list-item :disabled="bestellingUrl == null" :to="bestellingUrl">
+            <v-list-item-icon>
+              <v-icon>mdi-account</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>Invoer</v-list-item-title>
+          </v-list-item>
+          
+          <v-list-item to="/bestellingen">
+            <v-list-item-icon>
+              <v-icon>mdi-account</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>Bestellingen</v-list-item-title>
+          </v-list-item>
+          <v-list-item to="/auth/logout">
+            <v-list-item-icon>
+              <v-icon>mdi-account</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>Uitloggen</v-list-item-title>
+          </v-list-item>
+        </v-list-item-group>
+      </v-list>
+  </v-navigation-drawer>
+
+  <v-app-bar app>
+    <v-app-bar-nav-icon @click="drawer = true"></v-app-bar-nav-icon>
+
+      <v-toolbar-title>C.S.R. Bar</v-toolbar-title>
+  </v-app-bar>
+
+  <!-- Sizes your content based upon application components -->
+  <v-main>
+
+    <!-- Provides the application the proper gutter -->
+    <v-container fluid>
+
+      <!-- If using vue-router -->
+      <router-view></router-view>
+    </v-container>
+  </v-main>
+
+  <v-footer app>
+    <!-- -->
+  </v-footer>
+
+  <v-overlay :value="loading">
+      <v-progress-circular
+        indeterminate
+        size="64"
+      ></v-progress-circular>
+    </v-overlay>
+</v-app>
 </template>
 
+
 <script lang="ts">
-import { defineComponent } from 'vue';
-import PersoonSelectie from '@/components/PersoonSelectie.vue';
-import { RouteLocationNormalizedLoaded } from 'vue-router';
-import Clock from '@/components/Clock.vue';
+import Vue from 'vue';
+// import PersoonSelectie from '@/components/PersoonSelectie.vue';
+// import Clock from '@/components/Clock.vue';
 import { BarLocatie } from '@/model';
 
-export default defineComponent({
+export default Vue.extend({
   name: 'App',
-  components: { Clock, PersoonSelectie },
+  // components: { Clock, PersoonSelectie },
   data: () => ({
     loading: true,
+    drawer: false,
   }),
   computed: {
     loggedIn(): boolean {
       return Boolean(this.$store.getters.token);
     },
-    currentRoute(): RouteLocationNormalizedLoaded {
-      return this.$router.currentRoute.value;
+    currentRoute(): string {
+      return this.$router.currentRoute.path;
     },
     bestellingUrl(): string|null {
       const { selectie } = this.$store.state.user;
-
       if (selectie) {
         return `/invoer/${selectie}`;
       }
-
       return null;
     },
     vertrouwd(): BarLocatie | null {
@@ -78,34 +112,25 @@ export default defineComponent({
 });
 </script>
 
-<style>
-body {
+<style lang="scss">
+#app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
 }
 
-.el-menu a {
-  text-decoration: none;
-}
+#nav {
+  padding: 30px;
 
-.el-page-header {
-  background: white;
-}
-.el-page-header__content, .el-page-header__title {
-  float: left;
-  height: 60px;
-  line-height: 60px;
-  margin: 0;
-  color: #909399;
-}
+  a {
+    font-weight: bold;
+    color: #2c3e50;
 
-.el-menu--horizontal > .klok, .el-menu--horizontal > .locatie {
-  float: right;
-  height: 60px;
-  line-height: 60px;
-  color: #909399;
-  font-size: 20px;
-  margin: 0 0.5em;
+    &.router-link-exact-active {
+      color: #42b983;
+    }
+  }
 }
 </style>

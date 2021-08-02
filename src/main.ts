@@ -1,19 +1,14 @@
-import { createApp } from 'vue';
-import ElementPlus from 'element-plus';
-import locale from 'element-plus/lib/locale/lang/nl';
-import App from './App.vue';
-import router from './router';
-import store from './store';
-import './assets/scss/element-variables.scss';
+import Vue from 'vue'
+import App from './App.vue'
+import vuetify from './plugins/vuetify'
+import store from './store'
+import router from './router'
 
-declare global {
-  interface Window {
-    oauth2Callback: (uri: string) => void
-  }
-}
+Vue.config.productionTip = false
 
-createApp(App)
-  .use(ElementPlus, { locale })
-  .use(store)
-  .use(router)
-  .mount('#app');
+new Vue({
+  vuetify,
+  store,
+  router,
+  render: h => h(App)
+}).$mount('#app')

@@ -9,13 +9,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import Vue from 'vue';
 import SimpleKeyboard from '@/components/SimpleKeyboard.vue';
 
-export default defineComponent({
+export default Vue.extend({
   name: 'Numpad',
   components: { SimpleKeyboard },
-  emits: ['update:modelValue'],
+  //emits: ['update:modelValue'],
   props: {
     modelValue: String,
     defaultValue: {

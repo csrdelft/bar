@@ -1,10 +1,10 @@
 <template>
   <div v-if="persoon">
-    <el-row :gutter="20">
-      <el-col :span="18">
-        <el-row class="bestelling-inhoud">
-          <el-col
-            :span="6"
+    <v-row :gutter="20">
+      <v-col cols="8">
+        <v-row class="bestelling-inhoud">
+          <v-col
+            cols="3"
             v-for="bestelling in bestellingInhoud"
             :key="bestelling.product.productId"
           >
@@ -16,12 +16,12 @@
               {{ bestelling.product.beschrijving }}
               <span class="el-icon-close" />
             </div>
-          </el-col>
-        </el-row>
+          </v-col>
+        </v-row>
 
         <ProductWeergave :producten="producten" @selecteer="selecteerInvoer" />
-      </el-col>
-      <el-col :span="6">
+      </v-col>
+      <v-col cols="4">
         <Numpad default-value="1" v-model="aantal" />
         <BestellingSamenvatting
           :bestelling-laden="bestellingLaden"
@@ -30,66 +30,20 @@
           :annuleer="annuleer"
           :plaatsBestelling="plaatsBestelling"
         />
-
-        <el-descriptions :column="1" border>
-          <el-descriptions-item label="Huidig saldo">
-            {{ formatBedrag(persoon.saldo) }}
-          </el-descriptions-item>
-          <el-descriptions-item label="Totaal bestelling">
-            {{ formatBedrag(totaal) }}
-          </el-descriptions-item>
-          <el-descriptions-item label="Nieuw saldo">
-            {{ formatBedrag(persoon.saldo - totaal) }}
-          </el-descriptions-item>
-        </el-descriptions>
-        <el-divider />
-        <div>
-          <span> Huidig saldo: </span>
-          <span :style="{ float: 'right' }">
-            {{ formatBedrag(persoon.saldo) }}
-          </span>
-        </div>
-        <el-divider />
-        <span>
-          Totaal bestelling:
-          <span :style="{ float: 'right' }">{{ formatBedrag(totaal) }}</span>
-        </span>
-        <el-divider />
-        <span>
-          Nieuw Saldo:
-          <span :style="{ float: 'right' }">{{
-            formatBedrag(persoon.saldo - totaal)
-          }}</span>
-        </span>
-        <el-divider />
-        <div>
-          <el-button
-            type="success"
-            icon="el-icon-check"
-            @click="plaatsBestelling"
-            :loading="bestellingLaden"
-          />
-          <el-button
-            type="danger"
-            icon="el-icon-close"
-            @click="annuleer"
-            :disabled="bestellingLaden"
-          />
-        </div>
-      </el-col>
-    </el-row>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { BestellingInhoud, Persoon, Product } from '@/model';
-import Numpad from '@/components/Numpad.vue';
-import { formatBedrag, SaldoError, sum } from '@/util';
-import ProductWeergave from '@/components/bestellingen/ProductWeergave.vue';
-import BestellingSamenvatting from '@/components/bestellingen/BestellingSamenvatting.vue';
+import Vue from 'vue';
+import { BestellingInhoud, Persoon, Product } from '../model';
+import Numpad from '../components/Numpad.vue';
+import { formatBedrag, SaldoError, sum } from '../util';
+import ProductWeergave from '../components/bestellingen/ProductWeergave.vue';
+import BestellingSamenvatting from '../components/bestellingen/BestellingSamenvatting.vue';
 
-export default defineComponent({
+export default Vue.extend({
   name: 'Bestelling',
   components: {
     BestellingSamenvatting,
@@ -173,7 +127,8 @@ export default defineComponent({
           this.bestellingLaden = false;
         }
 
-        this.$message.error(e.message);
+        //this.$message.error(e.message);
+        // TODO
       }
     },
     annuleer(): void {

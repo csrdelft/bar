@@ -1,21 +1,23 @@
 <template>
-  <div
-    v-loading.fullscreen.lock="loading"
-    :element-loading-text="msg"
-  >
-  </div>
+  <v-overlay :value="loading">
+      <v-progress-circular
+        indeterminate
+        size="64"
+      ></v-progress-circular>
+      {{msg}}
+    </v-overlay>
 </template>
 
 <script lang="ts">
 
-import { defineComponent } from 'vue';
+import Vue from 'vue';
 import csrAuth from '../../auth/csrAuth';
 
 /**
  * Open autorisatie in een nieuw venster en ga terug naar /
  * Ga direct terug naar / als er al een profiel is.
  */
-export default defineComponent({
+export default Vue.extend({
   name: 'Authorize',
   data: () => ({
     msg: 'Wachten op autorisatie',
@@ -44,7 +46,8 @@ export default defineComponent({
           const token = await csrAuth.token.getToken(uri);
           await this.$store.commit('setToken', token.data);
         } catch (e) {
-          this.$notify({ message: e.message });
+          //this.$notify({ message: e.message });
+          // TODO: Notify
         }
 
         await this.setLoading('Profiel laden...');

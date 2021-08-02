@@ -1,4 +1,4 @@
-import { createStore, Store } from 'vuex';
+import Vuex, { Store } from 'vuex';
 import {
   BarLocatie, Persoon, Product, Profiel,
 } from '@/model';
@@ -15,6 +15,9 @@ import {
 import invoer from '@/store/invoer';
 import { State } from '@/store/state';
 import user from '@/store/user';
+import Vue from 'vue';
+
+Vue.use(Vuex)
 
 /**
  * Stop de token uit de cookie in de state en update de cookie als de state veranderd.
@@ -51,14 +54,14 @@ const saveTokenPlugin = (setTokenMutation: string, setLocatieTokenMutation: stri
   });
 };
 
-export default createStore<State>({
+export default new Vuex.Store<State>({
   devtools: true,
   plugins: [saveTokenPlugin('setToken', 'setLocatieToken')],
   state: () => ({
     profiel: null as Profiel | null,
     personen: {} as Record<string, Persoon>,
     producten: {} as Record<string, Product>,
-  }),
+  } as unknown as State),
   getters: {
     zichtbareProducten: (state) => Object.values(state.producten)
       .filter((p) => p.beheer === '0' && p.status === '1'),

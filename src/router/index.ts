@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
+import VueRouter, { RouteConfig } from 'vue-router';
 import Authorize from '@/views/auth/Authorize.vue';
 import AuthCallback from '@/views/auth/AuthCallback.vue';
 import Invoer from '@/views/Invoer.vue';
@@ -8,8 +8,11 @@ import Personen from '@/views/Personen.vue';
 import Bestellingen from '@/views/Bestellingen.vue';
 import { getToken } from '@/token';
 import PostLogin from '@/views/PostLogin.vue';
+import Vue from 'vue';
 
-const routes: Array<RouteRecordRaw> = [
+Vue.use(VueRouter);
+
+const routes: Array<RouteConfig> = [
   {
     path: '/',
     name: 'Home',
@@ -19,14 +22,6 @@ const routes: Array<RouteRecordRaw> = [
     path: '/personen',
     name: 'Persoonselectie',
     component: Personen,
-  },
-  {
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue'),
   },
   {
     path: '/invoer/:socCieId',
@@ -67,8 +62,8 @@ const routes: Array<RouteRecordRaw> = [
   },
 ];
 
-const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+const router = new VueRouter({
+  mode: 'history',
   routes,
 });
 

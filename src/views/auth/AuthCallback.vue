@@ -4,16 +4,16 @@
 
 <script lang="ts">
 
-import { defineComponent } from 'vue';
+import Vue from 'vue';
 
 /**
  * Roept oauth2Callback aan op de opener, hiermee wordt
  * de originele tab geïnformeerd over de autorisatie.
  */
-export default defineComponent({
+export default Vue.extend({
   name: 'AuthCallback',
   created(): void {
-    window.opener.oauth2Callback(window.location);
+    if (window.opener) window.opener.oauth2Callback(window.location.href);
     window.close();
   },
 });

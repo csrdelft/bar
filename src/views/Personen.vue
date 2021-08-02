@@ -1,16 +1,16 @@
 <template>
   <div class="hello">
-    <Keyboard v-model.uppercase="value"/>
+    <Keyboard v-model="value"/>
     <LedenTable :zoeken="value"/>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import Vue from 'vue';
 import Keyboard from '@/components/Keyboard.vue';
 import LedenTable from '@/components/LedenTable.vue';
 
-export default defineComponent({
+export default Vue.extend({
   name: 'Personen',
   components: {
     LedenTable,

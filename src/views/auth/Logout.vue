@@ -1,17 +1,17 @@
 <template>
-  <el-container>
-    <el-main class="logout-main">
+  <v-container>
+    <v-main class="logout-main">
       <h1>Weet je zeker dat je wil uitloggen?</h1>
-      <el-button @click="logout" type="primary">Uitloggen</el-button>
-      <el-button @click="$router.push('/')">Terug</el-button>
-    </el-main>
-  </el-container>
+      <v-btn @click="logout" type="primary">Uitloggen</v-btn>
+      <v-btn @click="$router.push('/')">Terug</v-btn>
+    </v-main>
+  </v-container>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import Vue from 'vue';
 
-export default defineComponent({
+export default Vue.extend({
   name: 'Logout',
   methods: {
     logout(): void {

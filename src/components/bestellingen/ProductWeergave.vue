@@ -1,20 +1,20 @@
 <template>
-  <el-row :gutter="20">
-    <el-col :span="4" v-for="product in producten" :key="product.productId">
-      <el-button class="btn-product" @click="$emit('selecteer', product)">
+  <v-row :gutter="20">
+    <v-col :span="4" v-for="product in producten" :key="product.productId">
+      <v-btn class="btn-product" @click="$emit('selecteer', product)">
         <div>{{ product.beschrijving }}</div>
         <div>{{ formatBedrag(product.prijs) }}</div>
-      </el-button>
-    </el-col>
-  </el-row>
+      </v-btn>
+    </v-col>
+  </v-row>
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue';
+import Vue, { PropType } from 'vue';
 import { Product } from '@/model';
 import { formatBedrag } from '@/util';
 
-export default defineComponent({
+export default Vue.extend({
   name: 'ProductWeergave',
   props: {
     producten: {

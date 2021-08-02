@@ -8,30 +8,26 @@
 
 <script lang="ts">
 import 'simple-keyboard/build/css/index.css';
-import { defineComponent } from 'vue';
+import Vue from 'vue';
 import SimpleKeyboard from '@/components/SimpleKeyboard.vue';
 
-export default defineComponent({
+export default Vue.extend({
   name: 'Keyboard',
   model: {
-    prop: 'input',
-    event: 'change',
+    prop: 'modelValue',
+    event: 'update:modelValue',
   },
   components: { SimpleKeyboard },
-  emits: ['update:modelValue'],
   props: {
     modelValue: {
       type: String,
-    },
-    modelModifiers: {
-      default: () => ({}),
     },
   },
   methods: {
     emitValue(value: string) {
       let val = value;
-      if ('uppercase' in this.modelModifiers) {
-        val = val.toUpperCase();
+      if (val) {
+      val = val?.toUpperCase();
       }
       this.$emit('update:modelValue', val);
     },

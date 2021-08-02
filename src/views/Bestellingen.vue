@@ -1,14 +1,14 @@
 <template>
-  <el-row>
-    <el-col :span="8">
-      <el-switch
+  <v-row>
+    <v-col :span="8">
+      <v-switch
         v-model="zoekInAlles"
         inactive-text="Geselecteerde persoon"
         active-text="Alle personen"
       />
-    </el-col>
-    <el-col :span="8">
-      <el-date-picker
+    </v-col>
+    <v-col :span="8">
+      <v-date-picker
         v-model="datum"
         type="daterange"
         popper-class="bar-datepicker"
@@ -18,9 +18,9 @@
         end-placeholder="Eind datum"
         :shortcuts="shortcuts"
       />
-    </el-col>
-    <el-col :span="4">
-      <el-button
+    </v-col>
+    <v-col :span="4">
+      <v-btn
         title="Filter op specifieke producten"
         :type="isIndeterminate ? 'primary' : 'default'"
         icon="el-icon-set-up"
@@ -28,46 +28,47 @@
         @click="productSelectieZichtbaar = true; productSelectieAlle = false"
       >
         Producten
-      </el-button>
-      <el-dialog title="Selecteer producten" v-model="productSelectieZichtbaar">
-        <el-checkbox
+      </v-btn>
+      <v-dialog title="Selecteer producten" v-model="productSelectieZichtbaar">
+        <v-checkbox
           :indeterminate="isIndeterminate"
           v-model="checkAll"
           @change="handleCheckAllChange"
         >Alle
-        </el-checkbox>
+        </v-checkbox>
         <div style="margin: 15px 0;"></div>
-        <el-checkbox-group v-model="selectedProducten" @change="handleCheckedProductenChange">
-          <el-row>
-            <el-col
+        <v-checkbox-group v-model="selectedProducten" @change="handleCheckedProductenChange">
+          <v-row>
+            <v-col
               :span="4"
               v-for="product in producten"
               :key="product.productId"
             >
-              <el-checkbox
+              <v-checkbox
                 :label="product.productId"
               >
                 {{ product.beschrijving }}
-              </el-checkbox>
-            </el-col>
-          </el-row>
-        </el-checkbox-group>
-      </el-dialog>
-    </el-col>
-    <el-col :span="4">
-      <el-button @click="zoeken" size="medium">Zoeken</el-button>
-    </el-col>
-    <el-col>
-      <el-table :data="bestellingen" :default-sort="{prop: 'tijd', order: 'descending'}">
-        <el-table-column label="Naam" sortable :formatter="naamFormatter">
-        </el-table-column>
-        <el-table-column prop="tijd" label="Datum en tijd" sortable/>
-        <el-table-column label="Totaal" sortable>
+              </v-checkbox>
+            </v-col>
+          </v-row>
+        </v-checkbox-group>
+      </v-dialog>
+    </v-col>
+    <v-col :span="4">
+      <v-btn @click="zoeken" size="medium">Zoeken</v-btn>
+    </v-col>
+    <v-col>
+      <v-data-table :items="bestellingen" :headers="headers"></v-data-table>
+      <!-- <v-table :data="bestellingen" :default-sort="{prop: 'tijd', order: 'descending'}">
+        <v-table-column label="Naam" sortable :formatter="naamFormatter">
+        </v-table-column>
+        <v-table-column prop="tijd" label="Datum en tijd" sortable/>
+        <v-table-column label="Totaal" sortable>
           <template #default="scope">
             {{ formatBedrag(scope.row.bestelTotaal) }}
           </template>
-        </el-table-column>
-        <el-table-column label="Bestelling">
+        </v-table-column>
+        <v-table-column label="Bestelling">
           <template #default="scope">
             <ul>
               <li v-for="item in getBestelLijstString(scope.row.bestelLijst)" :key="item">
@@ -75,42 +76,42 @@
               </li>
             </ul>
           </template>
-        </el-table-column>
-        <el-table-column
+        </v-table-column>
+        <v-table-column
           label="Opties">
           <template #default="scope">
-            <el-button
+            <v-btn
               v-if="scope.row.deleted === '0'"
               size="mini"
               @click="handleEdit(scope.$index, scope.row)">Bewerk
-            </el-button>
-            <el-button
+            </v-btn>
+            <v-btn
               v-if="scope.row.deleted === '0'"
               size="mini"
               type="danger"
               :loading="scope.row.bestelId in verwijderLaden"
               @click="handleVerwijder(scope.$index, scope.row)">Verwijder
-            </el-button>
-            <el-button
+            </v-btn>
+            <v-btn
               v-if="scope.row.deleted === '1'"
               size="mini"
               type="warning"
               :loading="scope.row.bestelId in herstelLaden"
               @click="handleHerstel(scope.$index, scope.row)">Herstel
-            </el-button>
+            </v-btn>
           </template>
-        </el-table-column>
-      </el-table>
-    </el-col>
-  </el-row>
+        </v-table-column>
+      </v-table> -->
+    </v-col>
+  </v-row>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { Bestelling, Persoon, Product } from '@/model';
-import { formatBedrag } from '@/util';
+import Vue from 'vue';
+import { Bestelling, Persoon, Product } from '../model';
+import { formatBedrag } from '../util';
 
-export default defineComponent({
+export default Vue.extend({
   name: 'Bestellingen',
   computed: {
     bestellingen(): Bestelling[] {
@@ -120,6 +121,18 @@ export default defineComponent({
       return Object.values<Product>(this.$store.state.producten)
         .filter((p) => p.beheer === '0' && p.status === '1');
     },
+    headers() {
+      return [
+        {
+          text: "Naam",
+          value: "persoon",
+        },
+        { text: "Datum en tijd", value: "datum"},
+        { text: "Totaal", value: "bestelTotaal"},
+        { text: "Bestelling", value: "bestelLijst"},
+        { text: "Opties"}
+      ]
+    }
   },
   data: () => ({
     verwijderLaden: {} as Record<string, boolean>,
@@ -196,7 +209,8 @@ export default defineComponent({
       try {
         await this.$store.dispatch('verwijderBestelling', row);
       } catch (e) {
-        this.$message.error(e.message);
+        //this.$message.error(e.message);
+        // TODO
       }
       delete this.verwijderLaden[row.bestelId];
     },
@@ -205,7 +219,8 @@ export default defineComponent({
       try {
         await this.$store.dispatch('herstelBestelling', row);
       } catch (e) {
-        this.$message.error(e.message);
+        //this.$message.error(e.message);
+        // TODO
       }
       delete this.verwijderLaden[row.bestelId];
     },
