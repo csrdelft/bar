@@ -1,137 +1,153 @@
 <template>
   <v-row>
-    <v-col :span="8">
-      <v-switch
-        v-model="zoekInAlles"
-        inactive-text="Geselecteerde persoon"
-        active-text="Alle personen"
-      />
+    <v-col cols="3">
+      <v-switch v-model="zoekInAlles" label="Alleen geselecteerde persoon" />
     </v-col>
-    <v-col :span="8">
-      <v-date-picker
-        v-model="datum"
-        type="daterange"
-        popper-class="bar-datepicker"
-        unlink-panels
-        range-separator="tot"
-        start-placeholder="Start datum"
-        end-placeholder="Eind datum"
-        :shortcuts="shortcuts"
-      />
-    </v-col>
-    <v-col :span="4">
-      <v-btn
-        title="Filter op specifieke producten"
-        :type="isIndeterminate ? 'primary' : 'default'"
-        icon="el-icon-set-up"
-        size="medium"
-        @click="productSelectieZichtbaar = true; productSelectieAlle = false"
+    <v-col cols="3">
+      <v-menu
+        ref="datumMenu"
+        v-model="datumMenu"
+        :close-on-content-click="false"
+        transition="scale-transition"
+        offset-y
+        min-width="auto"
       >
-        Producten
-      </v-btn>
-      <v-dialog title="Selecteer producten" v-model="productSelectieZichtbaar">
-        <v-checkbox
-          :indeterminate="isIndeterminate"
-          v-model="checkAll"
-          @change="handleCheckAllChange"
-        >Alle
-        </v-checkbox>
-        <div style="margin: 15px 0;"></div>
-        <v-checkbox-group v-model="selectedProducten" @change="handleCheckedProductenChange">
-          <v-row>
-            <v-col
-              :span="4"
-              v-for="product in producten"
-              :key="product.productId"
-            >
-              <v-checkbox
-                :label="product.productId"
+        <template v-slot:activator="{ on, attrs }">
+          <v-text-field
+            v-model="datumText"
+            label="Datum"
+            prepend-icon="mdi-calendar"
+            readonly
+            v-bind="attrs"
+            v-on="on"
+          ></v-text-field>
+        </template>
+        <v-date-picker v-model="datum" range min="1950-01-01"></v-date-picker>
+      </v-menu>
+    </v-col>
+    <v-col cols="3">
+      <v-dialog v-model="productSelectieZichtbaar">
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn
+            title="Filter op specifieke producten"
+            :type="isIndeterminate ? 'primary' : 'default'"
+            v-bind="attrs"
+            v-on="on"
+          >
+            <v-icon>mdi-tune</v-icon>
+            Producten
+          </v-btn>
+        </template>
+        <!-- <v-dialog title="Selecteer producten" v-model="productSelectieZichtbaar"> -->
+        <v-card>
+          <v-card-title>Selecteer producten</v-card-title>
+
+          <v-card-text>
+            <v-checkbox
+              :indeterminate="isIndeterminate"
+              v-model="checkAll"
+              @change="handleCheckAllChange"
+              label="Alle"
+              >Alle
+            </v-checkbox>
+            <v-divider></v-divider>
+            <v-row>
+              <v-col
+                cols="3"
+                v-for="product in producten"
+                :key="product.productId"
               >
-                {{ product.beschrijving }}
-              </v-checkbox>
-            </v-col>
-          </v-row>
-        </v-checkbox-group>
+                <v-checkbox
+                  v-model="selectedProducten"
+                  :value="product.productId"
+                  :label="product.beschrijving"
+                >
+                </v-checkbox>
+              </v-col>
+            </v-row>
+          </v-card-text>
+        </v-card>
       </v-dialog>
     </v-col>
-    <v-col :span="4">
+    <v-col cols="3">
       <v-btn @click="zoeken" size="medium">Zoeken</v-btn>
     </v-col>
     <v-col>
-      <v-data-table :items="bestellingen" :headers="headers"></v-data-table>
-      <!-- <v-table :data="bestellingen" :default-sort="{prop: 'tijd', order: 'descending'}">
-        <v-table-column label="Naam" sortable :formatter="naamFormatter">
-        </v-table-column>
-        <v-table-column prop="tijd" label="Datum en tijd" sortable/>
-        <v-table-column label="Totaal" sortable>
-          <template #default="scope">
-            {{ formatBedrag(scope.row.bestelTotaal) }}
-          </template>
-        </v-table-column>
-        <v-table-column label="Bestelling">
-          <template #default="scope">
-            <ul>
-              <li v-for="item in getBestelLijstString(scope.row.bestelLijst)" :key="item">
-                {{ item }}
-              </li>
-            </ul>
-          </template>
-        </v-table-column>
-        <v-table-column
-          label="Opties">
-          <template #default="scope">
-            <v-btn
-              v-if="scope.row.deleted === '0'"
-              size="mini"
-              @click="handleEdit(scope.$index, scope.row)">Bewerk
-            </v-btn>
-            <v-btn
-              v-if="scope.row.deleted === '0'"
-              size="mini"
-              type="danger"
-              :loading="scope.row.bestelId in verwijderLaden"
-              @click="handleVerwijder(scope.$index, scope.row)">Verwijder
-            </v-btn>
-            <v-btn
-              v-if="scope.row.deleted === '1'"
-              size="mini"
-              type="warning"
-              :loading="scope.row.bestelId in herstelLaden"
-              @click="handleHerstel(scope.$index, scope.row)">Herstel
-            </v-btn>
-          </template>
-        </v-table-column>
-      </v-table> -->
+      <v-data-table :items="bestellingen" :headers="headers">
+        <template v-slot:item.persoon="{ item }">
+          {{ naamFormatter(item) }}
+        </template>
+        <template v-slot:item.bestelLijst="{ item }">
+          <ul>
+            <li v-for="el in getBestelLijstString(item.bestelLijst)" :key="el">
+              {{ el }}
+            </li>
+          </ul>
+        </template>
+        <template v-slot:item.bestelTotaal="{ item }">
+          {{ formatBedrag(item.bestelTotaal) }}
+        </template>
+        <template v-slot:item.opties="{ item }">
+          <v-icon
+            v-if="item.deleted === '0'"
+            small
+            class="mr-2"
+            @click="handleEdit(item)"
+          >
+            mdi-pencil
+          </v-icon>
+          <v-icon
+            v-if="item.deleted === '0'"
+            small
+            @click="handleVerwijder(item)"
+          >
+            mdi-delete
+          </v-icon>
+          <v-icon v-if="item.deleted === '1'" small @click="handleHerstel(item)"
+            >mdi-restore</v-icon
+          >
+        </template>
+      </v-data-table>
     </v-col>
   </v-row>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import { Bestelling, Persoon, Product } from '../model';
-import { formatBedrag } from '../util';
+import Vue from "vue";
+import { Bestelling, Persoon, Product } from "../model";
+import { formatBedrag } from "../util";
 
 export default Vue.extend({
-  name: 'Bestellingen',
+  name: "Bestellingen",
   computed: {
     bestellingen(): Bestelling[] {
       return Object.values(this.$store.state.bestelling.bestellingen);
     },
     producten(): Product[] {
-      return Object.values<Product>(this.$store.state.producten)
-        .filter((p) => p.beheer === '0' && p.status === '1');
+      return Object.values<Product>(this.$store.state.producten).filter(
+        p => p.beheer === "0" && p.status === "1"
+      );
     },
     headers() {
       return [
         {
           text: "Naam",
-          value: "persoon",
+          value: "persoon"
         },
-        { text: "Datum en tijd", value: "datum"},
-        { text: "Totaal", value: "bestelTotaal"},
-        { text: "Bestelling", value: "bestelLijst"},
-        { text: "Opties"}
-      ]
+        { text: "Datum en tijd", value: "tijd" },
+        { text: "Totaal", value: "bestelTotaal" },
+        { text: "Bestelling", value: "bestelLijst" },
+        { text: "Opties", value: "opties", sortable: false }
+      ];
+    },
+    isIndeterminate(): boolean {
+      return (
+        this.selectedProducten.length > 0 &&
+        this.selectedProducten.length < this.producten.length
+      );
+    },
+    datumText() {
+      return this.datum.join(" ~ ");
     }
   },
   data: () => ({
@@ -139,43 +155,52 @@ export default Vue.extend({
     herstelLaden: {} as Record<string, boolean>,
     productSelectieZichtbaar: false,
     zoekInAlles: true,
-    datum: [(new Date(+new Date() - 3600 * 1000 * 24 * 15)), new Date()] as Date[],
+    datum: [
+      new Date(+new Date() - 3600 * 1000 * 24 * 15).toISOString().substr(0, 10),
+      new Date().toISOString().substr(0, 10)
+    ] as string[],
+    datumMenu: false,
     selectedProducten: [] as string[],
-    isIndeterminate: false,
+    // isIndeterminate: false,
     checkAll: false,
-    shortcuts: [{
-      text: 'Afgelopen week',
-      value: (() => {
-        const end = new Date();
-        const start = new Date();
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-        return [start, end];
-      })(),
-    }, {
-      text: 'Laatste 2 weken',
-      value: (() => {
-        const end = new Date();
-        const start = new Date();
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 15);
-        return [start, end];
-      })(),
-    }, {
-      text: 'Afgelopen maand',
-      value: (() => {
-        const end = new Date();
-        const start = new Date();
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-        return [start, end];
-      })(),
-    }, {
-      text: 'Laatste 3 maanden',
-      value: (() => {
-        const end = new Date();
-        const start = new Date();
-        start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-        return [start, end];
-      })(),
-    }],
+    shortcuts: [
+      {
+        text: "Afgelopen week",
+        value: (() => {
+          const end = new Date();
+          const start = new Date();
+          start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+          return [start, end];
+        })()
+      },
+      {
+        text: "Laatste 2 weken",
+        value: (() => {
+          const end = new Date();
+          const start = new Date();
+          start.setTime(start.getTime() - 3600 * 1000 * 24 * 15);
+          return [start, end];
+        })()
+      },
+      {
+        text: "Afgelopen maand",
+        value: (() => {
+          const end = new Date();
+          const start = new Date();
+          start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
+          return [start, end];
+        })()
+      },
+      {
+        text: "Laatste 3 maanden",
+        value: (() => {
+          const end = new Date();
+          const start = new Date();
+          start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
+          return [start, end];
+        })()
+      }
+    ]
   }),
   methods: {
     naamFormatter(row: Bestelling): string {
@@ -188,36 +213,35 @@ export default Vue.extend({
       return this.$store.state.producten[productId];
     },
     getBestelLijstString(bestelLijst: Record<string, string>): string[] {
-      return Object.entries(bestelLijst)
-        .map(([productId, aantal]) => `${aantal} ${this.getProduct(productId)?.beschrijving}`);
+      return Object.entries(bestelLijst).map(
+        ([productId, aantal]) =>
+          `${aantal} ${this.getProduct(productId)?.beschrijving}`
+      );
     },
     formatBedrag,
     handleCheckedProductenChange(value: string[]) {
-      const checkedCount = value.length;
-      this.checkAll = checkedCount === this.producten.length;
-      this.isIndeterminate = checkedCount > 0 && checkedCount < this.producten.length;
+      this.checkAll = value.length === this.producten.length;
     },
     handleCheckAllChange(val: boolean) {
-      this.selectedProducten = val ? this.producten.map((v) => v.productId) : [];
-      this.isIndeterminate = false;
+      this.selectedProducten = val ? this.producten.map(v => v.productId) : [];
     },
-    handleEdit(index: number, row: Bestelling) {
+    handleEdit(row: Bestelling) {
       this.$router.push(`/invoer/${row.persoon}/bewerken/${row.bestelId}`);
     },
-    async handleVerwijder(index: number, row: Bestelling) {
+    async handleVerwijder(row: Bestelling) {
       this.verwijderLaden[row.bestelId] = true;
       try {
-        await this.$store.dispatch('verwijderBestelling', row);
+        await this.$store.dispatch("verwijderBestelling", row);
       } catch (e) {
         //this.$message.error(e.message);
         // TODO
       }
       delete this.verwijderLaden[row.bestelId];
     },
-    async handleHerstel(index: number, row: Bestelling) {
+    async handleHerstel(row: Bestelling) {
       this.herstelLaden[row.bestelId] = true;
       try {
-        await this.$store.dispatch('herstelBestelling', row);
+        await this.$store.dispatch("herstelBestelling", row);
       } catch (e) {
         //this.$message.error(e.message);
         // TODO
@@ -225,24 +249,24 @@ export default Vue.extend({
       delete this.verwijderLaden[row.bestelId];
     },
     zoeken() {
-      this.$store.dispatch('fetchBestellingen', {
-        aantal: this.zoekInAlles ? 'alles' : this.$store.state.user.selectie,
-        begin: this.datum[0]?.toISOString(),
-        eind: this.datum[1]?.toISOString(),
-        productType: this.selectedProducten,
+      this.$store.dispatch("fetchBestellingen", {
+        aantal: this.zoekInAlles ? "alles" : this.$store.state.user.selectie,
+        begin: this.datum[0],
+        eind: this.datum[1],
+        productType: this.selectedProducten
       });
-    },
+    }
   },
   created() {
     setTimeout(() => {
-      this.$store.dispatch('fetchBestellingen', {
-        aantal: 'alles',
-        begin: '',
-        eind: '',
-        productType: [],
+      this.$store.dispatch("fetchBestellingen", {
+        aantal: "alles",
+        begin: "",
+        eind: "",
+        productType: []
       });
     }, 1000);
-  },
+  }
 });
 </script>
 

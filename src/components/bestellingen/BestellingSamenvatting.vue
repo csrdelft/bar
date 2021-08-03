@@ -15,26 +15,7 @@
     </v-list-item>
   </v-list>
   <v-divider />
-  <!-- <div>
-    <span> Huidig saldo: </span>
-    <span :style="{ float: 'right' }">
-      {{ formatBedrag(persoon.saldo) }}
-    </span>
-  </div>
-  <v-divider />
-  <span>
-    Totaal bestelling:
-    <span :style="{ float: 'right' }">{{ formatBedrag(totaal) }}</span>
-  </span>
-  <v-divider />
-  <span>
-    Nieuw Saldo:
-    <span :style="{ float: 'right' }">{{
-      formatBedrag(persoon.saldo - totaal)
-    }}</span>
-  </span>
-  <v-divider /> -->
-  <div>
+  <v-btn-toggle>
     <v-btn
       color="success"
       @click="plaatsBestelling"
@@ -49,7 +30,7 @@
     >
     <v-icon dark>mdi-close</v-icon>
     </v-btn>
-  </div>
+  </v-btn-toggle>
   </div>
 </template>
 

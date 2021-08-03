@@ -2,6 +2,10 @@
 <div>
   <h1>Welkom in het bar systeem! {{ profielNaam }}</h1>
 
+  <p>
+    <v-btn x-large to="/personen">Beginnen</v-btn>
+  </p>
+
   <div v-if="isAdmin">
     <div v-if="vertrouwd">
       <p>Deze locatie is vertrouwd: {{ vertrouwd.naam }}</p>

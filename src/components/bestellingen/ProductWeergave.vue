@@ -1,10 +1,10 @@
 <template>
-  <v-row :gutter="20">
-    <v-col :span="4" v-for="product in producten" :key="product.productId">
-      <v-btn x-large class="btn-product" @click="$emit('selecteer', product)">
-        <div>{{ product.beschrijving }}</div>
-        <div>{{ formatBedrag(product.prijs) }}</div>
-      </v-btn>
+  <v-row>
+    <v-col cols="2" v-for="product in producten" :key="product.productId">
+      <v-card class="btn-product" @click="$emit('selecteer', product)">
+        <v-card-title>{{ product.beschrijving }}</v-card-title>
+        <v-card-subtitle>{{ formatBedrag(product.prijs) }}</v-card-subtitle>
+      </v-card>
     </v-col>
   </v-row>
 </template>

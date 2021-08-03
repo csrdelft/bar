@@ -1,5 +1,8 @@
 <template>
   <div v-if="persoon">
+    <v-app-bar flat :color="persoon.saldo > 0 ? 'success' : 'error'">
+      <v-toolbar-title>{{ persoon.naam }}</v-toolbar-title>
+    </v-app-bar>
     <v-row>
       <v-col cols="8">
         <v-row class="bestelling-inhoud">
@@ -8,14 +11,21 @@
             v-for="bestelling in bestellingInhoud"
             :key="bestelling.product.productId + ' ' + bestelling.aantal"
           >
-            <div
+            <v-card
               class="product"
               @click="verwijderInvoer(bestelling.product.productId)"
             >
-              {{ bestelling.aantal }}
-              {{ bestelling.product.beschrijving }}
-              <v-icon>mdi-close</v-icon>
-            </div>
+              <v-card-title class="product-title">
+                {{ bestelling.product.beschrijving }}
+
+                <v-spacer></v-spacer>
+
+                <v-btn icon>
+                  <v-icon>mdi-close</v-icon>
+                </v-btn>
+              </v-card-title>
+              <v-card-text class="text-h5">{{ bestelling.aantal }}</v-card-text>
+            </v-card>
           </v-col>
         </v-row>
 
@@ -36,41 +46,45 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import { BestellingInhoud, Persoon, Product } from '../model';
-import Numpad from '../components/Numpad.vue';
-import { formatBedrag, SaldoError, sum } from '../util';
-import ProductWeergave from '../components/bestellingen/ProductWeergave.vue';
-import BestellingSamenvatting from '../components/bestellingen/BestellingSamenvatting.vue';
+import Vue from "vue";
+import { BestellingInhoud, Persoon, Product } from "../model";
+import Numpad from "../components/Numpad.vue";
+import { formatBedrag, SaldoError, sum } from "../util";
+import ProductWeergave from "../components/bestellingen/ProductWeergave.vue";
+import BestellingSamenvatting from "../components/bestellingen/BestellingSamenvatting.vue";
 
 export default Vue.extend({
-  name: 'Bestelling',
+  name: "Bestelling",
   components: {
     BestellingSamenvatting,
     ProductWeergave,
-    Numpad,
+    Numpad
   },
   props: {
     socCieId: String,
     bestellingId: {
       type: String,
-      default: '',
-    },
+      default: ""
+    }
   },
   data: () => ({
-    aantal: '',
+    aantal: "",
     bestellingLaden: false,
-    forceBestelling: false,
+    forceBestelling: false
   }),
   created() {
-    this.$store.commit('setSelectie', this.socCieId);
+    this.$store.commit("setSelectie", this.socCieId);
 
     if (this.bestellingId) {
       const { producten } = this.$store.state;
 
-      this.$store.commit('setInvoer', Object.entries(
-        this.$store.state.bestelling.bestellingen[this.bestellingId].bestelLijst,
-      ).map(([id, aantal]) => ({ aantal, product: producten[id] })));
+      this.$store.commit(
+        "setInvoer",
+        Object.entries(
+          this.$store.state.bestelling.bestellingen[this.bestellingId]
+            .bestelLijst
+        ).map(([id, aantal]) => ({ aantal, product: producten[id] }))
+      );
     }
   },
   computed: {
@@ -82,42 +96,41 @@ export default Vue.extend({
     },
     totaal(): number {
       const inhoud = Object.values(this.bestellingInhoud);
-      return sum(...inhoud.map((b) => Number(b.product.prijs) * b.aantal));
+      return sum(...inhoud.map(b => Number(b.product.prijs) * b.aantal));
     },
     bestellingInhoud(): Record<string, BestellingInhoud> {
-      console.log("update bestelling inhoud")
       return this.$store.state.invoer.inhoud;
-    },
+    }
   },
   methods: {
     formatBedrag,
     verwijderInvoer(productId: string): void {
-      this.$store.commit('verwijderInvoer', productId);
+      this.$store.commit("verwijderInvoer", productId);
     },
     selecteerInvoer(product: Product): void {
-      this.$store.commit('selecteerInvoer', {
+      this.$store.commit("selecteerInvoer", {
         product,
-        aantal: this.aantal,
+        aantal: this.aantal
       });
 
-      this.aantal = '';
+      this.aantal = "";
     },
     async plaatsBestelling(): Promise<void> {
       this.bestellingLaden = true;
       try {
-        await this.$store.dispatch('plaatsBestelling', {
+        await this.$store.dispatch("plaatsBestelling", {
           inhoud: this.bestellingInhoud,
           persoon: this.persoon,
-          force: this.forceBestelling,
+          force: this.forceBestelling
         });
         this.forceBestelling = false;
 
-        await this.$store.dispatch('postLogin');
+        await this.$store.dispatch("postLogin");
 
         this.bestellingLaden = false;
-        this.$store.commit('clearInvoer');
-        this.$store.commit('setSelectie', null);
-        await this.$router.replace('/personen');
+        this.$store.commit("clearInvoer");
+        this.$store.commit("setSelectie", null);
+        await this.$router.replace("/personen");
       } catch (e) {
         if (e instanceof SaldoError) {
           setTimeout(() => {
@@ -133,13 +146,13 @@ export default Vue.extend({
       }
     },
     annuleer(): void {
-      this.$store.commit('clearInvoer');
-      this.aantal = '';
+      this.$store.commit("clearInvoer");
+      this.aantal = "";
       this.forceBestelling = false;
-      this.$store.commit('setSelectie', null);
-      this.$router.replace('/personen');
-    },
-  },
+      this.$store.commit("setSelectie", null);
+      this.$router.replace("/personen");
+    }
+  }
 });
 </script>
 
@@ -155,12 +168,17 @@ export default Vue.extend({
   margin: 20px;
   overflow: hidden;
   overflow-y: auto;
-  font-size: 30px;
+  /* font-size: 30px; */
   align-content: start;
 }
 
 .product {
   padding-bottom: 0.3em;
   padding-top: 0.3em;
+}
+
+.product-title {
+  flex-wrap: nowrap;
+  white-space: nowrap;
 }
 </style>

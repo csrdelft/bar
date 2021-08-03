@@ -9,16 +9,15 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue from "vue";
 
 export default Vue.extend({
-  name: 'Logout',
+  name: "Logout",
   methods: {
     logout(): void {
-      this.$store.commit('setToken', null);
-      this.$router.push('/');
-    },
-  },
+      this.$router.push("/auth/logout");
+    }
+  }
 });
 </script>
 

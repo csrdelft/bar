@@ -3,7 +3,8 @@ import Authorize from '@/views/auth/Authorize.vue';
 import AuthCallback from '@/views/auth/AuthCallback.vue';
 import Invoer from '@/views/Invoer.vue';
 import Login from '@/views/Login.vue';
-import Logout from '@/views/auth/Logout.vue';
+import Logout from '@/views/Logout.vue';
+import AuthLogout from '@/views/auth/AuthLogout.vue';
 import Personen from '@/views/Personen.vue';
 import Bestellingen from '@/views/Bestellingen.vue';
 import { getToken } from '@/token';
@@ -51,9 +52,14 @@ const routes: Array<RouteConfig> = [
     component: AuthCallback,
   },
   {
-    path: '/auth/logout',
+    path: '/logout',
     name: 'Logout',
     component: Logout,
+  },
+  {
+    path: '/auth/logout',
+    name: 'AuthLogout',
+    component: AuthLogout,
   },
   {
     path: '/auth/post-login',

@@ -1,41 +1,36 @@
 <template>
-
   <v-data-table
-  :headers="headers"
+    :headers="headers"
     :items="personen"
-    :row-class-name="tableRowClassName"
     @click:row="rowClick"
-    row-key="socCieId"
+    item-key="socCieId"
+    :item-class="tableRowClassName"
   >
-
-      <template v-slot:item.saldo="{ item }">
-        {{ formatBedrag(item.saldo)}}
-      </template>
+    <template v-slot:item.saldo="{ item }">
+      {{ formatBedrag(item.saldo) }}
+    </template>
   </v-data-table>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import { Persoon } from '@/model';
-import { formatBedrag } from '@/util';
+import Vue from "vue";
+import { Persoon } from "@/model";
+import { formatBedrag } from "@/util";
 
 export default Vue.extend({
-  name: 'LedenTable',
+  name: "LedenTable",
   props: {
-    zoeken: String,
+    zoeken: String
   },
   computed: {
     personen(): Persoon[] {
-      return this.$store.getters.personenWeergave
-        .filter(this.filterPersoon)
-        // Laden van de hele dataset zorgt voor traagheid
-        .slice(0, 50);
+      return this.$store.getters.personenWeergave.filter(this.filterPersoon);
     },
     headers() {
       return [
         {
           text: "Bijnaam",
-          value: "bijnaam",
+          value: "bijnaam"
         },
         {
           text: "Naam",
@@ -43,9 +38,9 @@ export default Vue.extend({
         },
         {
           text: "Saldo",
-          value: "saldo",
+          value: "saldo"
         }
-      ]
+      ];
     }
   },
   methods: {
@@ -53,19 +48,23 @@ export default Vue.extend({
     rowClick(row: Persoon) {
       this.$router.push(`/invoer/${row.socCieId}`);
     },
-    tableRowClassName({ row }: { row: Persoon }) {
-      return row.saldo < 0 ? 'error-row' : 'success-row';
+    tableRowClassName(row: Persoon) {
+      let className = row.saldo < 0 ? "error" : "success";
+      if (this.$vuetify.theme.dark) {
+        return className + " darken-4";
+      } else {
+        return className + " lighten-5";
+      }
     },
     filterPersoon(persoon: Persoon) {
-      return persoon.bijnaam.toUpperCase()
-        .match(this.zoeken as string)
-        || persoon.naam.toUpperCase()
-          .match(this.zoeken as string);
-    },
-  },
+      return (
+        persoon.bijnaam.toUpperCase().match(this.zoeken as string) ||
+        persoon.naam.toUpperCase().match(this.zoeken as string)
+      );
+    }
+  }
 });
 </script>
 
 <style scoped>
-
 </style>
