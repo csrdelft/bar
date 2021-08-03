@@ -8,7 +8,6 @@
 </template>
 
 <script lang="ts">
-import 'simple-keyboard/build/css/index.css';
 import Vue from 'vue';
 import SimpleKeyboard from '@/components/SimpleKeyboard.vue';
 
