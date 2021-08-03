@@ -3,6 +3,7 @@ import { Module } from 'vuex';
 import { fetchAuthorized } from '@/fetch';
 import { isOudlid, SaldoError, sum } from '@/util';
 import { InvoerState, State } from '@/store/state';
+import Vue from "vue"
 
 const defineModule = <T, R>(tree: Module<T, R>): Module<T, R> => tree;
 
@@ -20,20 +21,23 @@ export default defineModule<InvoerState, State>({
       aantal,
     }: { product: Product, aantal: string }) {
       if (!(product.productId in state.inhoud)) {
-        state.inhoud[product.productId] = {
+        Vue.set(state.inhoud, product.productId, {
           product,
           aantal: 0,
-        };
+        })
       }
 
-      state.inhoud[product.productId].aantal += Number(aantal) || 1;
+      Vue.set(state.inhoud, product.productId, {
+        ...state.inhoud[product.productId],
+        aantal: state.inhoud[product.productId].aantal + (Number(aantal) || 1)
+      })
 
       if (state.inhoud[product.productId].aantal === 0) {
-        delete state.inhoud[product.productId];
+        Vue.delete(state.inhoud, product.productId)
       }
     },
     verwijderInvoer(state, productId: string) {
-      delete state.inhoud[productId];
+      Vue.delete(state.inhoud, productId);
     },
     clearInvoer(state) {
       state.inhoud = {};

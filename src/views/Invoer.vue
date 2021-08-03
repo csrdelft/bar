@@ -1,12 +1,12 @@
 <template>
   <div v-if="persoon">
-    <v-row :gutter="20">
+    <v-row>
       <v-col cols="8">
         <v-row class="bestelling-inhoud">
           <v-col
             cols="3"
             v-for="bestelling in bestellingInhoud"
-            :key="bestelling.product.productId"
+            :key="bestelling.product.productId + ' ' + bestelling.aantal"
           >
             <div
               class="product"
@@ -14,7 +14,7 @@
             >
               {{ bestelling.aantal }}
               {{ bestelling.product.beschrijving }}
-              <span class="el-icon-close" />
+              <v-icon>mdi-close</v-icon>
             </div>
           </v-col>
         </v-row>
@@ -85,6 +85,7 @@ export default Vue.extend({
       return sum(...inhoud.map((b) => Number(b.product.prijs) * b.aantal));
     },
     bestellingInhoud(): Record<string, BestellingInhoud> {
+      console.log("update bestelling inhoud")
       return this.$store.state.invoer.inhoud;
     },
   },

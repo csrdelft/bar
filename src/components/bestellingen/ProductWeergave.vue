@@ -1,7 +1,7 @@
 <template>
   <v-row :gutter="20">
     <v-col :span="4" v-for="product in producten" :key="product.productId">
-      <v-btn class="btn-product" @click="$emit('selecteer', product)">
+      <v-btn x-large class="btn-product" @click="$emit('selecteer', product)">
         <div>{{ product.beschrijving }}</div>
         <div>{{ formatBedrag(product.prijs) }}</div>
       </v-btn>

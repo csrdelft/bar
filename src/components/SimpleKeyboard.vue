@@ -108,10 +108,49 @@ export default Vue.extend({
 </script>
 
 <style>
-.simple-keyboard {
+.hg-theme-default {
   margin-bottom: 1em;
 }
 .simple-keyboard-input {
   margin: 0.2em;
 }
+
+input {
+  width: 100%;
+  height: 100px;
+  padding: 20px;
+  font-size: 20px;
+  border: none;
+  box-sizing: border-box;
+}
+
+.hg-theme-default {
+  /* max-width: 850px; */
+}
+
+
+/*
+  Donker thema
+*/
+.theme--dark .hg-theme-default {
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: 0;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+
+.theme--dark .hg-theme-default .hg-button {
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+}
+
+.theme--dark .hg-theme-default .hg-button:active {
+  /* background: #1c4995; */
+  color: white;
+}
+
 </style>

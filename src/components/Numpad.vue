@@ -15,7 +15,10 @@ import SimpleKeyboard from '@/components/SimpleKeyboard.vue';
 export default Vue.extend({
   name: 'Numpad',
   components: { SimpleKeyboard },
-  //emits: ['update:modelValue'],
+  model: {
+     prop: 'modelValue',
+     event: 'update:modelValue',
+  },
   props: {
     modelValue: String,
     defaultValue: {

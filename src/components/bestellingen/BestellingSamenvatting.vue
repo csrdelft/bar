@@ -40,14 +40,14 @@
       @click="plaatsBestelling"
       :loading="bestellingLaden"
     >
-    <v-icon dark>mbi-check</v-icon>
+    <v-icon dark>mdi-check</v-icon>
     </v-btn>
     <v-btn
       color="error"
       @click="annuleer"
       :disabled="bestellingLaden"
     >
-    <v-icon dark>mbi-close</v-icon>
+    <v-icon dark>mdi-close</v-icon>
     </v-btn>
   </div>
   </div>
