@@ -54,10 +54,10 @@ export default Vue.extend({
 
         this.loading = false;
 
-        await this.$router.push("/auth/post-login");
+        await this.$router.push("/");
       };
     } else {
-      this.$router.push("/auth/post-login");
+      this.$router.push("/");
     }
   }
 });

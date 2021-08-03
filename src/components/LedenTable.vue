@@ -49,17 +49,15 @@ export default Vue.extend({
       this.$router.push(`/invoer/${row.socCieId}`);
     },
     tableRowClassName(row: Persoon) {
-      let className = row.saldo < 0 ? "error" : "success";
-      if (this.$vuetify.theme.dark) {
-        return className + " darken-4";
-      } else {
-        return className + " lighten-5";
-      }
+      const color = row.saldo < 0 ? "error" : "success";
+      const extra = this.$vuetify.theme.dark ? "darken-4" : "ligthen-5";
+
+      return `${color} ${extra}`
     },
     filterPersoon(persoon: Persoon) {
       return (
-        persoon.bijnaam.toUpperCase().match(this.zoeken as string) ||
-        persoon.naam.toUpperCase().match(this.zoeken as string)
+        persoon.bijnaam.toUpperCase().match(this.zoeken) ||
+        persoon.naam.toUpperCase().match(this.zoeken)
       );
     }
   }

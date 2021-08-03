@@ -1,7 +1,8 @@
 <template>
   <SimpleKeyboard
+    keyboardClass="numpad"
     :layout="['7 8 9', '4 5 6', '1 2 3', '{bksp} 0 {neg}']"
-    :display="{'{bksp}': '<', '{neg}': '-'}"
+    :display="{ '{bksp}': '<', '{neg}': '-' }"
     @update:modelValue="$emit('update:modelValue', $event)"
     :modelValue="modelValue"
     :defaultValue="defaultValue"
@@ -9,26 +10,28 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import SimpleKeyboard from '@/components/SimpleKeyboard.vue';
+import Vue from "vue";
+import SimpleKeyboard from "@/components/SimpleKeyboard.vue";
 
 export default Vue.extend({
-  name: 'Numpad',
+  name: "Numpad",
   components: { SimpleKeyboard },
   model: {
-     prop: 'modelValue',
-     event: 'update:modelValue',
+    prop: "modelValue",
+    event: "update:modelValue"
   },
   props: {
     modelValue: String,
     defaultValue: {
-      default: '',
-      type: String,
-    },
-  },
+      default: "",
+      type: String
+    }
+  }
 });
 </script>
 
-<style scoped>
-
+<style>
+.numpad .keyboard-button.v-size--default.special {
+  width: 60px;
+}
 </style>

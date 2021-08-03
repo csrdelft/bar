@@ -8,7 +8,6 @@ import AuthLogout from '@/views/auth/AuthLogout.vue';
 import Personen from '@/views/Personen.vue';
 import Bestellingen from '@/views/Bestellingen.vue';
 import { getToken } from '@/token';
-import PostLogin from '@/views/PostLogin.vue';
 import Vue from 'vue';
 
 Vue.use(VueRouter);
@@ -60,11 +59,6 @@ const routes: Array<RouteConfig> = [
     path: '/auth/logout',
     name: 'AuthLogout',
     component: AuthLogout,
-  },
-  {
-    path: '/auth/post-login',
-    name: 'Welcome',
-    component: PostLogin,
   },
 ];
 

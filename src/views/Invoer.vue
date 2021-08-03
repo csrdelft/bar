@@ -1,47 +1,68 @@
 <template>
-  <div v-if="persoon">
-    <v-app-bar flat :color="persoon.saldo > 0 ? 'success' : 'error'">
-      <v-toolbar-title>{{ persoon.naam }}</v-toolbar-title>
-    </v-app-bar>
-    <v-row>
-      <v-col cols="8">
-        <v-row class="bestelling-inhoud">
-          <v-col
-            cols="3"
-            v-for="bestelling in bestellingInhoud"
-            :key="bestelling.product.productId + ' ' + bestelling.aantal"
-          >
-            <v-card
-              class="product"
-              @click="verwijderInvoer(bestelling.product.productId)"
+  <div>
+    <div v-if="persoon">
+      <v-app-bar flat :color="persoon.saldo > 0 ? 'success' : 'error'">
+        <v-toolbar-title>{{ persoon.naam }}</v-toolbar-title>
+      </v-app-bar>
+      <v-row>
+        <v-col cols="9">
+          <v-row class="bestelling-inhoud">
+            <v-col
+              cols="3"
+              v-for="bestelling in bestellingInhoud"
+              :key="bestelling.product.productId + ' ' + bestelling.aantal"
             >
-              <v-card-title class="product-title">
-                {{ bestelling.product.beschrijving }}
+              <v-card
+                class="product"
+                @click="verwijderInvoer(bestelling.product.productId)"
+              >
+                <v-card-title class="product-title">
+                  {{ bestelling.product.beschrijving }}
 
-                <v-spacer></v-spacer>
+                  <v-spacer></v-spacer>
 
-                <v-btn icon>
-                  <v-icon>mdi-close</v-icon>
-                </v-btn>
-              </v-card-title>
-              <v-card-text class="text-h5">{{ bestelling.aantal }}</v-card-text>
-            </v-card>
-          </v-col>
-        </v-row>
+                  <v-btn icon>
+                    <v-icon>mdi-close</v-icon>
+                  </v-btn>
+                </v-card-title>
+                <v-card-text class="text-h5">{{
+                  bestelling.aantal
+                }}</v-card-text>
+              </v-card>
+            </v-col>
+          </v-row>
 
-        <ProductWeergave :producten="producten" @selecteer="selecteerInvoer" />
-      </v-col>
-      <v-col cols="4">
-        <Numpad default-value="1" v-model="aantal" />
-        <BestellingSamenvatting
-          :bestelling-laden="bestellingLaden"
-          :persoon="persoon"
-          :totaal="totaal"
-          :annuleer="annuleer"
-          :plaatsBestelling="plaatsBestelling"
-        />
-      </v-col>
-    </v-row>
+          <ProductWeergave
+            :producten="producten"
+            @selecteer="selecteerInvoer"
+          />
+        </v-col>
+        <v-col cols="3">
+          <Numpad default-value="1" v-model="aantal" />
+          <BestellingSamenvatting
+            :bestelling-laden="bestellingLaden"
+            :persoon="persoon"
+            :totaal="totaal"
+            :annuleer="annuleer"
+            :plaatsBestelling="plaatsBestelling"
+          />
+        </v-col>
+      </v-row>
+    </div>
+
+    <v-snackbar v-model="notificatieWeergeven" top color="error" timeout="5000">
+      {{notificatie}}
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          color="white"
+          text
+          v-bind="attrs"
+          @click="notificatieWeergeven = false"
+        >
+          Sluiten
+        </v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
@@ -70,7 +91,9 @@ export default Vue.extend({
   data: () => ({
     aantal: "",
     bestellingLaden: false,
-    forceBestelling: false
+    forceBestelling: false,
+    notificatie: '',
+    notificatieWeergeven: false,
   }),
   created() {
     this.$store.commit("setSelectie", this.socCieId);
@@ -85,6 +108,8 @@ export default Vue.extend({
             .bestelLijst
         ).map(([id, aantal]) => ({ aantal, product: producten[id] }))
       );
+    } else {
+      this.$store.commit("setInvoer", {})
     }
   },
   computed: {
@@ -141,8 +166,8 @@ export default Vue.extend({
           this.bestellingLaden = false;
         }
 
-        //this.$message.error(e.message);
-        // TODO
+        this.notificatie = e.message;
+        this.notificatieWeergeven = true;
       }
     },
     annuleer(): void {

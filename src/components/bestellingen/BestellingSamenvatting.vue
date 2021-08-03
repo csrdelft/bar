@@ -17,6 +17,7 @@
   <v-divider />
   <v-btn-toggle>
     <v-btn
+    block
       color="success"
       @click="plaatsBestelling"
       :loading="bestellingLaden"
@@ -24,6 +25,7 @@
     <v-icon dark>mdi-check</v-icon>
     </v-btn>
     <v-btn
+    block
       color="error"
       @click="annuleer"
       :disabled="bestellingLaden"

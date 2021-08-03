@@ -1,20 +1,36 @@
 <template>
-  <div>
-    <div class="simple-keyboard-input">
-      <v-text-field
-        :autofocus="true"
-        :value="modelValue"
-        :placeholder="defaultValue"
-        @input="onChange"
-      />
+  <div class="d-flex flex-column align-center">
+    <v-text-field
+      :style="{ width: '100%' }"
+      :autofocus="true"
+      :value="modelValue"
+      :placeholder="defaultValue"
+      @input="onChange"
+    />
+    <div :class="{'d-flex flex-column': true, [keyboardClass]: true}">
+      <span
+        v-for="(line, i) in layout"
+        :key="i"
+        class="keyboard d-inline-flex"
+        :style="{ marginLeft: i * (staggered ? 32 : 0) + 'px' }"
+      >
+        <v-btn
+          :class="
+            'ma-1 keyboard-button ' + (key.startsWith('{') ? 'special' : '')
+          "
+          v-for="key in line.split(' ')"
+          :key="key"
+          @click="(e) => onKeyPress(key)"
+        >
+          {{ key in display ? display[key] : key }}
+        </v-btn>
+      </span>
     </div>
-    <div :class="keyboardClass + ' hg-theme-default'"></div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue, { PropType } from "vue";
-import Keyboard from "simple-keyboard";
 
 export default Vue.extend({
   name: "SimpleKeyboard",
@@ -39,6 +55,10 @@ export default Vue.extend({
       }),
       type: Object as PropType<Record<string, string>>
     },
+    staggered: {
+      default: false,
+      type: Boolean
+    },
     keyboardClass: {
       default: "simple-keyboard",
       type: String
@@ -51,18 +71,6 @@ export default Vue.extend({
       type: String
     }
   },
-  data: () => ({
-    keyboard: null as Keyboard | null
-  }),
-  mounted() {
-    this.keyboard = new Keyboard(this.keyboardClass, {
-      onChange: this.onChange,
-      onKeyPress: this.onKeyPress,
-      display: this.display,
-      // theme: '',
-      layout: { default: this.layout }
-    });
-  },
   methods: {
     onChange(input: string) {
       this.$emit("update:modelValue", input);
@@ -72,9 +80,14 @@ export default Vue.extend({
       /**
        * If you want to handle the shift and caps lock buttons
        */
-      if (button === "{shift}" || button === "{lock}") this.handleShift();
       if (button === "{leeg}") this.handleLeeg();
+      if (button === "{space}") this.onChange(this.modelValue + " ");
       if (button === "{neg}") this.handleNeg();
+      if (button === "{bksp}") this.onChange(this.modelValue.slice(0, -1));
+
+      if (!button.startsWith("{")) {
+        this.onChange(this.modelValue + button);
+      }
     },
     handleNeg() {
       if (this.modelValue && this.modelValue.startsWith("-")) {
@@ -86,66 +99,21 @@ export default Vue.extend({
       }
     },
     handleLeeg() {
-      if (this.keyboard) this.keyboard.setInput("");
-    },
-    handleShift() {
-      const currentLayout = this.keyboard?.options.layoutName;
-      const shiftToggle = currentLayout === "default" ? "shift" : "default";
-      if (this.keyboard) {
-        this.keyboard.setOptions({
-          layoutName: shiftToggle
-        });
-      }
-    }
-  },
-  watch: {
-    modelValue(input) {
-      if (this.keyboard) {
-        this.keyboard.setInput(input);
-      }
+      this.onChange("");
     }
   }
 });
 </script>
 
 <style>
-.hg-theme-default {
-  margin-bottom: 1em;
-}
-.simple-keyboard-input {
-  margin: 0.2em;
-}
-
-input {
-  width: 100%;
-  height: 100px;
-  padding: 20px;
-  font-size: 20px;
-  border: none;
-  box-sizing: border-box;
+.keyboard .keyboard-button.v-size--default {
+  height: 60px;
+  min-width: 60px;
+  padding: 0;
+  font-size: 1rem;
 }
 
-/*
-  Donker thema
-*/
-.theme--dark .hg-theme-default {
-  background-color: rgba(0, 0, 0, 0.8);
-  border-radius: 0;
-  border-bottom-right-radius: 5px;
-  border-bottom-left-radius: 5px;
-}
-
-.theme--dark .hg-theme-default .hg-button {
-  height: 50px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: rgba(0, 0, 0, 0.5);
-  color: white;
-}
-
-.theme--dark .hg-theme-default .hg-button:active {
-  /* background: #1c4995; */
-  color: white;
+.keyboard .keyboard-button.v-size--default.special {
+  width: 120px;
 }
 </style>

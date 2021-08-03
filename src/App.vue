@@ -1,12 +1,14 @@
 <template>
   <v-app>
-    <v-navigation-drawer app v-model="drawer" temporary>
+    <v-navigation-drawer app v-model="drawer" permanent expand-on-hover>
       <v-list nav dense>
         <v-list-item-group act>
+          <v-list-item to="/">
+            <v-list-item-icon><v-icon>mdi-home</v-icon></v-list-item-icon>
+            <v-list-item-title>Begin</v-list-item-title>
+          </v-list-item>
           <v-list-item to="/personen">
-            <v-list-item-icon>
-              <v-icon>mdi-home</v-icon>
-            </v-list-item-icon>
+            <v-list-item-icon><v-icon>mdi-account-multiple</v-icon></v-list-item-icon>
             <v-list-item-title>Personen</v-list-item-title>
           </v-list-item>
 
@@ -25,7 +27,7 @@
           </v-list-item>
           <v-list-item to="/logout">
             <v-list-item-icon>
-              <v-icon>mdi-account</v-icon>
+              <v-icon>mdi-exit-to-app</v-icon>
             </v-list-item-icon>
             <v-list-item-title>Uitloggen</v-list-item-title>
           </v-list-item>
@@ -34,7 +36,10 @@
     </v-navigation-drawer>
 
     <v-app-bar app>
-      <v-app-bar-nav-icon v-if="loggedIn" @click="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon
+        v-if="loggedIn"
+        @click="drawer = !drawer"
+      ></v-app-bar-nav-icon>
 
       <v-toolbar-title
         >C.S.R. Bar

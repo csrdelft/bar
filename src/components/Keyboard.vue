@@ -3,6 +3,7 @@
     @update:modelValue="emitValue"
     :modelValue="modelValue"
     keyboard-class="full-keyboard"
+    staggered
   />
 </template>
 
