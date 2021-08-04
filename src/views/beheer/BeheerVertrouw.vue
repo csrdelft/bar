@@ -18,7 +18,7 @@
         </p>
         <p>
           <v-text-field v-model="naam" label="Naam van deze locatie" />
-          <v-btn block color="primary" @click="vertrouw">
+          <v-btn block color="primary" @click="vertrouw" :loading="laden">
             Vertrouw deze locatie
           </v-btn>
         </p>
@@ -32,7 +32,8 @@ import { BarLocatie } from "@/model";
 import Vue from "vue";
 export default Vue.extend({
   data: () => ({
-    naam: ""
+    naam: "",
+    laden: false
   }),
   computed: {
     vertrouwd(): BarLocatie | null {
@@ -40,10 +41,12 @@ export default Vue.extend({
     }
   },
   methods: {
-    vertrouw() {
-      this.$store.dispatch("vertrouwLocatie", this.naam);
+    async vertrouw() {
+      this.laden = true;
+      await this.$store.dispatch("vertrouwLocatie", this.naam);
+      this.laden = false;
     },
-    stopVertrouwen() {
+    async stopVertrouwen() {
       this.$store.commit("setLocatieToken", null);
     }
   }
