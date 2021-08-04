@@ -39,7 +39,7 @@ export default Vue.extend({
         this.bijnaam = "";
       } else {
         this.persoon = this.$store.state.personen[socCieId];
-        this.bijnaam = this.persoon.bijnaam;
+        this.bijnaam = this.persoon?.bijnaam ?? "";
       }
     },
     async opslaan() {
