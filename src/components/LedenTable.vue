@@ -5,6 +5,8 @@
     @click:row="rowClick"
     item-key="socCieId"
     :item-class="tableRowClassName"
+    :items-per-page="-1"
+    hide-default-footer
   >
     <template v-slot:item.saldo="{ item }">
       {{ formatBedrag(item.saldo) }}
@@ -28,18 +30,9 @@ export default Vue.extend({
     },
     headers() {
       return [
-        {
-          text: "Bijnaam",
-          value: "bijnaam"
-        },
-        {
-          text: "Naam",
-          value: "naam"
-        },
-        {
-          text: "Saldo",
-          value: "saldo"
-        }
+        { text: "Bijnaam", value: "bijnaam" },
+        { text: "Naam", value: "naam" },
+        { text: "Saldo", value: "saldo" }
       ];
     }
   },
@@ -50,9 +43,9 @@ export default Vue.extend({
     },
     tableRowClassName(row: Persoon) {
       const color = row.saldo < 0 ? "error" : "success";
-      const extra = this.$vuetify.theme.dark ? "darken-4" : "ligthen-5";
+      const extra = this.$vuetify.theme.dark ? "darken-4" : "lighten-5";
 
-      return `${color} ${extra}`
+      return `${color} ${extra}`;
     },
     filterPersoon(persoon: Persoon) {
       return (

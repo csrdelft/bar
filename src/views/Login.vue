@@ -5,7 +5,7 @@
       Welkom <span v-if="vertrouwd">terug</span> bij het barsysteem, gebruik je
       stek account om in te loggen.
     </p>
-    <v-btn @click="$router.push('/auth/csr')">Login</v-btn>
+    <v-btn x-large color="primary" @click="$router.push('/auth/csr')">Login</v-btn>
   </v-container>
   <v-container v-else class="login-main">
     <h1>Welkom in het bar systeem! {{ profielNaam }}</h1>
@@ -15,25 +15,7 @@
     </p>
 
     <div v-if="isAdmin">
-      <div v-if="vertrouwd">
-        <p>Deze locatie is vertrouwd: {{ vertrouwd.naam }}</p>
-
-        <v-btn color="primary" @click="stopVertrouwen">
-          Deze locatie niet langer vertrouwen.
-        </v-btn>
-      </div>
-
-      <div v-else>
-        <p>
-          Door een locatie te vertrouwen wordt het mogelijk voor alle leden om
-          in te loggen in het bar systeem. Gebruik deze functie alleen op
-          vertrouwde plekken.
-        </p>
-        <p>
-          <v-text-field v-model="naam" label="Naam van deze locatie" />
-          <v-btn color="primary" @click="vertrouw">Vertrouw deze locatie</v-btn>
-        </p>
-      </div>
+      
     </div>
   </v-container>
 </template>
@@ -63,14 +45,7 @@ export default Vue.extend({
       return !!this.$store.state.user.tokenData;
     }
   },
-  methods: {
-    vertrouw() {
-      this.$store.dispatch("vertrouwLocatie", this.naam);
-    },
-    stopVertrouwen() {
-      this.$store.commit("setLocatieToken", null);
-    }
-  }
+  
 });
 </script>
 

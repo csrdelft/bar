@@ -7,6 +7,7 @@ import Logout from '@/views/Logout.vue';
 import AuthLogout from '@/views/auth/AuthLogout.vue';
 import Personen from '@/views/Personen.vue';
 import Bestellingen from '@/views/Bestellingen.vue';
+import Beheer from '@/views/Beheer.vue';
 import { getToken } from '@/token';
 import Vue from 'vue';
 
@@ -60,6 +61,11 @@ const routes: Array<RouteConfig> = [
     name: 'AuthLogout',
     component: AuthLogout,
   },
+  {
+    path: '/beheer',
+    name: 'Beheer',
+    component: Beheer
+  }
 ];
 
 const router = new VueRouter({

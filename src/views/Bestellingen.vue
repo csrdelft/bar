@@ -73,7 +73,7 @@
       <v-btn @click="zoeken" size="medium">Zoeken</v-btn>
     </v-col>
     <v-col>
-      <v-data-table :items="bestellingen" :headers="headers">
+      <v-data-table :items="bestellingen" :headers="headers" sort-by="tijd" sort-desc>
         <template v-slot:item.persoon="{ item }">
           {{ naamFormatter(item) }}
         </template>

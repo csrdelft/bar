@@ -76,6 +76,9 @@ export default new Vuex.Store<State>({
     setProducten(state, producten: Record<string, Product>) {
       state.producten = producten;
     },
+    setPersoon(state, persoon: Persoon) {
+      Vue.set(state.personen, persoon.socCieId, persoon)
+    }
   },
   actions: {
     async listUsers({
@@ -121,6 +124,24 @@ export default new Vuex.Store<State>({
 
       commit('setLocatieToken', barLocatie);
     },
+    async updateBijnaam({commit, state}, {
+      id, 
+      name,
+    } : {id: string, name: string}): Promise<void> {
+      await fetchAuthorized<void>({
+        url: '/api/v3/bar/updatePerson',
+        method: 'POST',
+        data: {
+          id,
+          name,
+        }
+      })
+
+      commit('setPersoon', {
+        ...state.personen[id],
+        bijnaam: name,
+      })
+    }
   },
   modules: {
     bestelling,

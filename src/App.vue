@@ -1,6 +1,12 @@
 <template>
   <v-app>
-    <v-navigation-drawer app v-model="drawer" permanent expand-on-hover>
+    <v-navigation-drawer
+      app
+      v-model="drawer"
+      permanent
+      expand-on-hover
+      v-if="loggedIn"
+    >
       <v-list nav dense>
         <v-list-item-group act>
           <v-list-item to="/">
@@ -8,7 +14,9 @@
             <v-list-item-title>Begin</v-list-item-title>
           </v-list-item>
           <v-list-item to="/personen">
-            <v-list-item-icon><v-icon>mdi-account-multiple</v-icon></v-list-item-icon>
+            <v-list-item-icon>
+              <v-icon>mdi-account-multiple</v-icon>
+            </v-list-item-icon>
             <v-list-item-title>Personen</v-list-item-title>
           </v-list-item>
 
@@ -25,13 +33,32 @@
             </v-list-item-icon>
             <v-list-item-title>Bestellingen</v-list-item-title>
           </v-list-item>
+          <v-list-item to="/beheer">
+            <v-list-item-icon>
+              <v-icon>mdi-wrench</v-icon>
+            </v-list-item-icon>
+            <v-list-item-title>Beheer</v-list-item-title>
+          </v-list-item>
           <v-list-item to="/logout">
             <v-list-item-icon>
               <v-icon>mdi-exit-to-app</v-icon>
             </v-list-item-icon>
             <v-list-item-title>Uitloggen</v-list-item-title>
           </v-list-item>
+          
         </v-list-item-group>
+        <v-list-item>
+          <v-list-item-icon></v-list-item-icon>
+          <v-list-item-title>
+            <v-switch
+              v-model="$vuetify.theme.dark"
+              hint="Schakelt tussen licht en donker thema"
+              inset
+              label="Donker thema"
+              persistent-hint
+            ></v-switch>
+          </v-list-item-title>
+        </v-list-item>
       </v-list>
     </v-navigation-drawer>
 

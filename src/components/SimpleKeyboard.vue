@@ -2,12 +2,11 @@
   <div class="d-flex flex-column align-center">
     <v-text-field
       :style="{ width: '100%' }"
-      :autofocus="true"
       :value="modelValue"
       :placeholder="defaultValue"
       @input="onChange"
     />
-    <div :class="{'d-flex flex-column': true, [keyboardClass]: true}">
+    <div :class="{ 'd-flex flex-column': true, [keyboardClass]: true }">
       <span
         v-for="(line, i) in layout"
         :key="i"
@@ -15,9 +14,10 @@
         :style="{ marginLeft: i * (staggered ? 32 : 0) + 'px' }"
       >
         <v-btn
-          :class="
-            'ma-1 keyboard-button ' + (key.startsWith('{') ? 'special' : '')
-          "
+          :class="{
+            'ma-1 keyboard-button': true,
+            special: key.startsWith('{'),
+          }"
           v-for="key in line.split(' ')"
           :key="key"
           @click="(e) => onKeyPress(key)"
@@ -77,16 +77,23 @@ export default Vue.extend({
     },
     onKeyPress(button: string) {
       this.$emit("keypress", button);
-      /**
-       * If you want to handle the shift and caps lock buttons
-       */
-      if (button === "{leeg}") this.handleLeeg();
-      if (button === "{space}") this.onChange(this.modelValue + " ");
-      if (button === "{neg}") this.handleNeg();
-      if (button === "{bksp}") this.onChange(this.modelValue.slice(0, -1));
 
-      if (!button.startsWith("{")) {
-        this.onChange(this.modelValue + button);
+      switch (button) {
+        case "{leeg}":
+          this.onChange("");
+          break;
+        case "{space}":
+          this.onChange(this.modelValue + " ");
+          break;
+        case "{neg}":
+          this.handleNeg();
+          break;
+        case "{bksp}":
+          this.onChange(this.modelValue.slice(0, -1));
+          break;
+        default:
+          this.onChange(this.modelValue + button);
+          break;
       }
     },
     handleNeg() {
@@ -98,9 +105,6 @@ export default Vue.extend({
         this.onChange(`-${this.modelValue}`);
       }
     },
-    handleLeeg() {
-      this.onChange("");
-    }
   }
 });
 </script>

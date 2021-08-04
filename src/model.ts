@@ -1,7 +1,7 @@
 export interface Profiel {
   id: string
   displayName: string
-  scopes: 'BAR:NORMAAL' | 'BAR:BEHEER' | 'BAR:TRUST'
+  scopes: ('BAR:NORMAAL' | 'BAR:BEHEER' | 'BAR:TRUST')[]
 }
 
 export interface Persoon {
