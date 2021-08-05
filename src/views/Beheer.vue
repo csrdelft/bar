@@ -4,7 +4,7 @@
       <beheer-bijnaam v-if="isBeheer" />
     </v-col>
     <v-col cols="4">
-      <beheer-vertrouw v-if="isBeheer" />
+      <beheer-vertrouw v-if="isAdmin" />
     </v-col>
   </v-row>
 </template>
@@ -16,10 +16,14 @@ import BeheerVertrouw from "./beheer/BeheerVertrouw.vue";
 export default Vue.extend({
   components: { BeheerBijnaam, BeheerVertrouw },
   computed: {
+    scopes() {
+      return this.$store.state.user.profiel?.scopes ?? [];
+    },
     isBeheer(): boolean {
-      return (
-        this.$store.state.user.profiel?.scopes.includes("BAR:BEHEER") ?? false
-      );
+      return this.scopes.includes("BAR:BEHEER");
+    },
+    isAdmin(): boolean {
+      return this.scopes.includes("BAR:TRUST");
     }
   }
 });
