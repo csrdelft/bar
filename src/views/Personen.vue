@@ -1,8 +1,6 @@
 <template>
   <div class="hello">
-    <div class="d-none d-md-block">
-      <Keyboard v-model="value" />
-    </div>
+    <Keyboard v-model="value" placeholder="Zoeken"  />
     <LedenTable :zoeken="value" />
   </div>
 </template>

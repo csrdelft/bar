@@ -4,34 +4,39 @@
     :modelValue="modelValue"
     keyboard-class="full-keyboard"
     staggered
+    :placeholder="placeholder"
   />
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import SimpleKeyboard from '@/components/SimpleKeyboard.vue';
+import Vue from "vue";
+import SimpleKeyboard from "@/components/SimpleKeyboard.vue";
 
 export default Vue.extend({
-  name: 'Keyboard',
+  name: "Keyboard",
   model: {
-    prop: 'modelValue',
-    event: 'update:modelValue',
+    prop: "modelValue",
+    event: "update:modelValue"
   },
   components: { SimpleKeyboard },
   props: {
     modelValue: {
-      type: String,
+      type: String
     },
+    placeholder: {
+      default: "",
+      type: String
+    }
   },
   methods: {
     emitValue(value: string) {
       let val = value;
       if (val) {
-      val = val?.toUpperCase();
+        val = val?.toUpperCase();
       }
-      this.$emit('update:modelValue', val);
-    },
-  },
+      this.$emit("update:modelValue", val);
+    }
+  }
 });
 </script>
 
@@ -53,5 +58,4 @@ export default Vue.extend({
 .full-keyboard .hg-button.hg-functionBtn {
   height: 100%;
 }
-
 </style>

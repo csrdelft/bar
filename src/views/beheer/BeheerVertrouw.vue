@@ -6,7 +6,7 @@
         <p>Deze locatie is vertrouwd: {{ vertrouwd.naam }}</p>
 
         <v-btn color="primary" @click="stopVertrouwen">
-          Deze locatie niet langer vertrouwen.
+          Niet langer vertrouwen
         </v-btn>
       </div>
 

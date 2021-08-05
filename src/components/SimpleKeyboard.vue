@@ -3,10 +3,10 @@
     <v-text-field
       :style="{ width: '100%' }"
       :value="modelValue"
-      :placeholder="defaultValue"
+      :placeholder="placeholder"
       @input="onChange"
     />
-    <div :class="{ 'd-flex flex-column': true, [keyboardClass]: true }">
+    <div :class="{ 'd-none d-md-flex flex-column': true, [keyboardClass]: true }">
       <span
         v-for="(line, i) in layout"
         :key="i"
@@ -66,7 +66,7 @@ export default Vue.extend({
     modelValue: {
       type: String
     },
-    defaultValue: {
+    placeholder: {
       default: "",
       type: String
     }
@@ -104,7 +104,7 @@ export default Vue.extend({
       } else {
         this.onChange(`-${this.modelValue}`);
       }
-    },
+    }
   }
 });
 </script>
