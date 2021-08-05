@@ -2,7 +2,7 @@
   <div>
     <div v-if="persoon">
       <v-app-bar flat :color="persoon.saldo > 0 ? 'success' : 'error'">
-        <v-toolbar-title>{{ persoon.naam }}</v-toolbar-title>
+        <v-toolbar-title>{{ persoon.weergave }}</v-toolbar-title>
       </v-app-bar>
       <v-row>
         <v-col lg="9">
@@ -10,11 +10,11 @@
             <v-col
               lg="3"
               v-for="bestelling in bestellingInhoud"
-              :key="bestelling.product.productId + ' ' + bestelling.aantal"
+              :key="bestelling.product.id + ' ' + bestelling.aantal"
             >
               <v-card
                 class="product"
-                @click="verwijderInvoer(bestelling.product.productId)"
+                @click="verwijderInvoer(bestelling.product.id)"
               >
                 <v-card-title class="product-title">
                   {{ bestelling.product.beschrijving }}
@@ -82,7 +82,7 @@ export default Vue.extend({
     Numpad
   },
   props: {
-    socCieId: String,
+    uid: String,
     bestellingId: {
       type: String,
       default: ""
@@ -96,16 +96,13 @@ export default Vue.extend({
     notificatieWeergeven: false
   }),
   created() {
-    this.$store.commit("setSelectie", this.socCieId);
+    this.$store.commit("setSelectie", this.uid);
 
     if (this.bestellingId) {
-      const { producten } = this.$store.state;
+      const oudeBestelling = this.$store.state.bestelling.bestellingen[this.bestellingId]
 
-      const invoer = Object.entries(
-        this.$store.state.bestelling.bestellingen[this.bestellingId].bestelLijst
-      ).map(([id, aantal]) => ({ aantal, product: producten[id] }));
-      this.$store.commit("setInvoer", invoer);
-      this.$store.commit("setOudeInvoer", this.$store.state.bestelling.bestellingen[this.bestellingId]);
+      this.$store.commit("setInvoer", oudeBestelling.inhoud);
+      this.$store.commit("setOudeInvoer", oudeBestelling);
     } else {
       this.$store.commit("setInvoer", {});
     }
@@ -120,7 +117,7 @@ export default Vue.extend({
         return (
           saldo +
           sum(
-            ...Object.values(this.oudeBestellingInhoud).map(
+            ...this.oudeBestellingInhoud.inhoud.map(
               b => b.product.prijs * b.aantal
             )
           )
@@ -130,7 +127,7 @@ export default Vue.extend({
       return saldo;
     },
     persoon(): Persoon {
-      return this.$store.state.personen[this.socCieId];
+      return this.$store.state.personen[this.uid];
     },
     totaal(): number {
       const inhoud = Object.values(this.bestellingInhoud);
@@ -145,8 +142,8 @@ export default Vue.extend({
   },
   methods: {
     formatBedrag,
-    verwijderInvoer(productId: string): void {
-      this.$store.commit("verwijderInvoer", productId);
+    verwijderInvoer(id: number): void {
+      this.$store.commit("verwijderInvoer", id);
     },
     selecteerInvoer(product: Product): void {
       this.$store.commit("selecteerInvoer", {

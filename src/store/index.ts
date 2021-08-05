@@ -64,9 +64,9 @@ export default new Vuex.Store<State>({
   } as unknown as State),
   getters: {
     zichtbareProducten: (state) => Object.values(state.producten)
-      .filter((p) => p.beheer === '0' && p.status === '1'),
+      .filter((p) => !p.beheer && p.status === 1),
     personenWeergave: (state) => Object.values<Persoon>(state.personen)
-      .filter((persoon: Persoon) => persoon.deleted === '0')
+      .filter((persoon: Persoon) => persoon.deleted === false)
       .sort((a, b) => b.recent - a.recent),
       isAdmin: (state) => state.user.profiel?.scopes.includes("BAR:TRUST") ?? false,
       isBeheer: (state) => state.user.profiel?.scopes.includes("BAR:BEHEER") ?? false,
@@ -79,7 +79,7 @@ export default new Vuex.Store<State>({
       state.producten = producten;
     },
     setPersoon(state, persoon: Persoon) {
-      Vue.set(state.personen, persoon.socCieId, persoon)
+      Vue.set(state.personen, persoon.uid, persoon)
     }
   },
   actions: {
@@ -92,7 +92,7 @@ export default new Vuex.Store<State>({
       });
 
       const personen = Object.values(response);
-      const personenRecord = Object.fromEntries(personen.map((p) => [p.socCieId, p]));
+      const personenRecord = Object.fromEntries(personen.map((p) => [p.uid, p]));
 
       commit('setPersonen', personenRecord);
     },
@@ -105,7 +105,7 @@ export default new Vuex.Store<State>({
       });
 
       const producten = Object.values(response);
-      const productenRecord = Object.fromEntries(producten.map((p) => [p.productId, p]));
+      const productenRecord = Object.fromEntries(producten.map((p) => [p.id, p]));
 
       commit('setProducten', productenRecord);
     },

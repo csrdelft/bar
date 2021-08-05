@@ -2,6 +2,7 @@ import { Bestelling } from '@/model';
 import { Module } from 'vuex';
 import { fetchAuthorized } from '@/fetch';
 import { BestellingState, State } from '@/store/state';
+import { groupBy } from '@/util';
 
 const defineModule = <T, R = unknown>(tree: Module<T, R>): Module<T, R> => tree;
 
@@ -11,11 +12,10 @@ export default defineModule<BestellingState, State>({
   }),
   mutations: {
     setBestellingen(state, bestellingen: Bestelling[]) {
-      state.bestellingen = Object.fromEntries(Object.values(bestellingen)
-        .map((b) => [b.bestelId, b]));
+      state.bestellingen = groupBy(bestellingen, 'id')
     },
     updateBestelling(state, bestelling: Bestelling) {
-      state.bestellingen[bestelling.bestelId] = bestelling;
+      state.bestellingen[bestelling.id] = bestelling;
     },
   },
   actions: {
@@ -23,17 +23,17 @@ export default defineModule<BestellingState, State>({
       { state },
       data: { aantal: number, begin: Date, eind: Date, productType?: number[] },
     ): Promise<void> {
-      state.bestellingen = await fetchAuthorized<Record<string, Bestelling>>({
+      state.bestellingen = groupBy(await fetchAuthorized<Bestelling[]>({
         url: '/api/v3/bar/laadLaatste',
         method: 'POST',
         data: JSON.stringify(data),
-      });
+      }), 'id');
     },
     async verwijderBestelling({ commit }, bestelling: Bestelling): Promise<void> {
       const response = await fetchAuthorized<boolean>({
         url: '/api/v3/bar/verwijderBestelling',
         method: 'POST',
-        data: JSON.stringify({ verwijderBestelling: bestelling }),
+        data: { verwijderBestelling: bestelling.id }
       });
 
       if (!response) {
@@ -49,7 +49,7 @@ export default defineModule<BestellingState, State>({
       const response = await fetchAuthorized<boolean>({
         url: '/api/v3/bar/undoVerwijderBestelling',
         method: 'POST',
-        data: JSON.stringify({ undoVerwijderBestelling: bestelling }),
+        data: { undoVerwijderBestelling: bestelling.id },
       });
 
       if (!response) {

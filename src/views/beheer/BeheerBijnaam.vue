@@ -6,7 +6,7 @@
         label="Naam"
         :items="personen"
         item-text="naam"
-        item-value="socCieId"
+        item-value="uid"
         @change="selecteerPersoon"
         clearable
       ></v-autocomplete>
@@ -33,13 +33,13 @@ export default Vue.extend({
     }
   },
   methods: {
-    selecteerPersoon(socCieId: string) {
-      if (!socCieId) {
+    selecteerPersoon(uid: string) {
+      if (!uid) {
         this.persoon = null;
         this.bijnaam = "";
       } else {
-        this.persoon = this.$store.state.personen[socCieId];
-        this.bijnaam = this.persoon?.bijnaam ?? "";
+        this.persoon = this.$store.state.personen[uid];
+        this.bijnaam = this.persoon?.naam ?? "";
       }
     },
     async opslaan() {
@@ -50,7 +50,7 @@ export default Vue.extend({
       this.laden = true;
 
       await this.$store.dispatch("updateBijnaam", {
-        id: this.persoon.socCieId,
+        id: this.persoon.uid,
         name: this.bijnaam
       });
 

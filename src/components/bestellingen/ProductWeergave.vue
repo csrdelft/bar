@@ -1,6 +1,6 @@
 <template>
   <v-row>
-    <v-col cols="6" sm="4" lg="2" v-for="product in producten" :key="product.productId">
+    <v-col cols="6" sm="4" lg="2" v-for="product in producten" :key="product.id">
       <v-card class="btn-product" @click="$emit('selecteer', product)">
         <v-card-title>{{ product.beschrijving }}</v-card-title>
         <v-card-subtitle>{{ formatBedrag(product.prijs) }}</v-card-subtitle>

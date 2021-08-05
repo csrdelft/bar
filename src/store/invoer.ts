@@ -15,7 +15,7 @@ export default defineModule<InvoerState, State>({
   mutations: {
     setInvoer(state, bestellingen: BestellingInhoud[]) {
       state.inhoud = Object.fromEntries(Object.values(bestellingen)
-        .map((b) => [b.product.productId, b]));
+        .map((b) => [b.product.id, b]));
     },
     setOudeInvoer(state, bestelling: Bestelling) {
       state.oudeBestelling = bestelling
@@ -24,24 +24,24 @@ export default defineModule<InvoerState, State>({
       product,
       aantal,
     }: { product: Product, aantal: string }) {
-      if (!(product.productId in state.inhoud)) {
-        Vue.set(state.inhoud, product.productId, {
+      if (!(product.id in state.inhoud)) {
+        Vue.set(state.inhoud, product.id, {
           product,
           aantal: 0,
         })
       }
 
-      Vue.set(state.inhoud, product.productId, {
-        ...state.inhoud[product.productId],
-        aantal: state.inhoud[product.productId].aantal + (Number(aantal) || 1)
+      Vue.set(state.inhoud, product.id, {
+        ...state.inhoud[product.id],
+        aantal: state.inhoud[product.id].aantal + (Number(aantal) || 1)
       })
 
-      if (state.inhoud[product.productId].aantal === 0) {
-        Vue.delete(state.inhoud, product.productId)
+      if (state.inhoud[product.id].aantal === 0) {
+        Vue.delete(state.inhoud, product.id)
       }
     },
-    verwijderInvoer(state, productId: string) {
-      Vue.delete(state.inhoud, productId);
+    verwijderInvoer(state, id: string) {
+      Vue.delete(state.inhoud, id);
     },
     clearInvoer(state) {
       state.inhoud = {};
@@ -54,7 +54,7 @@ export default defineModule<InvoerState, State>({
     }: {
       force: boolean
     }): Promise<void> {
-      const persoon = rootGetters.huidigePersoon;
+      const persoon: Persoon = rootGetters.huidigePersoon;
 
       if (!persoon) {
         throw new Error("Geen persoon geselecteerd");
@@ -73,8 +73,7 @@ export default defineModule<InvoerState, State>({
 
       let nieuwSaldo;
       if (oudeInhoud) {
-        const oudTotaal = sum(...Object.values(oudeInhoud)
-          .map((i) => i.aantal * i.product.prijs));
+        const oudTotaal = oudeInhoud.totaal
         nieuwSaldo = persoon.saldo + oudTotaal - totaal
       } else {
         nieuwSaldo = persoon.saldo - totaal
@@ -95,27 +94,16 @@ export default defineModule<InvoerState, State>({
         if (!force && naarRood) {
           throw new SaldoError('Laat lid inleggen. Saldo wordt negatief.');
         } else {
-          // Set submitting state on true
-
-          const result = {
-            persoon,
-            bestelTotaal: totaal,
-            bestelLijst: Object.fromEntries(Object.values(state.inhoud)
-              .map((i) => [i.product.productId, i.aantal])),
-            oudeBestelling: oudeInhoud,
-          };
-
           const response = await fetchAuthorized<boolean>({
             url: '/api/v3/bar/bestelling',
             method: 'POST',
             data: {
-              bestelling: JSON.stringify(result),
+              uid: persoon.uid,
+              inhoud:  Object.fromEntries(Object.values(state.inhoud)
+              .map((i) => [i.product.id, i.aantal])),
+              ...(oudeInhoud ? {oudeBestelling: oudeInhoud.id}: {})
             },
           });
-
-          if (!response) {
-            throw new Error(`Er ging iets mis! "${response}"`);
-          }
 
           commit("setPersoon", {
             ...persoon,

@@ -3,7 +3,7 @@
     :headers="headers"
     :items="personen"
     @click:row="rowClick"
-    item-key="socCieId"
+    item-key="uid"
     :item-class="tableRowClassName"
     :items-per-page="-1"
     hide-default-footer
@@ -30,8 +30,8 @@ export default Vue.extend({
     },
     headers() {
       return [
-        { text: "Bijnaam", value: "bijnaam" },
-        { text: "Naam", value: "naam" },
+        { text: "Bijnaam", value: "naam" },
+        { text: "Naam", value: "weergave" },
         { text: "Saldo", value: "saldo" }
       ];
     }
@@ -39,7 +39,7 @@ export default Vue.extend({
   methods: {
     formatBedrag,
     rowClick(row: Persoon) {
-      this.$router.push(`/invoer/${row.socCieId}`);
+      this.$router.push(`/invoer/${row.uid}`);
     },
     tableRowClassName(row: Persoon) {
       const color = row.saldo < 0 ? "error" : "success";
@@ -49,7 +49,7 @@ export default Vue.extend({
     },
     filterPersoon(persoon: Persoon) {
       return (
-        persoon.bijnaam.toUpperCase().match(this.zoeken) ||
+        persoon.weergave.toUpperCase().match(this.zoeken) ||
         persoon.naam.toUpperCase().match(this.zoeken)
       );
     }

@@ -5,39 +5,40 @@ export interface Profiel {
 }
 
 export interface Persoon {
-  naam: string
+  weergave: string
   status: string
-  socCieId: string
-  bijnaam: string
+  uid: string
+  naam: string
   saldo: number
   recent: number
-  deleted: string
+  deleted: boolean
 }
 
 export interface Product {
-  productId: string
+  id: string
   prijs: number
-  beheer: string
+  beheer: boolean
   beschrijving: string
-  prioriteit: string
-  status: string
-  cie: string
+  prioriteit: number
+  status: number
+  categorie: string
 }
 
 export interface BestellingInhoud {
+  product_id: number
   product: Product
   aantal: number
 }
 
 export interface Bestelling {
-  // Record<productId, aantal>
-  bestelLijst: Record<string, string>
-  bestelTotaal: number
-  persoon: string
-  tijd: string
-  bestelId: string
-  deleted: string
-  oud: boolean
+  inhoud: BestellingInhoud[]
+  totaal: number
+  uid: string
+  moment: string
+  id: number
+  deleted: boolean
+  comment: string
+  cie: string
 }
 
 export interface BarLocatie {

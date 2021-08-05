@@ -25,13 +25,13 @@ const routes: Array<RouteConfig> = [
     component: Personen,
   },
   {
-    path: '/invoer/:socCieId',
+    path: '/invoer/:uid',
     name: 'Invoer',
     component: Invoer,
     props: true,
   },
   {
-    path: '/invoer/:socCieId/bewerken/:bestellingId',
+    path: '/invoer/:uid/bewerken/:bestellingId',
     name: 'Invoer bewerken',
     component: Invoer,
     props: true,

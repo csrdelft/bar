@@ -54,11 +54,11 @@
               <v-col
                 cols="3"
                 v-for="product in producten"
-                :key="product.productId"
+                :key="product.id"
               >
                 <v-checkbox
                   v-model="selectedProducten"
-                  :value="product.productId"
+                  :value="product.id"
                   :label="product.beschrijving"
                 >
                 </v-checkbox>
@@ -72,23 +72,26 @@
       <v-btn @click="zoeken" size="medium">Zoeken</v-btn>
     </v-col>
     <v-col>
-      <v-data-table :items="bestellingen" :headers="headers" sort-by="tijd" sort-desc>
-        <template v-slot:item.persoon="{ item }">
+      <v-data-table :items="bestellingen" :headers="headers" sort-by="moment" sort-desc>
+        <template v-slot:item.uid="{ item }">
           {{ naamFormatter(item) }}
         </template>
-        <template v-slot:item.bestelLijst="{ item }">
+        <template v-slot:item.inhoud="{ item }">
           <ul>
-            <li v-for="el in getBestelLijstString(item.bestelLijst)" :key="el">
-              {{ el }}
+            <li v-for="el in item.inhoud" :key="el.id">
+              {{el.aantal}} {{ el.product.beschrijving }}
             </li>
           </ul>
         </template>
-        <template v-slot:item.bestelTotaal="{ item }">
-          {{ formatBedrag(item.bestelTotaal) }}
+        <template v-slot:item.totaal="{ item }">
+          {{ formatBedrag(item.totaal) }}
+        </template>
+        <template v-slot:item.moment="{item}">
+          {{ new Date(item.moment).toLocaleString('nl') }}
         </template>
         <template v-slot:item.opties="{ item }">
           <v-icon
-            v-if="item.deleted === '0'"
+            v-if="!item.deleted"
             small
             class="mr-2"
             @click="handleEdit(item)"
@@ -96,13 +99,13 @@
             mdi-pencil
           </v-icon>
           <v-icon
-            v-if="item.deleted === '0'"
+            v-if="!item.deleted"
             small
             @click="handleVerwijder(item)"
           >
             mdi-delete
           </v-icon>
-          <v-icon v-if="item.deleted === '1'" small @click="handleHerstel(item)"
+          <v-icon v-if="item.deleted" small @click="handleHerstel(item)"
             >mdi-restore</v-icon
           >
         </template>
@@ -124,18 +127,18 @@ export default Vue.extend({
     },
     producten(): Product[] {
       return Object.values<Product>(this.$store.state.producten).filter(
-        p => p.beheer === "0" && p.status === "1"
+        p => !p.beheer && p.status === 1
       );
     },
     headers() {
       return [
         {
           text: "Naam",
-          value: "persoon"
+          value: "uid"
         },
-        { text: "Datum en tijd", value: "tijd" },
-        { text: "Totaal", value: "bestelTotaal" },
-        { text: "Bestelling", value: "bestelLijst" },
+        { text: "Datum en tijd", value: "moment" },
+        { text: "Totaal", value: "totaal" },
+        { text: "Bestelling", value: "inhoud" },
         { text: "Opties", value: "opties", sortable: false }
       ];
     },
@@ -203,18 +206,18 @@ export default Vue.extend({
   }),
   methods: {
     naamFormatter(row: Bestelling): string {
-      return this.getPersoon(row.persoon)?.naam;
+      return this.getPersoon(row.uid)?.weergave;
     },
     getPersoon(uid: string): Persoon {
       return this.$store.state.personen[uid];
     },
-    getProduct(productId: string): Product {
-      return this.$store.state.producten[productId];
+    getProduct(id: string): Product {
+      return this.$store.state.producten[id];
     },
     getBestelLijstString(bestelLijst: Record<string, string>): string[] {
       return Object.entries(bestelLijst).map(
-        ([productId, aantal]) =>
-          `${aantal} ${this.getProduct(productId)?.beschrijving}`
+        ([id, aantal]) =>
+          `${aantal} ${this.getProduct(id)?.beschrijving}`
       );
     },
     formatBedrag,
@@ -222,30 +225,30 @@ export default Vue.extend({
       this.checkAll = value.length === this.producten.length;
     },
     handleCheckAllChange(val: boolean) {
-      this.selectedProducten = val ? this.producten.map(v => v.productId) : [];
+      this.selectedProducten = val ? this.producten.map(v => v.id) : [];
     },
     handleEdit(row: Bestelling) {
-      this.$router.push(`/invoer/${row.persoon}/bewerken/${row.bestelId}`);
+      this.$router.push(`/invoer/${row.uid}/bewerken/${row.id}`);
     },
     async handleVerwijder(row: Bestelling) {
-      this.verwijderLaden[row.bestelId] = true;
+      this.verwijderLaden[row.id] = true;
       try {
         await this.$store.dispatch("verwijderBestelling", row);
       } catch (e) {
         //this.$message.error(e.message);
         // TODO
       }
-      delete this.verwijderLaden[row.bestelId];
+      delete this.verwijderLaden[row.id];
     },
     async handleHerstel(row: Bestelling) {
-      this.herstelLaden[row.bestelId] = true;
+      this.herstelLaden[row.id] = true;
       try {
         await this.$store.dispatch("herstelBestelling", row);
       } catch (e) {
         //this.$message.error(e.message);
         // TODO
       }
-      delete this.verwijderLaden[row.bestelId];
+      delete this.verwijderLaden[row.id];
     },
     zoeken() {
       this.$store.dispatch("fetchBestellingen", {
