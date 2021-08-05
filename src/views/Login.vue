@@ -5,18 +5,20 @@
       Welkom <span v-if="vertrouwd">terug</span> bij het barsysteem, gebruik je
       stek account om in te loggen.
     </p>
-    <v-btn x-large color="primary" @click="$router.push('/auth/csr')">Login</v-btn>
+    <v-btn x-large color="primary" @click="$router.push('/auth/csr')"
+      >Login</v-btn
+    >
   </v-container>
   <v-container v-else class="login-main">
     <h1>Welkom in het bar systeem! {{ profielNaam }}</h1>
+
+    <v-alert prominent type="warning">Deze versie van het barsyseem is in beta! Wees dus voorzichtig met waar je op klikt.</v-alert>
 
     <p>
       <v-btn x-large to="/personen">Beginnen</v-btn>
     </p>
 
-    <div v-if="isAdmin">
-      
-    </div>
+    <div v-if="isAdmin"></div>
   </v-container>
 </template>
 
@@ -44,8 +46,7 @@ export default Vue.extend({
     loggedIn() {
       return !!this.$store.state.user.tokenData;
     }
-  },
-  
+  }
 });
 </script>
 
