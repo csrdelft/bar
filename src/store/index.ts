@@ -68,6 +68,8 @@ export default new Vuex.Store<State>({
     personenWeergave: (state) => Object.values<Persoon>(state.personen)
       .filter((persoon: Persoon) => persoon.deleted === '0')
       .sort((a, b) => b.recent - a.recent),
+      isAdmin: (state) => state.user.profiel?.scopes.includes("BAR:TRUST") ?? false,
+      isBeheer: (state) => state.user.profiel?.scopes.includes("BAR:BEHEER") ?? false,
   },
   mutations: {
     setPersonen(state, personen: Record<string, Persoon>) {

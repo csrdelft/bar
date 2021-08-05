@@ -16,7 +16,7 @@ export interface Persoon {
 
 export interface Product {
   productId: string
-  prijs: string
+  prijs: number
   beheer: string
   beschrijving: string
   prioriteit: string
@@ -32,7 +32,7 @@ export interface BestellingInhoud {
 export interface Bestelling {
   // Record<productId, aantal>
   bestelLijst: Record<string, string>
-  bestelTotaal: string
+  bestelTotaal: number
   persoon: string
   tijd: string
   bestelId: string

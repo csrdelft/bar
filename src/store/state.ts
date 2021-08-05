@@ -18,6 +18,7 @@ export interface BestellingState {
 
 export interface InvoerState {
   inhoud: Record<string, BestellingInhoud>
+  oudeBestelling: Bestelling|null
 }
 
 export interface UserState {

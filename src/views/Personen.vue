@@ -1,6 +1,6 @@
 <template>
-  <div class="hello">
-    <Keyboard v-model="value" placeholder="Zoeken"  />
+  <div>
+    <Keyboard v-model="value" placeholder="Zoeken" />
     <LedenTable :zoeken="value" />
   </div>
 </template>

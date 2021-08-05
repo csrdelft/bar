@@ -1,7 +1,5 @@
-import Vue, { ComponentCustomProperties } from 'vue'
+import Vue from 'vue'
 import { Store } from 'vuex'
-import { Bestelling, BestellingInhoud, Persoon, Product, BarLocatie, Profiel } from './model'
-import { OAuth2Data } from 'client-oauth2'
 import { State} from './store/state'
 
 declare module "vue/types/vue" {

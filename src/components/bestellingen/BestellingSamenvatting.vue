@@ -4,7 +4,7 @@
       <v-list-item>
         <v-list-item-title>Huidig saldo</v-list-item-title>
         <v-list-item-subtitle>{{
-          formatBedrag(persoon.saldo)
+          formatBedrag(saldo)
         }}</v-list-item-subtitle>
       </v-list-item>
       <v-list-item>
@@ -14,7 +14,7 @@
       <v-list-item>
         <v-list-item-title>Nieuw saldo</v-list-item-title>
         <v-list-item-subtitle>{{
-          formatBedrag(persoon.saldo - totaal)
+          formatBedrag(saldo - totaal)
         }}</v-list-item-subtitle>
       </v-list-item>
     </v-list>
@@ -50,10 +50,10 @@ export default Vue.extend({
   name: "BestellingSamenvatting",
   props: {
     bestellingLaden: Boolean,
-    persoon: Object,
     totaal: Number,
     plaatsBestelling: Function,
-    annuleer: Function
+    annuleer: Function,
+    saldo: Number,
   },
   methods: {
     formatBedrag

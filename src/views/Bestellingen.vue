@@ -38,7 +38,6 @@
             Producten
           </v-btn>
         </template>
-        <!-- <v-dialog title="Selecteer producten" v-model="productSelectieZichtbaar"> -->
         <v-card>
           <v-card-title>Selecteer producten</v-card-title>
 

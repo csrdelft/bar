@@ -1,4 +1,4 @@
-import { BestellingInhoud, Persoon, Product } from '@/model';
+import { Bestelling, BestellingInhoud, Persoon, Product } from '@/model';
 import { Module } from 'vuex';
 import { fetchAuthorized } from '@/fetch';
 import { isOudlid, SaldoError, sum } from '@/util';
@@ -9,12 +9,16 @@ const defineModule = <T, R>(tree: Module<T, R>): Module<T, R> => tree;
 
 export default defineModule<InvoerState, State>({
   state: () => ({
-    inhoud: {} as Record<string, BestellingInhoud>,
+    inhoud: {},
+    oudeBestelling: null
   }),
   mutations: {
     setInvoer(state, bestellingen: BestellingInhoud[]) {
       state.inhoud = Object.fromEntries(Object.values(bestellingen)
         .map((b) => [b.product.productId, b]));
+    },
+    setOudeInvoer(state, bestelling: Bestelling) {
+      state.oudeBestelling = bestelling
     },
     selecteerInvoer(state, {
       product,
@@ -41,46 +45,54 @@ export default defineModule<InvoerState, State>({
     },
     clearInvoer(state) {
       state.inhoud = {};
+      state.oudeBestelling = null;
     },
   },
   actions: {
-    async plaatsBestelling({ state, rootGetters }, {
-      oudeInhoud,
+    async plaatsBestelling({ commit, state, rootGetters }, {
       force = false,
     }: {
-      persoon: Persoon
-      oudeInhoud: Record<string, BestellingInhoud>
       force: boolean
     }): Promise<void> {
-      const warningGiven = force;
-
       const persoon = rootGetters.huidigePersoon;
+
+      if (!persoon) {
+        throw new Error("Geen persoon geselecteerd");
+      }
+      const emptyOrder = Object.values(state.inhoud).length === 0;
+
+      if (emptyOrder) {
+        throw new Error("Geen bestelling ingevoerd");
+      }
+
+      const oudeInhoud = state.oudeBestelling
 
       const oudLid = isOudlid(persoon);
       const totaal = sum(...Object.values(state.inhoud)
-        .map((i) => i.aantal * Number(i.product.prijs)));
+        .map((i) => i.aantal * i.product.prijs));
 
-      let toRed;
+      let nieuwSaldo;
       if (oudeInhoud) {
         const oudTotaal = sum(...Object.values(oudeInhoud)
-          .map((i) => i.aantal * Number(i.product.prijs)));
-        toRed = persoon.saldo + oudTotaal - totaal < 0;
+          .map((i) => i.aantal * i.product.prijs));
+        nieuwSaldo = persoon.saldo + oudTotaal - totaal
       } else {
-        toRed = persoon.saldo - totaal < 0;
+        nieuwSaldo = persoon.saldo - totaal
       }
+
+      let naarRood = nieuwSaldo < 0;
 
       // noinspection PointlessBooleanExpressionJS
-      if (totaal <= 0 || persoon.status === 'S_NOBODY' || /* TODO: beheer */ false) {
-        toRed = false;
+      if (totaal <= 0 || persoon.status === 'S_NOBODY' || rootGetters.isBeheer) {
+        // Inleg waarschuwt niet.
+        naarRood = false;
       }
 
-      const emptyOrder = Object.values(state.inhoud).length === 0;
 
-      if (oudLid && toRed) {
+      if (oudLid && naarRood) {
         throw new Error('Oudleden kunnen niet rood staan, inleg vereist!');
-      } else if (persoon && !emptyOrder) {
-        if (!warningGiven && toRed) {
-          // TODO: Timeout!
+      } else {
+        if (!force && naarRood) {
           throw new SaldoError('Laat lid inleggen. Saldo wordt negatief.');
         } else {
           // Set submitting state on true
@@ -104,9 +116,15 @@ export default defineModule<InvoerState, State>({
           if (!response) {
             throw new Error(`Er ging iets mis! "${response}"`);
           }
+
+          commit("setPersoon", {
+            ...persoon,
+            saldo: nieuwSaldo
+          })
+
+          // voorkom opnieuw submitten van hetzelfde
+          commit("clearInvoer")
         }
-      } else if (emptyOrder) {
-        throw new Error('Geen bestelling ingevoerd!');
       }
     },
   },

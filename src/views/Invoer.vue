@@ -41,7 +41,7 @@
           <Numpad default-value="1" v-model="aantal" />
           <BestellingSamenvatting
             :bestelling-laden="bestellingLaden"
-            :persoon="persoon"
+            :saldo="saldo"
             :totaal="totaal"
             :annuleer="annuleer"
             :plaatsBestelling="plaatsBestelling"
@@ -51,7 +51,7 @@
     </div>
 
     <v-snackbar v-model="notificatieWeergeven" top color="error" timeout="5000">
-      {{notificatie}}
+      {{ notificatie }}
       <template v-slot:action="{ attrs }">
         <v-btn
           color="white"
@@ -68,7 +68,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { BestellingInhoud, Persoon, Product } from "../model";
+import { Bestelling, BestellingInhoud, Persoon, Product } from "../model";
 import Numpad from "../components/Numpad.vue";
 import { formatBedrag, SaldoError, sum } from "../util";
 import ProductWeergave from "../components/bestellingen/ProductWeergave.vue";
@@ -92,8 +92,8 @@ export default Vue.extend({
     aantal: "",
     bestellingLaden: false,
     forceBestelling: false,
-    notificatie: '',
-    notificatieWeergeven: false,
+    notificatie: "",
+    notificatieWeergeven: false
   }),
   created() {
     this.$store.commit("setSelectie", this.socCieId);
@@ -101,30 +101,46 @@ export default Vue.extend({
     if (this.bestellingId) {
       const { producten } = this.$store.state;
 
-      this.$store.commit(
-        "setInvoer",
-        Object.entries(
-          this.$store.state.bestelling.bestellingen[this.bestellingId]
-            .bestelLijst
-        ).map(([id, aantal]) => ({ aantal, product: producten[id] }))
-      );
+      const invoer = Object.entries(
+        this.$store.state.bestelling.bestellingen[this.bestellingId].bestelLijst
+      ).map(([id, aantal]) => ({ aantal, product: producten[id] }));
+      this.$store.commit("setInvoer", invoer);
+      this.$store.commit("setOudeInvoer", this.$store.state.bestelling.bestellingen[this.bestellingId]);
     } else {
-      this.$store.commit("setInvoer", {})
+      this.$store.commit("setInvoer", {});
     }
   },
   computed: {
     producten(): Product[] {
       return this.$store.getters.zichtbareProducten;
     },
-    persoon(): Persoon | null {
-      return this.socCieId ? this.$store.state.personen[this.socCieId] : null;
+    saldo(): number {
+      const saldo = this.persoon.saldo;
+      if (this.oudeBestellingInhoud) {
+        return (
+          saldo +
+          sum(
+            ...Object.values(this.oudeBestellingInhoud).map(
+              b => b.product.prijs * b.aantal
+            )
+          )
+        );
+      }
+
+      return saldo;
+    },
+    persoon(): Persoon {
+      return this.$store.state.personen[this.socCieId];
     },
     totaal(): number {
       const inhoud = Object.values(this.bestellingInhoud);
-      return sum(...inhoud.map(b => Number(b.product.prijs) * b.aantal));
+      return sum(...inhoud.map(b => b.product.prijs * b.aantal));
     },
     bestellingInhoud(): Record<string, BestellingInhoud> {
       return this.$store.state.invoer.inhoud;
+    },
+    oudeBestellingInhoud(): Bestelling | null {
+      return this.$store.state.invoer.oudeBestelling;
     }
   },
   methods: {
@@ -140,40 +156,44 @@ export default Vue.extend({
 
       this.aantal = "";
     },
-    async plaatsBestelling(): Promise<void> {
+    async bestel(force: boolean): Promise<void> {
       this.bestellingLaden = true;
+
+      await this.$store.dispatch("plaatsBestelling", {
+        inhoud: this.bestellingInhoud,
+        persoon: this.persoon,
+        force
+      });
+
+      this.bestellingLaden = false;
+
+      await this.$router.replace("/personen");
+    },
+    async plaatsBestelling(): Promise<void> {
       try {
-        await this.$store.dispatch("plaatsBestelling", {
-          inhoud: this.bestellingInhoud,
-          persoon: this.persoon,
-          force: this.forceBestelling
-        });
-        this.forceBestelling = false;
-
-        await this.$store.dispatch("postLogin");
-
-        this.bestellingLaden = false;
-        this.$store.commit("clearInvoer");
-        this.$store.commit("setSelectie", null);
-        await this.$router.replace("/personen");
+        await this.bestel(false);
       } catch (e) {
         if (e instanceof SaldoError) {
-          setTimeout(() => {
-            this.forceBestelling = true;
-            this.bestellingLaden = false;
-          }, 3000);
-        } else {
-          this.bestellingLaden = false;
-        }
+          try {
+            await this.$notify.confirm(
+              { text: e.message },
+              { yesText: "Doorgaan", noText: "Terug" }
+            );
 
-        this.notificatie = e.message;
-        this.notificatieWeergeven = true;
+            await this.bestel(true);
+          } catch (e) {
+            // confirm geannuleerd
+          }
+        } else {
+          this.$notify.show({ text: e.message });
+        }
+      } finally {
+        this.bestellingLaden = false;
       }
     },
     annuleer(): void {
       this.$store.commit("clearInvoer");
       this.aantal = "";
-      this.forceBestelling = false;
       this.$store.commit("setSelectie", null);
       this.$router.replace("/personen");
     }
