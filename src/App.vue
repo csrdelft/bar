@@ -45,7 +45,6 @@
             </v-list-item-icon>
             <v-list-item-title>Uitloggen</v-list-item-title>
           </v-list-item>
-          
         </v-list-item-group>
         <v-list-item>
           <v-list-item-icon></v-list-item-icon>
@@ -63,15 +62,10 @@
     </v-navigation-drawer>
 
     <v-app-bar app>
-      <v-app-bar-nav-icon
-        v-if="loggedIn"
-        @click="drawer = !drawer"
-      ></v-app-bar-nav-icon>
-
-      <v-toolbar-title
-        >C.S.R. Bar
-        <span v-if="vertrouwd">- {{ vertrouwd.naam }}</span></v-toolbar-title
-      >
+      <v-toolbar-title>
+        C.S.R. Bar
+        <span v-if="vertrouwd">- {{ vertrouwd.naam }}</span>
+      </v-toolbar-title>
 
       <v-spacer></v-spacer>
 
@@ -83,10 +77,6 @@
         <router-view></router-view>
       </v-container>
     </v-main>
-
-    <v-footer app>
-      <!-- -->
-    </v-footer>
 
     <v-overlay :value="loading">
       <v-progress-circular indeterminate size="64"></v-progress-circular>
@@ -103,7 +93,6 @@ import Clock from "./components/Clock.vue";
 export default Vue.extend({
   components: { Clock },
   name: "App",
-  // components: { Clock, PersoonSelectie },
   data: () => ({
     loading: true,
     drawer: false
