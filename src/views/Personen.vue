@@ -1,34 +1,36 @@
 <template>
   <div class="hello">
-    <Keyboard v-model="value"/>
-    <LedenTable :zoeken="value"/>
+    <div class="d-none d-md-block">
+      <Keyboard v-model="value" />
+    </div>
+    <LedenTable :zoeken="value" />
   </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import Keyboard from '@/components/Keyboard.vue';
-import LedenTable from '@/components/LedenTable.vue';
+import Vue from "vue";
+import Keyboard from "@/components/Keyboard.vue";
+import LedenTable from "@/components/LedenTable.vue";
 
 export default Vue.extend({
-  name: 'Personen',
+  name: "Personen",
   components: {
     LedenTable,
-    Keyboard,
+    Keyboard
   },
   data: () => ({
-    value: '',
+    value: ""
   }),
   computed: {
     upperValue(): string {
       return this.value.toUpperCase();
-    },
+    }
   },
   methods: {
     change(value: string) {
       this.value = value;
-    },
-  },
+    }
+  }
 });
 </script>
 

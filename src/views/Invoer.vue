@@ -5,10 +5,10 @@
         <v-toolbar-title>{{ persoon.naam }}</v-toolbar-title>
       </v-app-bar>
       <v-row>
-        <v-col cols="9">
+        <v-col lg="9">
           <v-row class="bestelling-inhoud">
             <v-col
-              cols="3"
+              lg="3"
               v-for="bestelling in bestellingInhoud"
               :key="bestelling.product.productId + ' ' + bestelling.aantal"
             >
@@ -37,7 +37,7 @@
             @selecteer="selecteerInvoer"
           />
         </v-col>
-        <v-col cols="3">
+        <v-col lg="3">
           <Numpad default-value="1" v-model="aantal" />
           <BestellingSamenvatting
             :bestelling-laden="bestellingLaden"

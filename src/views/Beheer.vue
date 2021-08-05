@@ -1,9 +1,9 @@
 <template>
   <v-row>
-    <v-col cols="4">
+    <v-col lg="4">
       <beheer-bijnaam v-if="isBeheer" />
     </v-col>
-    <v-col cols="4">
+    <v-col lg="4">
       <beheer-vertrouw v-if="isAdmin" />
     </v-col>
   </v-row>
