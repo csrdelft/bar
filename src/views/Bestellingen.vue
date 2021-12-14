@@ -116,8 +116,8 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Bestelling, Persoon, Product } from "../model";
-import { formatBedrag } from "../util";
+import { Bestelling, Persoon, Product } from "@/model";
+import { formatBedrag } from "@/util";
 
 export default Vue.extend({
   name: "Bestellingen",

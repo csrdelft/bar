@@ -5,6 +5,7 @@
     keyboard-class="full-keyboard"
     staggered
     :placeholder="placeholder"
+    :grab-focus="grabFocus"
   />
 </template>
 
@@ -26,7 +27,11 @@ export default Vue.extend({
     placeholder: {
       default: "",
       type: String
-    }
+    },
+    grabFocus: {
+      default: false,
+      type: Boolean,
+    },
   },
   methods: {
     emitValue(value: string) {

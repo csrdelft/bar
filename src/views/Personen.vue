@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Keyboard v-model="value" placeholder="Zoeken" />
+    <Keyboard v-model="value" placeholder="Zoeken" :grab-focus="true" />
     <LedenTable :zoeken="value" />
   </div>
 </template>

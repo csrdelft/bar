@@ -67,7 +67,7 @@ export default new Vuex.Store<State>({
       .filter((p) => !p.beheer && p.status === 1),
     personenWeergave: (state) => Object.values<Persoon>(state.personen)
       .filter((persoon: Persoon) => persoon.deleted === false)
-      .sort((a, b) => b.recent - a.recent),
+      .sort((a, b) => a.recent - b.recent),
       isAdmin: (state) => state.user.profiel?.scopes.includes("BAR:TRUST") ?? false,
       isBeheer: (state) => state.user.profiel?.scopes.includes("BAR:BEHEER") ?? false,
   },
@@ -92,7 +92,8 @@ export default new Vuex.Store<State>({
       });
 
       const personen = Object.values(response);
-      const personenRecord = Object.fromEntries(personen.map((p) => [p.uid, p]));
+      // Bewaar de volgorde van de array
+      const personenRecord = Object.fromEntries(personen.map((p, i) => [p.uid, {...p, recent: i}]));
 
       commit('setPersonen', personenRecord);
     },
@@ -127,7 +128,7 @@ export default new Vuex.Store<State>({
       commit('setLocatieToken', barLocatie);
     },
     async updateBijnaam({commit, state}, {
-      id, 
+      id,
       name,
     } : {id: string, name: string}): Promise<void> {
       await fetchAuthorized<void>({
@@ -141,7 +142,7 @@ export default new Vuex.Store<State>({
 
       commit('setPersoon', {
         ...state.personen[id],
-        bijnaam: name,
+        naam: name,
       })
     }
   },

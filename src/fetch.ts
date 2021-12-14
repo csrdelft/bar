@@ -19,7 +19,7 @@ export const fetchAuthorized = async <T>(requestObj: FetchConfig): Promise<T> =>
       headers: {
         ...requestObj.headers,
         'Content-Type': 'application/json',
-        'X-Bar-Token': getLocatieToken(),
+        'X-Bar-Token': getLocatieToken()?.sleutel,
       },
       url: process.env.VUE_APP_REMOTE_URL + requestObj.url,
     }));

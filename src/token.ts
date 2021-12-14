@@ -54,7 +54,7 @@ export const removeLocatieToken = (): void => {
   Cookies.remove('locatie-token', LOCATIE_TOKEN_OPTIONS);
 };
 
-export const getLocatieToken = (): string | null => {
+export const getLocatieToken = (): BarLocatie | null => {
   const locatie = Cookies.get('locatie-token');
   if (!locatie) {
     return null;

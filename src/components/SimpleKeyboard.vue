@@ -1,6 +1,7 @@
 <template>
   <div class="d-flex flex-column align-center">
     <v-text-field
+      ref="textField"
       :style="{ width: '100%' }"
       :value="modelValue"
       :placeholder="placeholder"
@@ -69,6 +70,15 @@ export default Vue.extend({
     placeholder: {
       default: "",
       type: String
+    },
+    grabFocus: {
+      default: false,
+      type: Boolean,
+    }
+  },
+  mounted() {
+    if (this.grabFocus) {
+      (this.$refs.textField as HTMLElement).focus();
     }
   },
   methods: {

@@ -1,5 +1,13 @@
 # bar
 
+## Oauth setup
+
+Voer het volgende commando uit op je lokale test-stek om een nieuwe oauth applicatie met goede redirect-uri te registreren.
+
+```bash
+php bin/console trikoder:oauth2:create-client --redirect-uri http://localhost:8080/auth/callback bar
+```
+
 ## Project setup
 ```
 yarn install

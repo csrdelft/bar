@@ -5,7 +5,7 @@
       <v-autocomplete
         label="Naam"
         :items="personen"
-        item-text="naam"
+        item-text="weergave"
         item-value="uid"
         @change="selecteerPersoon"
         clearable

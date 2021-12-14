@@ -68,9 +68,9 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Bestelling, BestellingInhoud, Persoon, Product } from "../model";
+import { Bestelling, BestellingInhoud, Persoon, Product } from "@/model";
 import Numpad from "../components/Numpad.vue";
-import { formatBedrag, SaldoError, sum } from "../util";
+import { formatBedrag, SaldoError, sum } from "@/util";
 import ProductWeergave from "../components/bestellingen/ProductWeergave.vue";
 import BestellingSamenvatting from "../components/bestellingen/BestellingSamenvatting.vue";
 
