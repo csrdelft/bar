@@ -32,7 +32,7 @@ export default Vue.extend({
   },
   created(): void {
     if (!this.$store.state.user.tokenData) {
-      window.open(csrAuth.token.getUri());
+      window.open(csrAuth.token.getUri({query: {"remote-login": "true"}}));
 
       this.loading = true;
 

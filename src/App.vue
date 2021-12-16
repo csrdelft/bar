@@ -46,18 +46,6 @@
             <v-list-item-title>Uitloggen</v-list-item-title>
           </v-list-item>
         </v-list-item-group>
-        <v-list-item>
-          <v-list-item-icon></v-list-item-icon>
-          <v-list-item-title>
-            <v-switch
-              v-model="$vuetify.theme.dark"
-              hint="Schakelt tussen licht en donker thema"
-              inset
-              label="Donker thema"
-              persistent-hint
-            ></v-switch>
-          </v-list-item-title>
-        </v-list-item>
       </v-list>
     </v-navigation-drawer>
 
