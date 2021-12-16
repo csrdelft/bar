@@ -107,6 +107,7 @@ export default defineModule<InvoerState, State>({
 
           commit("setPersoon", {
             ...persoon,
+            recent: persoon.recent + 1,
             saldo: nieuwSaldo
           })
 
