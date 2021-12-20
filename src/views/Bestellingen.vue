@@ -126,7 +126,7 @@ export default Vue.extend({
       return Object.values(this.$store.state.bestelling.bestellingen);
     },
     producten(): Product[] {
-      return Object.values<Product>(this.$store.state.producten).filter(
+      return Object.values<Product>(this.$store.state.product.producten).filter(
         p => !p.beheer && p.status === 1
       );
     },
@@ -209,10 +209,10 @@ export default Vue.extend({
       return this.getPersoon(row.uid)?.weergave;
     },
     getPersoon(uid: string): Persoon {
-      return this.$store.state.personen[uid];
+      return this.$store.state.persoon.personen[uid];
     },
     getProduct(id: string): Product {
-      return this.$store.state.producten[id];
+      return this.$store.state.product.producten[id];
     },
     getBestelLijstString(bestelLijst: Record<string, string>): string[] {
       return Object.entries(bestelLijst).map(

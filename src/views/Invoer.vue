@@ -127,7 +127,7 @@ export default Vue.extend({
       return saldo;
     },
     persoon(): Persoon {
-      return this.$store.state.personen[this.uid];
+      return this.$store.state.persoon.personen[this.uid];
     },
     totaal(): number {
       const inhoud = Object.values(this.bestellingInhoud);

@@ -44,7 +44,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { formatBedrag } from "../../util";
+import { formatBedrag } from "@/util";
 
 export default Vue.extend({
   name: "BestellingSamenvatting",

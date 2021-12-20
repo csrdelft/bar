@@ -1,96 +1,44 @@
-import Vuex, {Store} from 'vuex';
-import {BarLocatie, Persoon, Product, Profiel,} from '@/model';
-import bestelling from '@/store/bestelling';
+import Vuex from 'vuex';
+import {BarLocatie, Persoon, Product,} from '@/model';
+import bestelling, {BestellingState} from '@/store/module/bestelling';
 import {fetchAuthorized} from '@/fetch';
-import {getLocatieToken, getTokenData, removeLocatieToken, removeToken, setLocatieToken, setToken,} from '@/token';
-import invoer from '@/store/invoer';
-import {State} from '@/store/state';
-import user from '@/store/user';
+import invoer, {InvoerState} from '@/store/module/invoer';
+import user, {UserState} from '@/store/module/user';
+import persoon, {PersonenState} from './module/persoon';
 import Vue from 'vue';
+import {isOudlid, SaldoError, sum} from "@/util";
+import product, {ProductenState} from "@/store/module/product";
+import {saveTokenPlugin} from "@/store/plugin/token";
 
 Vue.use(Vuex)
 
-/**
- * Stop de token uit de cookie in de state en update de cookie als de state veranderd.
- * @param setTokenMutation
- * @param setLocatieTokenMutation
- */
-// eslint-disable-next-line max-len
-const saveTokenPlugin = (setTokenMutation: string, setLocatieTokenMutation: string) => <S>(store: Store<S>) => {
-    const token = getTokenData();
-    if (token) {
-        store.commit(setTokenMutation, token);
-    }
+export interface State {
+    bestelling: BestellingState
+    invoer: InvoerState
+    user: UserState
+    persoon: PersonenState
+    product: ProductenState
+}
 
-    const locatieToken = getLocatieToken();
-    if (locatieToken) {
-        store.commit(setLocatieTokenMutation, locatieToken);
-    }
-
-    store.subscribe((mutation) => {
-        if (mutation.type === setTokenMutation) {
-            if (mutation.payload) {
-                setToken(mutation.payload);
-            } else {
-                removeToken();
-            }
-        }
-        if (mutation.type === setLocatieTokenMutation) {
-            if (mutation.payload) {
-                setLocatieToken(mutation.payload);
-            } else {
-                removeLocatieToken();
-            }
-        }
-    });
-};
 
 export default new Vuex.Store<State>({
     devtools: true,
     plugins: [saveTokenPlugin('setToken', 'setLocatieToken')],
-    state: () => ({
-        profiel: null as Profiel | null,
-        personen: {} as Record<string, Persoon>,
-        producten: {} as Record<string, Product>,
-    } as unknown as State),
     getters: {
-        zichtbareProducten: (state) => Object.values(state.producten)
-            .filter((p) => !p.beheer && p.status === 1),
-        personenWeergave: (state) => Object.values<Persoon>(state.personen)
-            .filter((persoon: Persoon) => !persoon.deleted)
+        personenWeergave: (state) => Object.values<Persoon>(state.persoon.personen)
+            .filter((p: Persoon) => !p.deleted)
             .sort((a, b) => a.recent - b.recent)
             .reverse(),
+        zichtbareProducten: (state) => Object.values(state.product.producten)
+            .filter((p) => !p.beheer && p.status === 1),
         isAdmin: (state) => state.user.profiel?.scopes.includes("BAR:TRUST") ?? false,
         isBeheer: (state) => state.user.profiel?.scopes.includes("BAR:BEHEER") ?? false,
+        huidigePersoon: (state): Persoon | null =>
+            state.user.selectie ? state.persoon.personen[state.user.selectie] : null,
     },
-    mutations: {
-        setPersonen(state, personen: Record<string, Persoon>) {
-            state.personen = personen;
-        },
-        setProducten(state, producten: Record<string, Product>) {
-            state.producten = producten;
-        },
-        setPersoon(state, persoon: Persoon) {
-            Vue.set(state.personen, persoon.uid, persoon)
-        }
-    },
+    mutations: {},
     actions: {
-        async listUsers({
-                            commit,
-                        }): Promise<void> {
-            const response = await fetchAuthorized<Persoon[]>({
-                url: '/api/v3/bar/personen',
-                method: 'POST',
-            });
-
-            const personen = Object.values(response);
-            const personenRecord = Object.fromEntries(personen.map((p, i) => [p.uid, {...p}]));
-
-            commit('setPersonen', personenRecord);
-        },
-        async listProducten({
-                                commit,
-                            }): Promise<void> {
+        async listProducten({commit}): Promise<void> {
             const response = await fetchAuthorized<Product[]>({
                 url: '/api/v3/bar/producten',
                 method: 'POST',
@@ -118,28 +66,78 @@ export default new Vuex.Store<State>({
 
             commit('setLocatieToken', barLocatie);
         },
-        async updateBijnaam({commit, state}, {
-            id,
-            name,
-        }: { id: string, name: string }): Promise<void> {
-            await fetchAuthorized<void>({
-                url: '/api/v3/bar/updatePerson',
-                method: 'POST',
-                data: {
-                    id,
-                    name,
-                }
-            })
+        async plaatsBestelling({commit, state, getters}, {
+            force = false,
+        }: {
+            force: boolean
+        }): Promise<void> {
+            const huidigePersoon: Persoon = getters.huidigePersoon;
 
-            commit('setPersoon', {
-                ...state.personen[id],
-                naam: name,
-            })
-        }
+            if (!huidigePersoon) {
+                throw new Error("Geen persoon geselecteerd");
+            }
+            const emptyOrder = Object.values(state.invoer.inhoud).length === 0;
+
+            if (emptyOrder) {
+                throw new Error("Geen bestelling ingevoerd");
+            }
+
+            const oudeInhoud = state.invoer.oudeBestelling
+
+            const oudLid = isOudlid(huidigePersoon);
+            const totaal = sum(...Object.values(state.invoer.inhoud)
+                .map((i) => i.aantal * i.product.prijs));
+
+            let nieuwSaldo;
+            if (oudeInhoud) {
+                const oudTotaal = oudeInhoud.totaal
+                nieuwSaldo = huidigePersoon.saldo + oudTotaal - totaal
+            } else {
+                nieuwSaldo = huidigePersoon.saldo - totaal
+            }
+
+            let naarRood = nieuwSaldo < 0;
+
+            // noinspection PointlessBooleanExpressionJS
+            if (totaal <= 0 || huidigePersoon.status === 'S_NOBODY' || getters.isBeheer) {
+                // Inleg waarschuwt niet.
+                naarRood = false;
+            }
+
+            if (oudLid && naarRood) {
+                throw new Error('Oudleden kunnen niet rood staan, inleg vereist!');
+            } else {
+                if (!force && naarRood) {
+                    throw new SaldoError('Laat lid inleggen. Saldo wordt negatief.');
+                } else {
+                    await fetchAuthorized<boolean>({
+                        url: '/api/v3/bar/bestelling',
+                        method: 'POST',
+                        data: {
+                            uid: huidigePersoon.uid,
+                            inhoud: Object.fromEntries(Object.values(state.invoer.inhoud)
+                                .map((i) => [i.product.id, i.aantal])),
+                            ...(oudeInhoud ? {oudeBestelling: oudeInhoud.id} : {})
+                        },
+                    });
+
+                    commit("setPersoon", {
+                        ...huidigePersoon,
+                        recent: huidigePersoon.recent + 1,
+                        saldo: nieuwSaldo
+                    })
+
+                    // voorkom opnieuw submitten van hetzelfde
+                    commit("clearInvoer")
+                }
+            }
+        },
     },
     modules: {
         bestelling,
         invoer,
         user,
+        persoon,
+        product,
     },
 });
