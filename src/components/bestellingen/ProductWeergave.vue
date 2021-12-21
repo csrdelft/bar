@@ -10,9 +10,9 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from 'vue';
-import { Product } from '@/model';
-import { formatBedrag } from '@/util';
+import Vue, {PropType} from 'vue';
+import {Product} from '@/model';
+import {formatBedrag} from '@/util';
 
 export default Vue.extend({
   name: 'ProductWeergave',

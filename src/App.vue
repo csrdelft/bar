@@ -1,16 +1,18 @@
 <template>
   <v-app>
     <v-navigation-drawer
-      app
-      v-model="drawer"
-      permanent
-      expand-on-hover
-      v-if="loggedIn"
+        app
+        v-model="drawer"
+        permanent
+        expand-on-hover
+        v-if="loggedIn"
     >
       <v-list nav dense>
         <v-list-item-group act>
           <v-list-item to="/">
-            <v-list-item-icon><v-icon>mdi-home</v-icon></v-list-item-icon>
+            <v-list-item-icon>
+              <v-icon>mdi-home</v-icon>
+            </v-list-item-icon>
             <v-list-item-title>Begin</v-list-item-title>
           </v-list-item>
           <v-list-item to="/personen">
@@ -57,7 +59,7 @@
 
       <v-spacer></v-spacer>
 
-      <clock />
+      <clock/>
     </v-app-bar>
 
     <v-main>
@@ -75,11 +77,11 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { BarLocatie } from "@/model";
+import {BarLocatie} from "@/model";
 import Clock from "./components/Clock.vue";
 
 export default Vue.extend({
-  components: { Clock },
+  components: {Clock},
   name: "App",
   data: () => ({
     loading: true,
@@ -90,7 +92,7 @@ export default Vue.extend({
       return Boolean(this.$store.getters.token);
     },
     bestellingUrl(): string | null {
-      const { selectie } = this.$store.state.user;
+      const {selectie} = this.$store.state.user;
       if (selectie) {
         return `/invoer/${selectie}`;
       }

@@ -1,27 +1,27 @@
 <template>
   <div class="d-flex flex-column align-center">
     <v-text-field
-      ref="textField"
-      :style="{ width: '100%' }"
-      :value="modelValue"
-      :placeholder="placeholder"
-      @input="onChange"
+        ref="textField"
+        :style="{ width: '100%' }"
+        :value="modelValue"
+        :placeholder="placeholder"
+        @input="onChange"
     />
     <div :class="{ 'd-none d-md-flex flex-column': true, [keyboardClass]: true }">
       <span
-        v-for="(line, i) in layout"
-        :key="i"
-        class="keyboard d-inline-flex"
-        :style="{ marginLeft: i * (staggered ? 32 : 0) + 'px' }"
+          v-for="(line, i) in layout"
+          :key="i"
+          class="keyboard d-inline-flex"
+          :style="{ marginLeft: i * (staggered ? 32 : 0) + 'px' }"
       >
         <v-btn
-          :class="{
+            :class="{
             'ma-1 keyboard-button': true,
             special: key.startsWith('{'),
           }"
-          v-for="key in line.split(' ')"
-          :key="key"
-          @click="(e) => onKeyPress(key)"
+            v-for="key in line.split(' ')"
+            :key="key"
+            @click="(e) => onKeyPress(key)"
         >
           {{ key in display ? display[key] : key }}
         </v-btn>
@@ -31,7 +31,7 @@
 </template>
 
 <script lang="ts">
-import Vue, { PropType } from "vue";
+import Vue, {PropType} from "vue";
 
 export default Vue.extend({
   name: "SimpleKeyboard",

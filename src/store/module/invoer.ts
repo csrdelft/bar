@@ -1,10 +1,10 @@
-import { Bestelling, BestellingInhoud, Product } from '@/model';
+import {Bestelling, BestellingInhoud, Product} from '@/model';
 import Vue from "vue"
 import {defineModule} from "@/util";
 
 export interface InvoerState {
   inhoud: Record<string, BestellingInhoud>
-  oudeBestelling: Bestelling|null
+  oudeBestelling: Bestelling | null
 }
 
 export default defineModule<InvoerState>({
@@ -15,7 +15,7 @@ export default defineModule<InvoerState>({
   mutations: {
     setInvoer(state, bestellingen: BestellingInhoud[]) {
       state.inhoud = Object.fromEntries(Object.values(bestellingen)
-        .map((b) => [b.product.id, b]));
+          .map((b) => [b.product.id, b]));
     },
     setOudeInvoer(state, bestelling: Bestelling) {
       state.oudeBestelling = bestelling
@@ -48,8 +48,6 @@ export default defineModule<InvoerState>({
       state.oudeBestelling = null;
     },
   },
-  actions: {
-
-  },
+  actions: {},
   getters: {},
 });

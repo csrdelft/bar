@@ -2,22 +2,22 @@ import {Persoon} from '@/model';
 import {Module} from "vuex";
 
 export const throwError = (msg: string): never => {
-    throw new Error(msg);
+  throw new Error(msg);
 };
 
 export const formatBedrag = (bedrag: number): string => {
-    let achterKomma = String(Math.abs(bedrag % 100));
-    if (achterKomma === '0') {
-        achterKomma = '00';
-    } else if (Number(achterKomma) < 10) {
-        achterKomma = `0${achterKomma}`;
-    }
+  let achterKomma = String(Math.abs(bedrag % 100));
+  if (achterKomma === '0') {
+    achterKomma = '00';
+  } else if (Number(achterKomma) < 10) {
+    achterKomma = `0${achterKomma}`;
+  }
 
-    if (bedrag > -100 && bedrag < 0) return `€-0,${achterKomma}`;
+  if (bedrag > -100 && bedrag < 0) return `€-0,${achterKomma}`;
 
-    const string = `€${(bedrag - (bedrag % 100)) / 100},${achterKomma}`;
+  const string = `€${(bedrag - (bedrag % 100)) / 100},${achterKomma}`;
 
-    return string.replace('€-', '-€');
+  return string.replace('€-', '-€');
 };
 
 export const sum = (...args: number[]): number => args.reduce((a, b) => a + b, 0);

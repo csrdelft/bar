@@ -2,11 +2,11 @@
   <v-dialog max-width="500" persistent v-model="model">
     <v-card class="text-center py-5">
       <v-icon
-        :color="data.type | color"
+        :color="color"
         class="py-5"
         size="128"
         v-if="data.type"
-        >{{ data.type | icon }}</v-icon
+        >{{ icon }}</v-icon
       >
       <v-card-title class="justify-center headline" v-if="data.title">{{
         data.title
@@ -83,14 +83,16 @@ export default Vue.extend({
         // eslint-disable-next-line no-unused-vars
         reject: (val: unknown) => void;
       } | null,
-      data: {},
+      data: {
+        type: null as null | "success" | "info" | "warning" | "error"
+      },
       dataInput: "",
       options: {} as DialogOptions
     };
   },
-  filters: {
-    icon: function(value: "success" | "info" | "warning" | "error") {
-      switch (value) {
+  computed: {
+    icon() {
+      switch (this.data.type) {
         case "success":
           return "mdi-check-circle-outline";
         case "info":
@@ -103,8 +105,8 @@ export default Vue.extend({
           return "";
       }
     },
-    color: function(value: "success" | "info" | "warning" | "error") {
-      switch (value) {
+    color() {
+      switch (this.data.type) {
         case "success":
           return "success";
         case "info":
@@ -145,7 +147,7 @@ export default Vue.extend({
     },
     close() {
       this.dataInput = "";
-      this.data = {};
+      this.data = { type: null };
       this.options = {};
       this.model = false;
     }

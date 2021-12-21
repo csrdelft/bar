@@ -8,13 +8,13 @@
         <v-col lg="9">
           <v-row class="bestelling-inhoud">
             <v-col
-              lg="3"
-              v-for="bestelling in bestellingInhoud"
-              :key="bestelling.product.id + ' ' + bestelling.aantal"
+                lg="3"
+                v-for="bestelling in bestellingInhoud"
+                :key="bestelling.product.id + ' ' + bestelling.aantal"
             >
               <v-card
-                class="product"
-                @click="verwijderInvoer(bestelling.product.id)"
+                  class="product"
+                  @click="verwijderInvoer(bestelling.product.id)"
               >
                 <v-card-title class="product-title">
                   {{ bestelling.product.beschrijving }}
@@ -26,25 +26,26 @@
                   </v-btn>
                 </v-card-title>
                 <v-card-text class="text-h5">{{
-                  bestelling.aantal
-                }}</v-card-text>
+                    bestelling.aantal
+                  }}
+                </v-card-text>
               </v-card>
             </v-col>
           </v-row>
 
           <ProductWeergave
-            :producten="producten"
-            @selecteer="selecteerInvoer"
+              :producten="producten"
+              @selecteer="selecteerInvoer"
           />
         </v-col>
         <v-col lg="3">
-          <Numpad default-value="1" v-model="aantal" />
+          <Numpad default-value="1" v-model="aantal"/>
           <BestellingSamenvatting
-            :bestelling-laden="bestellingLaden"
-            :saldo="saldo"
-            :totaal="totaal"
-            :annuleer="annuleer"
-            :plaatsBestelling="plaatsBestelling"
+              :bestelling-laden="bestellingLaden"
+              :saldo="saldo"
+              :totaal="totaal"
+              :annuleer="annuleer"
+              :plaatsBestelling="plaatsBestelling"
           />
         </v-col>
       </v-row>
@@ -54,10 +55,10 @@
       {{ notificatie }}
       <template v-slot:action="{ attrs }">
         <v-btn
-          color="white"
-          text
-          v-bind="attrs"
-          @click="notificatieWeergeven = false"
+            color="white"
+            text
+            v-bind="attrs"
+            @click="notificatieWeergeven = false"
         >
           Sluiten
         </v-btn>
@@ -68,9 +69,9 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Bestelling, BestellingInhoud, Persoon, Product } from "@/model";
+import {Bestelling, BestellingInhoud, Persoon, Product} from "@/model";
 import Numpad from "../components/Numpad.vue";
-import { formatBedrag, SaldoError, sum } from "@/util";
+import {formatBedrag, SaldoError, sum} from "@/util";
 import ProductWeergave from "../components/bestellingen/ProductWeergave.vue";
 import BestellingSamenvatting from "../components/bestellingen/BestellingSamenvatting.vue";
 
@@ -115,12 +116,12 @@ export default Vue.extend({
       const saldo = this.persoon.saldo;
       if (this.oudeBestellingInhoud) {
         return (
-          saldo +
-          sum(
-            ...this.oudeBestellingInhoud.inhoud.map(
-              b => b.product.prijs * b.aantal
+            saldo +
+            sum(
+                ...this.oudeBestellingInhoud.inhoud.map(
+                    b => b.product.prijs * b.aantal
+                )
             )
-          )
         );
       }
 
@@ -173,8 +174,8 @@ export default Vue.extend({
         if (e instanceof SaldoError) {
           try {
             await this.$notify.confirm(
-              { text: e.message },
-              { yesText: "Doorgaan", noText: "Terug" }
+                {text: e.message},
+                {yesText: "Doorgaan", noText: "Terug"}
             );
 
             await this.bestel(true);
@@ -182,7 +183,7 @@ export default Vue.extend({
             // confirm geannuleerd
           }
         } else {
-          this.$notify.show({ text: e.message });
+          this.$notify.show({text: e.message});
         }
       } finally {
         this.bestellingLaden = false;

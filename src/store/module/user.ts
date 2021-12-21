@@ -5,46 +5,44 @@ import {createToken} from '@/token';
 import {defineModule} from "@/util";
 
 export interface UserState {
-    profiel: Profiel | null,
-    selectie: string | null
-    tokenData: OAuth2Data | null
-    locatieToken: BarLocatie | null
+  profiel: Profiel | null,
+  selectie: string | null
+  tokenData: OAuth2Data | null
+  locatieToken: BarLocatie | null
 }
 
 export default defineModule<UserState>({
-    state: () => ({
-        profiel: null,
-        tokenData: null,
-        selectie: null,
-        locatieToken: null,
-    }),
-    getters: {
-        token: (state) => createToken(state.tokenData),
+  state: () => ({
+    profiel: null,
+    tokenData: null,
+    selectie: null,
+    locatieToken: null,
+  }),
+  getters: {
+    token: (state) => createToken(state.tokenData),
+  },
+  mutations: {
+    setToken(state, token: OAuth2Data) {
+      state.tokenData = token;
     },
-    mutations: {
-        setToken(state, token: OAuth2Data) {
-            state.tokenData = token;
-        },
-        setLocatieToken(state, token: BarLocatie) {
-            state.locatieToken = token;
-        },
-        setProfiel(state, profiel: Profiel) {
-            state.profiel = profiel;
-        },
-        setSelectie(state, persoonId: string) {
-            state.selectie = persoonId;
-        },
+    setLocatieToken(state, token: BarLocatie) {
+      state.locatieToken = token;
     },
-    actions: {
-        async fetchProfiel({
-                               commit,
-                           }): Promise<void> {
-            const profiel = await fetchAuthorized<Profiel>({
-                url: '/api/v3/profiel',
-                method: 'GET',
-            });
+    setProfiel(state, profiel: Profiel) {
+      state.profiel = profiel;
+    },
+    setSelectie(state, persoonId: string) {
+      state.selectie = persoonId;
+    },
+  },
+  actions: {
+    async fetchProfiel({commit}): Promise<void> {
+      const profiel = await fetchAuthorized<Profiel>({
+        url: '/api/v3/profiel',
+        method: 'GET',
+      });
 
-            commit('setProfiel', profiel);
-        },
+      commit('setProfiel', profiel);
     },
+  },
 });

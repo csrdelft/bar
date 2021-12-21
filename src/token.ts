@@ -1,9 +1,9 @@
-import Cookies, { CookieAttributes } from 'js-cookie';
-import { Data, Token } from 'client-oauth2';
+import Cookies, {CookieAttributes} from 'js-cookie';
+import {Data, Token} from 'client-oauth2';
 import csrAuth from '@/auth/csrAuth';
-import { BarLocatie } from '@/model';
+import {BarLocatie} from '@/model';
 
-const TOKEN_OPTIONS: CookieAttributes = { sameSite: 'strict' };
+const TOKEN_OPTIONS: CookieAttributes = {sameSite: 'strict'};
 
 // Session cookie, browser sluiten verwijderd cookie
 export const setToken = (data: Data): void => {

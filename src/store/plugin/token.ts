@@ -7,30 +7,30 @@ import {getLocatieToken, getTokenData, removeLocatieToken, removeToken, setLocat
  * @param setLocatieTokenMutation
  */
 export const saveTokenPlugin = (setTokenMutation: string, setLocatieTokenMutation: string) => <S>(store: Store<S>) => {
-    const token = getTokenData();
-    if (token) {
-        store.commit(setTokenMutation, token);
-    }
+  const token = getTokenData();
+  if (token) {
+    store.commit(setTokenMutation, token);
+  }
 
-    const locatieToken = getLocatieToken();
-    if (locatieToken) {
-        store.commit(setLocatieTokenMutation, locatieToken);
-    }
+  const locatieToken = getLocatieToken();
+  if (locatieToken) {
+    store.commit(setLocatieTokenMutation, locatieToken);
+  }
 
-    store.subscribe((mutation) => {
-        if (mutation.type === setTokenMutation) {
-            if (mutation.payload) {
-                setToken(mutation.payload);
-            } else {
-                removeToken();
-            }
-        }
-        if (mutation.type === setLocatieTokenMutation) {
-            if (mutation.payload) {
-                setLocatieToken(mutation.payload);
-            } else {
-                removeLocatieToken();
-            }
-        }
-    });
+  store.subscribe((mutation) => {
+    if (mutation.type === setTokenMutation) {
+      if (mutation.payload) {
+        setToken(mutation.payload);
+      } else {
+        removeToken();
+      }
+    }
+    if (mutation.type === setLocatieTokenMutation) {
+      if (mutation.payload) {
+        setLocatieToken(mutation.payload);
+      } else {
+        removeLocatieToken();
+      }
+    }
+  });
 };

@@ -1,25 +1,25 @@
 <template>
   <v-row>
     <v-col cols="3">
-      <v-switch v-model="zoekInAlles" label="Alleen geselecteerde persoon" />
+      <v-switch v-model="zoekInAlles" label="Alleen geselecteerde persoon"/>
     </v-col>
     <v-col cols="3">
       <v-menu
-        ref="datumMenu"
-        v-model="datumMenu"
-        :close-on-content-click="false"
-        transition="scale-transition"
-        offset-y
-        min-width="auto"
+          ref="datumMenu"
+          v-model="datumMenu"
+          :close-on-content-click="false"
+          transition="scale-transition"
+          offset-y
+          min-width="auto"
       >
         <template v-slot:activator="{ on, attrs }">
           <v-text-field
-            v-model="datumText"
-            label="Datum"
-            prepend-icon="mdi-calendar"
-            readonly
-            v-bind="attrs"
-            v-on="on"
+              v-model="datumText"
+              label="Datum"
+              prepend-icon="mdi-calendar"
+              readonly
+              v-bind="attrs"
+              v-on="on"
           ></v-text-field>
         </template>
         <v-date-picker v-model="datum" range min="1950-01-01"></v-date-picker>
@@ -29,10 +29,10 @@
       <v-dialog v-model="productSelectieZichtbaar">
         <template v-slot:activator="{ on, attrs }">
           <v-btn
-            title="Filter op specifieke producten"
-            :type="isIndeterminate ? 'primary' : 'default'"
-            v-bind="attrs"
-            v-on="on"
+              title="Filter op specifieke producten"
+              :type="isIndeterminate ? 'primary' : 'default'"
+              v-bind="attrs"
+              v-on="on"
           >
             <v-icon>mdi-tune</v-icon>
             Producten
@@ -43,23 +43,23 @@
 
           <v-card-text>
             <v-checkbox
-              :indeterminate="isIndeterminate"
-              v-model="checkAll"
-              @change="handleCheckAllChange"
-              label="Alle"
-              >Alle
+                :indeterminate="isIndeterminate"
+                v-model="checkAll"
+                @change="handleCheckAllChange"
+                label="Alle"
+            >Alle
             </v-checkbox>
             <v-divider></v-divider>
             <v-row>
               <v-col
-                cols="3"
-                v-for="product in producten"
-                :key="product.id"
+                  cols="3"
+                  v-for="product in producten"
+                  :key="product.id"
               >
                 <v-checkbox
-                  v-model="selectedProducten"
-                  :value="product.id"
-                  :label="product.beschrijving"
+                    v-model="selectedProducten"
+                    :value="product.id"
+                    :label="product.beschrijving"
                 >
                 </v-checkbox>
               </v-col>
@@ -79,7 +79,7 @@
         <template v-slot:item.inhoud="{ item }">
           <ul>
             <li v-for="el in item.inhoud" :key="el.id">
-              {{el.aantal}} {{ el.product.beschrijving }}
+              {{ el.aantal }} {{ el.product.beschrijving }}
             </li>
           </ul>
         </template>
@@ -91,22 +91,23 @@
         </template>
         <template v-slot:item.opties="{ item }">
           <v-icon
-            v-if="!item.deleted"
-            small
-            class="mr-2"
-            @click="handleEdit(item)"
+              v-if="!item.deleted"
+              small
+              class="mr-2"
+              @click="handleEdit(item)"
           >
             mdi-pencil
           </v-icon>
           <v-icon
-            v-if="!item.deleted"
-            small
-            @click="handleVerwijder(item)"
+              v-if="!item.deleted"
+              small
+              @click="handleVerwijder(item)"
           >
             mdi-delete
           </v-icon>
           <v-icon v-if="item.deleted" small @click="handleHerstel(item)"
-            >mdi-restore</v-icon
+          >mdi-restore
+          </v-icon
           >
         </template>
       </v-data-table>
@@ -116,8 +117,8 @@
 
 <script lang="ts">
 import Vue from "vue";
-import { Bestelling, Persoon, Product } from "@/model";
-import { formatBedrag } from "@/util";
+import {Bestelling, Persoon, Product} from "@/model";
+import {formatBedrag} from "@/util";
 
 export default Vue.extend({
   name: "Bestellingen",
@@ -127,7 +128,7 @@ export default Vue.extend({
     },
     producten(): Product[] {
       return Object.values<Product>(this.$store.state.product.producten).filter(
-        p => !p.beheer && p.status === 1
+          p => !p.beheer && p.status === 1
       );
     },
     headers() {
@@ -136,16 +137,16 @@ export default Vue.extend({
           text: "Naam",
           value: "uid"
         },
-        { text: "Datum en tijd", value: "moment" },
-        { text: "Totaal", value: "totaal" },
-        { text: "Bestelling", value: "inhoud" },
-        { text: "Opties", value: "opties", sortable: false }
+        {text: "Datum en tijd", value: "moment"},
+        {text: "Totaal", value: "totaal"},
+        {text: "Bestelling", value: "inhoud"},
+        {text: "Opties", value: "opties", sortable: false}
       ];
     },
     isIndeterminate(): boolean {
       return (
-        this.selectedProducten.length > 0 &&
-        this.selectedProducten.length < this.producten.length
+          this.selectedProducten.length > 0 &&
+          this.selectedProducten.length < this.producten.length
       );
     },
     datumText() {
@@ -216,8 +217,8 @@ export default Vue.extend({
     },
     getBestelLijstString(bestelLijst: Record<string, string>): string[] {
       return Object.entries(bestelLijst).map(
-        ([id, aantal]) =>
-          `${aantal} ${this.getProduct(id)?.beschrijving}`
+          ([id, aantal]) =>
+              `${aantal} ${this.getProduct(id)?.beschrijving}`
       );
     },
     formatBedrag,
