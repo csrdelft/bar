@@ -3,11 +3,7 @@ import {fetchAuthorized} from '@/fetch';
 import {defineModule} from "@/util";
 import Vue from "vue";
 
-export interface PersonenState {
-  personen: Record<string, Persoon>
-}
-
-export default defineModule<PersonenState>({
+export default defineModule({
   state: () => ({
     personen: {} as Record<string, Persoon>,
   }),
@@ -19,7 +15,12 @@ export default defineModule<PersonenState>({
       Vue.set(state.personen, persoon.uid, persoon)
     }
   },
-  getters: {},
+  getters: {
+    personenWeergave: (state) => Object.values<Persoon>(state.personen)
+        .filter((p: Persoon) => !p.deleted)
+        .sort((a, b) => a.recent - b.recent)
+        .reverse(),
+  },
   actions: {
     async listUsers({commit}): Promise<void> {
       const response = await fetchAuthorized<Persoon[]>({

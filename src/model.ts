@@ -45,3 +45,8 @@ export interface BarLocatie {
   sleutel: string
   naam: string
 }
+
+export interface Rechten {
+  beheer: boolean
+  admin: boolean
+}

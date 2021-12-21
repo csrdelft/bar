@@ -1,30 +1,29 @@
 <template>
   <v-row>
-    <v-col lg="4">
-      <beheer-bijnaam v-if="isBeheer" />
+    <v-col lg="4" v-if="rechten.beheer">
+      <beheer-bijnaam />
     </v-col>
-    <v-col lg="4">
-      <beheer-vertrouw v-if="isAdmin" />
+    <v-col lg="4" v-if="rechten.admin">
+      <beheer-vertrouw />
+    </v-col>
+    <v-col lg="4" v-if="!rechten.beheer && !rechten.admin">
+      Er is niets te zien hier.
     </v-col>
   </v-row>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import BeheerBijnaam from "./beheer/BeheerBijnaam.vue";
-import BeheerVertrouw from "./beheer/BeheerVertrouw.vue";
+import BeheerBijnaam from "../components/beheer/BeheerBijnaam.vue";
+import BeheerVertrouw from "../components/beheer/BeheerVertrouw.vue";
+import {Rechten} from "@/model";
+
 export default Vue.extend({
   components: { BeheerBijnaam, BeheerVertrouw },
   computed: {
-    scopes() {
-      return this.$store.state.user.profiel?.scopes ?? [];
+    rechten(): Rechten {
+      return this.$store.getters.rechten;
     },
-    isBeheer(): boolean {
-      return this.scopes.includes("BAR:BEHEER");
-    },
-    isAdmin(): boolean {
-      return this.scopes.includes("BAR:TRUST");
-    }
   }
 });
 </script>

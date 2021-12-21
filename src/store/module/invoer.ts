@@ -7,10 +7,10 @@ export interface InvoerState {
   oudeBestelling: Bestelling | null
 }
 
-export default defineModule<InvoerState>({
+export default defineModule({
   state: () => ({
-    inhoud: {},
-    oudeBestelling: null
+    inhoud: {} as Record<string, BestellingInhoud>,
+    oudeBestelling: null as Bestelling | null
   }),
   mutations: {
     setInvoer(state, bestellingen: BestellingInhoud[]) {

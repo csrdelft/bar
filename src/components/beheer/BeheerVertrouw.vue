@@ -17,8 +17,8 @@
           vertrouwde plekken.
         </p>
         <p>
-          <v-text-field v-model="naam" label="Naam van deze locatie" />
-          <v-btn block color="primary" @click="vertrouw" :loading="laden">
+          <v-text-field v-model="naam" label="Naam van deze locatie"/>
+          <v-btn block color="primary" @click="vertrouw" :loading="laden" :disabled="naam.length === 0">
             Vertrouw deze locatie
           </v-btn>
         </p>
@@ -28,8 +28,9 @@
 </template>
 
 <script lang="ts">
-import { BarLocatie } from "@/model";
+import {BarLocatie} from "@/model";
 import Vue from "vue";
+
 export default Vue.extend({
   data: () => ({
     naam: "",

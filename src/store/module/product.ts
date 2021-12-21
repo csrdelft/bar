@@ -1,11 +1,7 @@
 import {Product} from '@/model';
 import {defineModule} from "@/util";
 
-export interface ProductenState {
-  producten: Record<string, Product>
-}
-
-export default defineModule<ProductenState>({
+export default defineModule({
   state: () => ({
     producten: {} as Record<string, Product>,
   }),
@@ -14,6 +10,9 @@ export default defineModule<ProductenState>({
       state.producten = producten;
     },
   },
-  getters: {},
+  getters: {
+    zichtbareProducten: (state) => Object.values(state.producten)
+        .filter((p) => !p.beheer && p.status === 1),
+  },
   actions: {},
 });

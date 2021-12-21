@@ -3,24 +3,31 @@
     <v-card-title>Bijnaam aanpassen</v-card-title>
     <v-card-text>
       <v-autocomplete
-        label="Naam"
-        :items="personen"
-        item-text="weergave"
-        item-value="uid"
-        @change="selecteerPersoon"
-        clearable
+          label="Naam"
+          :items="personen"
+          item-text="weergave"
+          item-value="uid"
+          @change="selecteerPersoon"
+          clearable
       ></v-autocomplete>
       <v-text-field label="Bijnaam" v-model="bijnaam"></v-text-field>
-      <v-btn block :loading="laden" :disabled="persoon == null" @click="opslaan"
-        >Opslaan</v-btn
+      <v-btn
+          block
+          :loading="laden"
+          :disabled="persoon == null"
+          @click="opslaan"
+      >
+        Opslaan
+      </v-btn
       >
     </v-card-text>
   </v-card>
 </template>
 
 <script lang="ts">
-import { Persoon } from "@/model";
+import {Persoon} from "@/model";
 import Vue from "vue";
+
 export default Vue.extend({
   data: () => ({
     persoon: null as Persoon | null,

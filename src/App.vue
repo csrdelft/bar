@@ -5,7 +5,7 @@
         v-model="drawer"
         permanent
         expand-on-hover
-        v-if="loggedIn"
+        v-if="loggedIn && !loading"
     >
       <v-list nav dense>
         <v-list-item-group act>
@@ -35,7 +35,7 @@
             </v-list-item-icon>
             <v-list-item-title>Bestellingen</v-list-item-title>
           </v-list-item>
-          <v-list-item to="/beheer">
+          <v-list-item to="/beheer" v-if="rechten.beheer || rechten.admin">
             <v-list-item-icon>
               <v-icon>mdi-wrench</v-icon>
             </v-list-item-icon>
@@ -69,7 +69,10 @@
     </v-main>
 
     <v-overlay :value="loading">
-      <v-progress-circular indeterminate size="64"></v-progress-circular>
+      <div class="d-flex flex-column align-center" style="width: 200px; max-width: 100%;">
+        <v-progress-linear :value="loadingProgress" height="10"></v-progress-linear>
+        <span class="pt-2">{{ msg }}</span>
+      </div>
     </v-overlay>
   </v-app>
 </template>
@@ -77,7 +80,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import {BarLocatie} from "@/model";
+import {BarLocatie, Rechten} from "@/model";
 import Clock from "./components/Clock.vue";
 
 export default Vue.extend({
@@ -85,9 +88,14 @@ export default Vue.extend({
   name: "App",
   data: () => ({
     loading: true,
-    drawer: false
+    drawer: false,
+    msg: "",
+    loadingProgress: 0,
   }),
   computed: {
+    rechten(): Rechten {
+      return this.$store.getters.rechten;
+    },
     loggedIn(): boolean {
       return Boolean(this.$store.getters.token);
     },
@@ -102,16 +110,39 @@ export default Vue.extend({
       return this.$store.state.user.locatieToken;
     }
   },
-  async created() {
-    if (this.loggedIn) {
-      try {
-        await this.$store.dispatch("postLogin");
-      } finally {
+  watch: {
+    async loggedIn() {
+      await this.processLogin()
+    }
+  },
+  methods: {
+    async setLoading(progress: number, msg: string): Promise<void> {
+      this.loading = false;
+      this.msg = msg;
+      this.loadingProgress = progress;
+      // NextTick om er voor te zorgen dat loading update
+      await this.$nextTick();
+      this.loading = true;
+    },
+    async processLogin() {
+      if (this.loggedIn) {
+        try {
+          await this.setLoading(25, "Profiel laden...");
+          await this.$store.dispatch('fetchProfiel');
+          await this.setLoading(50, "Leden laden...");
+          await this.$store.dispatch('listUsers');
+          await this.setLoading(75, "Producten laden...");
+          await this.$store.dispatch('listProducten');
+        } finally {
+          this.loading = false;
+        }
+      } else {
         this.loading = false;
       }
-    } else {
-      this.loading = false;
     }
+  },
+  async created() {
+    await this.processLogin()
   }
 });
 </script>

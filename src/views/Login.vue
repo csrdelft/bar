@@ -20,8 +20,6 @@
     <p>
       <v-btn x-large to="/personen">Beginnen</v-btn>
     </p>
-
-    <div v-if="isAdmin"></div>
   </v-container>
 </template>
 
@@ -40,11 +38,6 @@ export default Vue.extend({
     },
     vertrouwd(): BarLocatie | null {
       return this.$store.state.user.locatieToken;
-    },
-    isAdmin(): boolean {
-      return (
-          this.$store.state.user.profiel?.scopes.includes("BAR:TRUST") ?? false
-      );
     },
     loggedIn() {
       return !!this.$store.state.user.tokenData;

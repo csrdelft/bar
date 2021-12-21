@@ -48,12 +48,6 @@ export default Vue.extend({
           // TODO: Notify
         }
 
-        await this.setLoading("Profiel laden...");
-
-        await this.$store.dispatch("postLogin");
-
-        this.loading = false;
-
         await this.$router.push("/");
       };
     } else {

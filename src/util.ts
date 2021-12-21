@@ -1,10 +1,6 @@
 import {Persoon} from '@/model';
 import {Module} from "vuex";
 
-export const throwError = (msg: string): never => {
-  throw new Error(msg);
-};
-
 export const formatBedrag = (bedrag: number): string => {
   let achterKomma = String(Math.abs(bedrag % 100));
   if (achterKomma === '0') {
