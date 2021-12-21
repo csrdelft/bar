@@ -40,10 +40,7 @@ export default defineModule({
       await fetchAuthorized<void>({
         url: '/api/v3/bar/updatePerson',
         method: 'POST',
-        data: {
-          id,
-          name,
-        }
+        body: JSON.stringify({id, name,})
       })
 
       commit('setPersoon', {
