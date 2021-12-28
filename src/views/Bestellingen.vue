@@ -84,7 +84,7 @@
           </ul>
         </template>
         <template v-slot:item.totaal="{ item }">
-          {{ formatBedrag(item.totaal) }}
+          {{ format(item.totaal) }}
         </template>
         <template v-slot:item.moment="{item}">
           {{ new Date(item.moment).toLocaleString('nl') }}
@@ -118,7 +118,7 @@
 <script lang="ts">
 import Vue from "vue";
 import {Bestelling, Persoon, Product} from "@/model";
-import {formatBedrag} from "@/util";
+import {format} from "@/util/bedrag";
 
 export default Vue.extend({
   name: "Bestellingen",
@@ -221,7 +221,7 @@ export default Vue.extend({
               `${aantal} ${this.getProduct(id)?.beschrijving}`
       );
     },
-    formatBedrag,
+    format,
     handleCheckedProductenChange(value: string[]) {
       this.checkAll = value.length === this.producten.length;
     },

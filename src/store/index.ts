@@ -1,14 +1,15 @@
 import Vuex, {Module} from 'vuex';
 import {BarLocatie, Persoon, Product,} from '@/model';
 import bestelling from '@/store/module/bestelling';
-import {fetchAuthorized} from '@/fetch';
+import {fetchAuthorized} from '@/util/fetch';
 import invoer from '@/store/module/invoer';
 import user from '@/store/module/user';
 import persoon from './module/persoon';
 import Vue from 'vue';
-import {isOudlid, SaldoError, sum} from "@/util";
+import {isOudlid, SaldoError} from "@/util/util";
 import product from "@/store/module/product";
 import {saveTokenPlugin} from "@/store/plugin/token";
+import {sum} from "@/util/list";
 
 Vue.use(Vuex)
 

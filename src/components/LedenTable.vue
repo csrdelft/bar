@@ -1,23 +1,23 @@
 <template>
   <v-data-table
-    :headers="headers"
-    :items="personen"
-    @click:row="rowClick"
-    item-key="uid"
-    :item-class="tableRowClassName"
-    :items-per-page="-1"
-    hide-default-footer
+      :headers="headers"
+      :items="personen"
+      @click:row="rowClick"
+      item-key="uid"
+      :item-class="tableRowClassName"
+      :items-per-page="-1"
+      hide-default-footer
   >
     <template v-slot:item.saldo="{ item }">
-      {{ formatBedrag(item.saldo) }}
+      {{ format(item.saldo) }}
     </template>
   </v-data-table>
 </template>
 
 <script lang="ts">
 import Vue from "vue";
-import { Persoon } from "@/model";
-import { formatBedrag } from "@/util";
+import {Persoon} from "@/model";
+import {format} from "@/util/bedrag";
 
 export default Vue.extend({
   name: "LedenTable",
@@ -30,14 +30,14 @@ export default Vue.extend({
     },
     headers() {
       return [
-        { text: "Bijnaam", value: "naam" },
-        { text: "Naam", value: "weergave" },
-        { text: "Saldo", value: "saldo" }
+        {text: "Bijnaam", value: "naam"},
+        {text: "Naam", value: "weergave"},
+        {text: "Saldo", value: "saldo"}
       ];
     }
   },
   methods: {
-    formatBedrag,
+    format,
     rowClick(row: Persoon) {
       this.$router.push(`/invoer/${row.uid}`);
     },
@@ -49,8 +49,8 @@ export default Vue.extend({
     },
     filterPersoon(persoon: Persoon) {
       return (
-        persoon.weergave.toUpperCase().match(this.zoeken) ||
-        persoon.naam.toUpperCase().match(this.zoeken)
+          persoon.weergave.toUpperCase().match(this.zoeken) ||
+          persoon.naam.toUpperCase().match(this.zoeken)
       );
     }
   }

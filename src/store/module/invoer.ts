@@ -1,6 +1,6 @@
 import {Bestelling, BestellingInhoud, Product} from '@/model';
 import Vue from "vue"
-import {defineModule} from "@/util";
+import {defineModule} from "@/util/util";
 
 export interface InvoerState {
   inhoud: Record<string, BestellingInhoud>

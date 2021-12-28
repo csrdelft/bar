@@ -1,6 +1,7 @@
 import {Bestelling} from '@/model';
-import {fetchAuthorized} from '@/fetch';
-import {defineModule, groupBy} from '@/util';
+import {fetchAuthorized} from '@/util/fetch';
+import {defineModule} from '@/util/util';
+import {groupBy} from "@/util/list";
 
 export default defineModule({
   state: () => ({

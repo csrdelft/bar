@@ -1,5 +1,5 @@
 import {Store} from "vuex";
-import {getLocatieToken, getTokenData, removeLocatieToken, removeToken, setLocatieToken, setToken} from "@/token";
+import {getLocatieToken, getTokenData, removeLocatieToken, removeToken, setLocatieToken, setToken} from "@/util/token";
 
 /**
  * Stop de token uit de cookie in de state en update de cookie als de state veranderd.

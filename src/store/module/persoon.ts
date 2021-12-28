@@ -1,6 +1,6 @@
 import {Persoon} from '@/model';
-import {fetchAuthorized} from '@/fetch';
-import {defineModule} from "@/util";
+import {fetchAuthorized} from '@/util/fetch';
+import {defineModule} from "@/util/util";
 import Vue from "vue";
 
 export default defineModule({

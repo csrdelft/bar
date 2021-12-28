@@ -25,9 +25,8 @@
                     <v-icon>mdi-close</v-icon>
                   </v-btn>
                 </v-card-title>
-                <v-card-text class="text-h5">{{
-                    bestelling.aantal
-                  }}
+                <v-card-text class="text-h5">
+                  {{ bestelling.aantal }}
                 </v-card-text>
               </v-card>
             </v-col>
@@ -71,9 +70,10 @@
 import Vue from "vue";
 import {Bestelling, BestellingInhoud, Persoon, Product} from "@/model";
 import Numpad from "../components/Numpad.vue";
-import {formatBedrag, SaldoError, sum} from "@/util";
+import {SaldoError} from "@/util/util";
 import ProductWeergave from "../components/bestellingen/ProductWeergave.vue";
 import BestellingSamenvatting from "../components/bestellingen/BestellingSamenvatting.vue";
+import {sum} from "@/util/list";
 
 export default Vue.extend({
   name: "Bestelling",
@@ -142,7 +142,6 @@ export default Vue.extend({
     }
   },
   methods: {
-    formatBedrag,
     verwijderInvoer(id: number): void {
       this.$store.commit("verwijderInvoer", id);
     },

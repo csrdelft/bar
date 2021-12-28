@@ -3,20 +3,20 @@
     <v-list two-line>
       <v-list-item>
         <v-list-item-title>Huidig saldo</v-list-item-title>
-        <v-list-item-subtitle>{{
-            formatBedrag(saldo)
-          }}
+        <v-list-item-subtitle>
+          {{ format(saldo) }}
         </v-list-item-subtitle>
       </v-list-item>
       <v-list-item>
         <v-list-item-title>Totaal bestelling</v-list-item-title>
-        <v-list-item-subtitle>{{ formatBedrag(totaal) }}</v-list-item-subtitle>
+        <v-list-item-subtitle>
+          {{ format(totaal) }}
+        </v-list-item-subtitle>
       </v-list-item>
       <v-list-item>
         <v-list-item-title>Nieuw saldo</v-list-item-title>
-        <v-list-item-subtitle>{{
-            formatBedrag(saldo - totaal)
-          }}
+        <v-list-item-subtitle>
+          {{ format(saldo - totaal) }}
         </v-list-item-subtitle>
       </v-list-item>
     </v-list>
@@ -46,7 +46,7 @@
 
 <script lang="ts">
 import Vue from "vue";
-import {formatBedrag} from "@/util";
+import {format} from "@/util/bedrag";
 
 export default Vue.extend({
   name: "BestellingSamenvatting",
@@ -58,7 +58,7 @@ export default Vue.extend({
     saldo: Number,
   },
   methods: {
-    formatBedrag
+    format
   }
 });
 </script>

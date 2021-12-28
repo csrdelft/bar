@@ -1,5 +1,5 @@
 import {Product} from '@/model';
-import {defineModule} from "@/util";
+import {defineModule} from "@/util/util";
 
 export default defineModule({
   state: () => ({

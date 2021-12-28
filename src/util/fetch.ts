@@ -1,5 +1,5 @@
 import router from '@/router';
-import {getLocatieToken, getToken} from '@/token';
+import {getLocatieToken, getToken} from '@/util/token';
 import {RequestObject} from "client-oauth2";
 
 type RequestObj = RequestObject & { headers?: Record<string, string> }

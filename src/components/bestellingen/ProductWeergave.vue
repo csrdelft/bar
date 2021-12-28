@@ -3,7 +3,7 @@
     <v-col cols="6" sm="4" lg="2" v-for="product in producten" :key="product.id">
       <v-card class="btn-product" @click="$emit('selecteer', product)">
         <v-card-title>{{ product.beschrijving }}</v-card-title>
-        <v-card-subtitle>{{ formatBedrag(product.prijs) }}</v-card-subtitle>
+        <v-card-subtitle>{{ format(product.prijs) }}</v-card-subtitle>
       </v-card>
     </v-col>
   </v-row>
@@ -12,7 +12,7 @@
 <script lang="ts">
 import Vue, {PropType} from 'vue';
 import {Product} from '@/model';
-import {formatBedrag} from '@/util';
+import {format} from "@/util/bedrag";
 
 export default Vue.extend({
   name: 'ProductWeergave',
@@ -23,7 +23,7 @@ export default Vue.extend({
     },
   },
   methods: {
-    formatBedrag,
+    format,
   },
 });
 </script>

@@ -8,7 +8,7 @@ import AuthLogout from '@/views/auth/AuthLogout.vue';
 import Personen from '@/views/Personen.vue';
 import Bestellingen from '@/views/Bestellingen.vue';
 import Beheer from '@/views/Beheer.vue';
-import { getToken } from '@/token';
+import { getToken } from '@/util/token';
 import Vue from 'vue';
 
 Vue.use(VueRouter);

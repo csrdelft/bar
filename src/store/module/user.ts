@@ -1,8 +1,8 @@
 import {BarLocatie, Profiel} from '@/model';
-import {fetchAuthorized} from '@/fetch';
+import {fetchAuthorized} from '@/util/fetch';
 import {Data as OAuth2Data} from 'client-oauth2';
-import {createToken} from '@/token';
-import {defineModule} from "@/util";
+import {createToken} from '@/util/token';
+import {defineModule} from "@/util/util";
 
 export default defineModule({
   state: () => ({
