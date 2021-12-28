@@ -3,7 +3,9 @@
     <v-card-title>Locatie vertrouwen</v-card-title>
     <v-card-text>
       <div v-if="vertrouwd">
-        <p>Deze locatie is vertrouwd: {{ vertrouwd.naam }}</p>
+        <p><strong>{{ vertrouwd.naam }}</strong> is een vertrouwde locatie. Alle leden kunnen gebruik maken van het bar systeem op deze
+          locatie.
+        </p>
 
         <v-btn color="primary" @click="stopVertrouwen">
           Niet langer vertrouwen
@@ -17,7 +19,7 @@
           vertrouwde plekken.
         </p>
         <p>
-          <v-text-field v-model="naam" label="Naam van deze locatie"/>
+          <v-text-field v-model="naam" label="Naam van deze locatie" @keydown="$event.key === 'Enter' && vertrouw()"/>
           <v-btn block color="primary" @click="vertrouw" :loading="laden" :disabled="naam.length === 0">
             Vertrouw deze locatie
           </v-btn>
