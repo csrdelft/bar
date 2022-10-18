@@ -2,6 +2,12 @@
 import vuetify from "vite-plugin-vuetify";
 
 export default defineNuxtConfig({
+  ssr: false,
+  router: {
+    base: "/bar/",
+  },
+
+  buildModules: ["nuxt-typed-router"],
   modules: [
     async (options, nuxt) => {
       // @ts-ignore

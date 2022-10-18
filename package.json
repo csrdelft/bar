@@ -10,12 +10,15 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "client-oauth2": "^4.3.3",
     "mdi": "^2.2.43",
+    "pinia": "^2.0.23",
     "sass": "^1.55.0",
     "vuetify": "^3.0.0-beta.14"
   },
   "devDependencies": {
     "nuxt": "3.0.0-rc.11",
+    "nuxt-typed-router": "^1.2.3",
     "typescript": "^4.6.4",
     "vite-plugin-vuetify": "^1.0.0-alpha.12",
     "vue-cli-plugin-vuetify": "~2.5.8"
