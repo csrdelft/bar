@@ -9,6 +9,7 @@ export default defineNuxtConfig({
 
   buildModules: ["nuxt-typed-router"],
   modules: [
+    "@pinia/nuxt",
     async (options, nuxt) => {
       // @ts-ignore
       nuxt.hooks.hook("vite:extendConfig", (config) => config.plugins.push(vuetify()));
