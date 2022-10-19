@@ -4,6 +4,10 @@ import BeheerBijnaam from "~/components/beheer/BeheerBijnaam.vue";
 import BeheerVertrouw from "~/components/beheer/BeheerVertrouw.vue";
 
 const user = useUserStore();
+
+definePageMeta({
+  middleware: ["token"],
+});
 </script>
 
 <template>

@@ -1,9 +1,7 @@
 <script lang="ts" setup>
-import { computed, onBeforeMount, onMounted, ref } from "vue";
-
 const date = ref(new Date());
 
-onBeforeMount(() => {
+onMounted(() => {
   setInterval(() => {
     date.value = new Date();
   }, 1000);

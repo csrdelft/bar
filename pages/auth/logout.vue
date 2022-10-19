@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { onBeforeMount, onMounted } from "vue";
 import { useUserStore } from "~/stores/user";
 import { useTypedRouter } from "~/generated";
 
@@ -7,7 +6,7 @@ const { router, routes } = useTypedRouter();
 
 const user = useUserStore();
 
-onBeforeMount(() => {
+onMounted(() => {
   user.setToken(null);
   router.push({ name: routes.index });
 });

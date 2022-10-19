@@ -10,18 +10,18 @@ const LOCATIE_TOKEN_OPTIONS: CookieOptions = {
   expires: new Date(+new Date() + 1000 * 24 * 60 * 60 * 1000),
 };
 
-const token = useCookie("token", TOKEN_OPTIONS);
-const locatieToken = useCookie("locatie-token", LOCATIE_TOKEN_OPTIONS);
-
 export const useToken = () => {
-  const csrAuth = useCsrAuth();
+  const token = useCookie("token", TOKEN_OPTIONS);
+  const locatieToken = useCookie("locatie-token", LOCATIE_TOKEN_OPTIONS);
+
+  const { oauthClient } = useCsrAuth();
 
   // Session cookie, browser sluiten verwijderd cookie
   const setToken = (data: Data): void => {
     token.value = data;
   };
   const removeToken = (): void => {
-    token.value = undefined;
+    token.value = null;
   };
   const getTokenData = (): Data | null => {
     return token.value;
@@ -34,7 +34,7 @@ export const useToken = () => {
     const data = getTokenData();
 
     if (data) {
-      return new Token(csrAuth, data);
+      return new Token(oauthClient, data);
     }
 
     return null;
@@ -45,14 +45,14 @@ export const useToken = () => {
       return null;
     }
 
-    return new Token(csrAuth, d);
+    return new Token(oauthClient, d);
   };
 
   const setLocatieToken = (locatie: BarLocatie): void => {
     locatieToken.value = locatie;
   };
   const removeLocatieToken = (): void => {
-    locatieToken.value = undefined;
+    locatieToken.value = null;
   };
 
   const getLocatieToken = (): BarLocatie | null => {

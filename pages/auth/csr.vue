@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { useUserStore } from "~/stores/user";
-import { onBeforeMount, onMounted, ref } from "vue";
 import { useTypedRouter } from "~/generated";
 import { useCsrAuth } from "~/composables/useCsrAuth";
 
@@ -18,18 +17,18 @@ const setLoading = async (msg: string) => {
 
 const { router, routes } = useTypedRouter();
 const user = useUserStore();
-const csrAuth = useCsrAuth();
+const { oauthClient } = useCsrAuth();
 
-onBeforeMount(() => {
+onMounted(async () => {
   if (!user.tokenData) {
-    window.open(csrAuth.token.getUri({ query: { "remote-login": "true" } }));
+    window.open(oauthClient.token.getUri({ query: { "remote-login": "true" } }));
 
     // Deze methode wordt vanuit een popup geladen door AuthCallback
     window.oauth2Callback = async (uri: string) => {
       await setLoading("Token laden...");
 
       try {
-        const token = await csrAuth.token.getToken(uri);
+        const token = await oauthClient.token.getToken(uri);
         await user.setToken(token.data);
       } catch (e) {
         //this.$notify({ message: e.message });
@@ -40,7 +39,7 @@ onBeforeMount(() => {
       await router.push({ name: routes.index });
     };
   } else {
-    router.push({ name: routes.index });
+    await router.push({ name: routes.index });
   }
 });
 </script>

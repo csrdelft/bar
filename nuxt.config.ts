@@ -7,6 +7,13 @@ export default defineNuxtConfig({
     base: "/bar/",
   },
 
+  runtimeConfig: {
+    public: {
+      oauth2ClientId: "bar",
+      remoteUrl: "http://localhost:8000",
+    },
+  },
+
   buildModules: ["nuxt-typed-router"],
   modules: [
     "@pinia/nuxt",

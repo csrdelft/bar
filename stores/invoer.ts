@@ -52,6 +52,8 @@ export const useInvoerStore = defineStore("invoer", () => {
     oudeBestelling,
     setInvoer,
     setOudeInvoer,
+    selecteerInvoer,
+    verwijderInvoer,
     clearInvoer,
   };
 });

@@ -8,6 +8,10 @@ const upperValue = computed(() => query.value.toUpperCase());
 const change = (value: string) => {
   query.value = value;
 };
+
+definePageMeta({
+  middleware: ["token"],
+});
 </script>
 
 <template>

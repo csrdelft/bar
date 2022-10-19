@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { computed, onBeforeMount, onMounted, ref } from "vue";
 import { Product } from "~/types/product";
 import { Persoon } from "~/types/persoon";
 import { Bestelling, BestellingInhoud } from "~/types/bestelling";
@@ -36,20 +35,6 @@ const invoer = useInvoerStore();
 const product = useProductStore();
 const persoon = usePersoonStore();
 const main = useMainStore();
-
-onBeforeMount(() => {
-  user.setSelectie(props.uid);
-
-  if (props.bestellingId) {
-    const oudeBestelling = bestelling.bestellingen[props.bestellingId];
-
-    invoer.setInvoer(oudeBestelling.inhoud);
-    invoer.setOudeInvoer(oudeBestelling);
-  } else {
-    // FIXME: werkt dit?
-    invoer.setInvoer([]);
-  }
-});
 
 const producten = (): Product[] => {
   return product.zichtbareProducten;
@@ -126,6 +111,24 @@ const annuleer = (): void => {
   user.setSelectie(null);
   router.replace({ name: routes.personen });
 };
+
+onMounted(() => {
+  user.setSelectie(props.uid);
+
+  if (props.bestellingId) {
+    const oudeBestelling = bestelling.bestellingen[props.bestellingId];
+
+    invoer.setInvoer(oudeBestelling.inhoud);
+    invoer.setOudeInvoer(oudeBestelling);
+  } else {
+    // FIXME: werkt dit?
+    invoer.setInvoer([]);
+  }
+});
+
+definePageMeta({
+  middleware: ["token"],
+});
 </script>
 
 <template>

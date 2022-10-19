@@ -1,3 +1,4 @@
+// import { getLocatieToken, getToken } from "@/util/token";
 import { RequestObject } from "client-oauth2";
 import { useToken } from "~/composables/useToken";
 import { useTypedRouter } from "~/generated";

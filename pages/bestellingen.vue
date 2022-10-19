@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { computed, onBeforeMount, ref } from "vue";
 import { Bestelling } from "~/types/bestelling";
 import { Product } from "~/types/product";
 import { Persoon } from "~/types/persoon";
@@ -128,7 +127,7 @@ const zoeken = () => {
   });
 };
 
-onBeforeMount(() => {
+onMounted(() => {
   setTimeout(() => {
     bestelling.fetchBestellingen({
       aantal: "alles",
@@ -136,6 +135,10 @@ onBeforeMount(() => {
       eind: "",
     });
   }, 1000);
+});
+
+definePageMeta({
+  middleware: ["token"],
 });
 </script>
 

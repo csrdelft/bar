@@ -122,6 +122,8 @@ export const useMainStore = defineStore("main", () => {
 
   return {
     huidigePersoon,
+    listProducten,
+    plaatsBestelling,
   };
 });
 
