@@ -51,6 +51,7 @@ export const usePersoonStore = defineStore("persoon", () => {
     setPersoon,
     personen,
     personenWeergave,
+    updateBijnaam,
   };
 });
 
