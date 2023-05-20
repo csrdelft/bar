@@ -10,19 +10,15 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@pinia/nuxt": "^0.4.3",
+    "@pinia/nuxt": "^0.4.11",
     "client-oauth2": "^4.3.3",
-    "mdi": "^2.2.43",
-    "sass": "^1.55.0",
+    "sass": "^1.62.1",
     "vuetify": "^3.3.0"
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^6.4.0",
-    "nuxt": "3.0.0-rc.11",
-    "nuxt-typed-router": "^1.2.3",
-    "prettier": "^2.8.8",
-    "typescript": "^4.6.4",
-    "vite-plugin-vuetify": "^1.0.0-alpha.12",
-    "vue-cli-plugin-vuetify": "~2.5.8"
+    "nuxt": "^3.5.0",
+    "nuxt-typed-router": "^3.2.2",
+    "typescript": "^4.6.4"
   }
 }
