@@ -291,6 +291,11 @@
   resolved "https://registry.yarnpkg.com/@esbuild/linux-loong64/-/linux-loong64-0.15.11.tgz#2f4f9a1083dcb4fc65233b6f59003c406abf32e5"
   integrity sha512-geWp637tUhNmhL3Xgy4Bj703yXB9dqiLJe05lCUfjSFDrQf9C/8pArusyPUbUbPwlC/EAUjBw32sxuIl/11dZw==
 
+"@fortawesome/fontawesome-free@^6.4.0":
+  version "6.4.0"
+  resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-free/-/fontawesome-free-6.4.0.tgz#1ee0c174e472c84b23cb46c995154dc383e3b4fe"
+  integrity sha512-0NyytTlPJwB/BF5LtRV8rrABDbe3TdTXqNB3PdZ+UUUZAEIrdOJdmABqKjt4AXwIoJNaRVVZEXxpNrqvE1GAYQ==
+
 "@ioredis/commands@^1.1.1":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@ioredis/commands/-/commands-1.2.0.tgz#6d61b3097470af1fdbbe622795b8921d42018e11"
@@ -3594,6 +3599,11 @@ prettier@^2.7.1:
   resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.7.1.tgz#e235806850d057f97bb08368a4f7d899f7760c64"
   integrity sha512-ujppO+MkdPqoVINuDFDRLClm7D78qbDt0/NR+wp5FqEZOoTNAjPHWj17QRhu7geIHJfcNhRk1XVQmF8Bp3ye+g==
 
+prettier@^2.8.8:
+  version "2.8.8"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.8.8.tgz#e8c5d7e98a4305ffe3de2e1fc4aca1a71c28b1da"
+  integrity sha512-tdN8qQGvNjw4CHbY+XXk0JgCXn9QiF21a55rBe5LJAU+kDyC4WQn4+awm2Xfk2lQMk5fKup9XgzTZtGkjBdP9Q==
+
 pretty-bytes@^6.0.0:
   version "6.0.0"
   resolved "https://registry.yarnpkg.com/pretty-bytes/-/pretty-bytes-6.0.0.tgz#928be2ad1f51a2e336add8ba764739f9776a8140"
@@ -4524,10 +4534,10 @@ vue@^3.2.39:
     "@vue/server-renderer" "3.2.41"
     "@vue/shared" "3.2.41"
 
-vuetify@^3.0.0-beta.14:
-  version "3.0.0-beta.14"
-  resolved "https://registry.yarnpkg.com/vuetify/-/vuetify-3.0.0-beta.14.tgz#ca1182da7b36ee98a5132e0ab53c50492ff7db59"
-  integrity sha512-7UX2rAcMPGdJ0SGAK+wUvlJTHR0KasYILhg7dV9hLyv9SfaTX4tbOQnSQVf4mXzdFB+5jDyaTs+bOYMVeoqXYg==
+vuetify@^3.3.0:
+  version "3.3.0"
+  resolved "https://registry.yarnpkg.com/vuetify/-/vuetify-3.3.0.tgz#9d85e528cc6829f0a005b60c5636484370df034a"
+  integrity sha512-4jQRZ6O4vUDlu3+/NZbbrv8dyVtvB5BnLc+NEusYjdj7+27GJSRJoDkkzJMmuM9XkZYFiTgq1vizK/vMSkB+2Q==
 
 wcwidth@^1.0.1:
   version "1.0.1"
