@@ -96,7 +96,10 @@ const handleCheckAllChange = (val: boolean) => {
   selectedProducten.value = val ? producten.value.map((v) => v.id) : [];
 };
 const handleEdit = (row: Bestelling) => {
-  router.push({ name: routes.invoerSlug, params: { slug: `/${row.uid}/bewerken/${row.id}` } }); // TODO: beter
+  router.push({
+    name: routes.invoerSlug,
+    params: { slug: `/${row.uid}/bewerken/${row.id}` },
+  }); // TODO: beter
 };
 const handleVerwijder = async (row: Bestelling) => {
   verwijderLaden.value[row.id] = true;

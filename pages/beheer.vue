@@ -1,13 +1,12 @@
 <script lang="ts" setup>
-import { useUserStore } from "~/stores/user";
 import BeheerBijnaam from "~/components/beheer/BeheerBijnaam.vue";
 import BeheerVertrouw from "~/components/beheer/BeheerVertrouw.vue";
 
-const user = useUserStore();
+const user = { rechten: { beheer: true, admin: false } };
 
-definePageMeta({
-  middleware: ["token"],
-});
+// definePageMeta({
+//   middleware: ["token"],
+// });
 </script>
 
 <template>

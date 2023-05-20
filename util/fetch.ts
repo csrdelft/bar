@@ -1,55 +1,55 @@
-// import { getLocatieToken, getToken } from "@/util/token";
-import { RequestObject } from "client-oauth2";
-import { useToken } from "~/composables/useToken";
-import { useTypedRouter } from "~/generated";
+// // import { getLocatieToken, getToken } from "@/util/token";
+// import { RequestObject } from "client-oauth2";
+// import { useToken } from "~/composables/useToken";
+// import { useTypedRouter } from "~/generated";
 
-type RequestObj = RequestObject & { headers?: Record<string, string> };
+// type RequestObj = RequestObject & { headers?: Record<string, string> };
 
-export const fetchAuthorized = async <
-  U,
-  T extends RequestObj = RequestInit & { url: string; headers?: Record<string, string> }
->(
-  requestObj: T
-): Promise<U> => {
-  const { getLocatieToken, getToken } = useToken();
-  const token = getToken();
+// export const fetchAuthorized = async <
+//   U,
+//   T extends RequestObj = RequestInit & { url: string; headers?: Record<string, string> }
+// >(
+//   requestObj: T
+// ): Promise<U> => {
+//   const { getLocatieToken, getToken } = useToken();
+//   const token = getToken();
 
-  if (!token) {
-    const { router, routes } = useTypedRouter();
-    await router.push({ name: routes.authLogout });
+//   if (!token) {
+//     const { router, routes } = useTypedRouter();
+//     await router.push({ name: routes.authLogout });
 
-    throw new Error("Geen token");
-  }
+//     throw new Error("Geen token");
+//   }
 
-  const locatieToken = getLocatieToken();
+//   const locatieToken = getLocatieToken();
 
-  const tokenHeader: Record<string, string> = locatieToken ? { "X-Bar-Token": locatieToken.sleutel } : {};
+//   const tokenHeader: Record<string, string> = locatieToken ? { "X-Bar-Token": locatieToken.sleutel } : {};
 
-  const { url, ...rest } = token.sign({
-    ...requestObj,
-    headers: {
-      ...requestObj.headers,
-      ...tokenHeader,
-      "Content-Type": "application/json",
-    },
-    url: process.env.VUE_APP_REMOTE_URL + requestObj.url,
-  });
+//   const { url, ...rest } = token.sign({
+//     ...requestObj,
+//     headers: {
+//       ...requestObj.headers,
+//       ...tokenHeader,
+//       "Content-Type": "application/json",
+//     },
+//     url: process.env.VUE_APP_REMOTE_URL + requestObj.url,
+//   });
 
-  const response = await fetch(url, rest);
+//   const response = await fetch(url, rest);
 
-  if (response.status == 401) {
-    const { router, routes } = useTypedRouter();
-    await router.push({ name: routes.authLogout });
+//   if (response.status == 401) {
+//     const { router, routes } = useTypedRouter();
+//     await router.push({ name: routes.authLogout });
 
-    throw new Error("Niet ingelogd!");
-  }
+//     throw new Error("Niet ingelogd!");
+//   }
 
-  if (!response.ok) {
-    throw new Error(await response.text());
-  }
+//   if (!response.ok) {
+//     throw new Error(await response.text());
+//   }
 
-  return (await response.json()) as U;
-};
+//   return (await response.json()) as U;
+// };
 
-export default fetchAuthorized;
+// export default fetchAuthorized;
 

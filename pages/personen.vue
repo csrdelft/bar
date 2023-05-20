@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { computed, ref } from "vue";
 import Keyboard from "~/components/Keyboard.vue";
 import LedenTable from "~/components/LedenTable.vue";
 
@@ -9,16 +8,14 @@ const change = (value: string) => {
   query.value = value;
 };
 
-definePageMeta({
-  middleware: ["token"],
-});
+// definePageMeta({
+//   middleware: ["token"],
+// });
 </script>
 
 <template>
-  <div>
-    <Keyboard v-model="query" placeholder="Zoeken" :grab-focus="true" />
-    <LedenTable :zoeken="query" />
-  </div>
+  <Keyboard v-model="query" placeholder="Zoeken" :grab-focus="true" />
+  <LedenTable :zoeken="query" />
 </template>
 
 <style>

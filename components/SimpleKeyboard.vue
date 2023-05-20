@@ -3,8 +3,8 @@ import { onMounted, ref } from "vue";
 
 interface Props {
   modelValue: string;
-  layout: string[];
-  display: Record<string, string>;
+  layout?: string[];
+  display?: Record<string, string>;
   staggered: boolean;
   keyboardClass: string;
   placeholder: string;
@@ -96,7 +96,7 @@ const handleNeg = () => {
           }"
           v-for="key in line.split(' ')"
           :key="key"
-          @click="(e) => onKeyPress(key)"
+          @click="() => onKeyPress(key)"
         >
           {{ key in display ? display[key] : key }}
         </v-btn>
