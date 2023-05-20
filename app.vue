@@ -15,7 +15,8 @@ const drawer = ref(false);
 const message = ref("");
 const loadingProgress = ref(0);
 
-const loggedIn = computed(() => Boolean(user.token));
+// const loggedIn = computed(() => Boolean(user.token));
+const loggedIn = true;
 const bestellingUrl = computed(() => {
   if (user.selectie) {
     return `/invoer/${user.selectie}`;
@@ -31,24 +32,24 @@ async function setLoading(progress: number, msg: string) {
   await nextTick();
   loading.value = true;
 }
-async function processLogin() {
-  if (loggedIn) {
-    try {
-      await setLoading(25, "Profiel laden...");
-      await user.fetchProfiel();
-      await setLoading(50, "Leden laden...");
-      await persoon.listUsers();
-      await setLoading(75, "Producten laden...");
-      await main.listProducten();
-    } finally {
-      loading.value = false;
-    }
-  } else {
-    loading.value = false;
-  }
-}
-
 // FIXME:
+// async function processLogin() {
+//   if (loggedIn) {
+//     try {
+//       await setLoading(25, "Profiel laden...");
+//       await user.fetchProfiel();
+//       await setLoading(50, "Leden laden...");
+//       await persoon.listUsers();
+//       await setLoading(75, "Producten laden...");
+//       await main.listProducten();
+//     } finally {
+//       loading.value = false;
+//     }
+//   } else {
+//     loading.value = false;
+//   }
+// }
+
 // watch(
 //   () => user.token,
 //   () => {

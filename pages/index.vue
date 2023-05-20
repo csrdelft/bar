@@ -12,9 +12,10 @@ const profielNaam = computed((): string => {
 const vertrouwd = computed((): BarLocatie | null => {
   return user.locatieToken;
 });
-const loggedIn = computed(() => {
-  return !!user.tokenData;
-});
+// const loggedIn = computed(() => {
+//   return !!user.tokenData;
+// });
+const loggedIn = true;
 </script>
 
 <template>
