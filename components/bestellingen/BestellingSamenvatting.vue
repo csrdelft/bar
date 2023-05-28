@@ -40,10 +40,10 @@ const { bedragFormat } = useFormatter();
     <v-divider />
     <v-btn-toggle>
       <v-btn block x-large color="success" @click="emits('plaatsBestelling')" :loading="bestellingLaden">
-        <v-icon dark>mdi-check</v-icon>
+        <v-icon icon="fas fa-check" dark />
       </v-btn>
       <v-btn block color="error" @click="emits('annuleer')" :disabled="bestellingLaden" x-large>
-        <v-icon dark>mdi-close</v-icon>
+        <v-icon icon="fas fa-close" dark />
       </v-btn>
     </v-btn-toggle>
   </div>

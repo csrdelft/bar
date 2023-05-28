@@ -24,13 +24,13 @@ const admin = ref(0);
 
     <v-navigation-drawer v-model="drawer" expand-on-hover rail>
       <v-list density="compact" nav>
-        <v-list-item prepend-icon="fa-home" title="Begin" to="/"> </v-list-item>
-        <v-list-item prepend-icon="fa-user-group" title="Personen" to="/personen"> </v-list-item>
-        <v-list-item :disabled="bestellingUrl == null" prepend-icon="fa-receipt" title="Invoer" :to="bestellingUrl">
+        <v-list-item prepend-icon="fas fa-home" title="Begin" to="/"> </v-list-item>
+        <v-list-item prepend-icon="fas fa-user-group" title="Personen" to="/personen"> </v-list-item>
+        <v-list-item :disabled="bestellingUrl == null" prepend-icon="fas fa-receipt" title="Invoer" :to="bestellingUrl">
         </v-list-item>
-        <v-list-item prepend-icon="fa-list" title="Bestellingen" to="bestellingen"> </v-list-item>
-        <v-list-item v-if="beheer || admin" prepend-icon="fa-wrench" title="Beheer" to="beheer"> </v-list-item>
-        <v-list-item prepend-icon="fa-arrow-right-from-bracket" title="Uitloggen" to="logout"> </v-list-item>
+        <v-list-item prepend-icon="fas fa-list" title="Bestellingen" to="bestellingen"> </v-list-item>
+        <v-list-item v-if="beheer || admin" prepend-icon="fas fa-wrench" title="Beheer" to="beheer"> </v-list-item>
+        <v-list-item prepend-icon="fas fa-arrow-right-from-bracket" title="Uitloggen" to="logout"> </v-list-item>
       </v-list>
     </v-navigation-drawer>
 

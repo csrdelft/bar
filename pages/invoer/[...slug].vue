@@ -147,8 +147,7 @@ definePageMeta({
 
                   <v-spacer></v-spacer>
 
-                  <v-btn icon>
-                    <v-icon>mdi-close</v-icon>
+                  <v-btn prepend-icon="fas fa-close">Close
                   </v-btn>
                 </v-card-title>
                 <v-card-text class="text-h5">

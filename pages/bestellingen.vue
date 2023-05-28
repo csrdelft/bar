@@ -176,8 +176,7 @@ definePageMeta({
       <v-dialog v-model="productSelectieZichtbaar">
         <!-- TODO: werkend -->
         <template v-slot:activator="{ props }">
-          <v-btn title="Filter op specifieke producten" :type="isIndeterminate ? 'primary' : 'default'" v-bind="props">
-            <v-icon>mdi-tune</v-icon>
+          <v-btn title="Filter op specifieke producten" :type="isIndeterminate ? 'primary' : 'default'" v-bind="props" prepend-icon="fas fa-sliders">
             Producten
           </v-btn>
         </template>
@@ -205,7 +204,7 @@ definePageMeta({
       </v-dialog>
     </v-col>
     <v-col cols="3">
-      <v-btn @click="zoeken" size="medium">Zoeken</v-btn>
+      <v-btn @click="zoeken">Zoeken</v-btn>
     </v-col>
     <v-col>
       <v-data-table :items="bestellingen" :headers="headers" sort-by="moment" sort-desc>
@@ -224,9 +223,9 @@ definePageMeta({
           {{ new Date(item.moment).toLocaleString("nl") }}
         </template>
         <template v-slot:item.opties="{ item }">
-          <v-icon v-if="!item.deleted" small class="mr-2" @click="handleEdit(item)"> mdi-pencil </v-icon>
-          <v-icon v-if="!item.deleted" small @click="handleVerwijder(item)"> mdi-delete </v-icon>
-          <v-icon v-if="item.deleted" small @click="handleHerstel(item)">mdi-restore </v-icon>
+          <v-icon v-if="!item.deleted" small icon="fas fa-pencil" class="mr-2" @click="handleEdit(item)" />
+          <v-icon v-if="!item.deleted" small icon="fas fa-trash" @click="handleVerwijder(item)" />
+          <v-icon v-if="item.deleted" small icon="fas fa-rotate-left" @click="handleHerstel(item)" />
         </template>
       </v-data-table>
     </v-col>
