@@ -3,10 +3,12 @@ const loading = ref(true);
 const drawer = ref(true);
 const message = ref("");
 const loadingProgress = ref(0);
-const bestellingUrl = ref(null);
+const bestellingUrl = ref(undefined);
 
 const beheer = ref(0);
 const admin = ref(0);
+
+const tijd = useDateFormat(useNow(), "HH:mm:ss", { locales: "nl-NL" });
 </script>
 
 <template>
@@ -19,11 +21,11 @@ const admin = ref(0);
 
       <v-spacer></v-spacer>
 
-      <clock />
+      <span>{{ tijd }}</span>
     </v-app-bar>
 
     <v-navigation-drawer v-model="drawer" expand-on-hover rail>
-      <v-list density="compact" nav>
+      <v-list nav>
         <v-list-item prepend-icon="fas fa-home" title="Begin" to="/"> </v-list-item>
         <v-list-item prepend-icon="fas fa-user-group" title="Personen" to="/personen"> </v-list-item>
         <v-list-item :disabled="bestellingUrl == null" prepend-icon="fas fa-receipt" title="Invoer" :to="bestellingUrl">
