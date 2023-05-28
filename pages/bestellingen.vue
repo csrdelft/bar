@@ -1,4 +1,7 @@
 <script lang="ts" setup>
+import { ref } from 'vue';
+import VueDatePicker from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css'
 import { Bestelling } from "~/types/bestelling";
 import { Product } from "~/types/product";
 import { Persoon } from "~/types/persoon";
@@ -16,6 +19,11 @@ const user = useUserStore();
 const product = useProductStore();
 const persoon = usePersoonStore();
 const bestelling = useBestellingStore();
+
+
+// const datum = ref();
+const datum = ref([
+] as string[]);
 
 const bestellingen = computed((): Bestelling[] => {
   return Object.values(bestelling.bestellingen);
@@ -46,10 +54,6 @@ const verwijderLaden = ref({} as Record<string, boolean>);
 const herstelLaden = ref({} as Record<string, boolean>);
 const productSelectieZichtbaar = ref(false);
 const zoekInAlles = ref(true);
-const datum = ref([
-  new Date(+new Date() - 3600 * 1000 * 24 * 15).toISOString().substr(0, 10),
-  new Date().toISOString().substr(0, 10),
-] as string[]);
 const datumMenu = ref(false);
 const selectedProducten = ref([] as string[]);
 const checkAll = ref(false);
@@ -138,6 +142,10 @@ onMounted(() => {
       eind: "",
     });
   }, 1000);
+
+  const startDate = new Date(+new Date() - 3600 * 1000 * 24 * 15).toISOString().slice(0, 9);
+  const endDate = new Date().toISOString().slice(0, 9);
+  datum.value = [startDate, endDate];
 });
 
 definePageMeta({
@@ -151,26 +159,13 @@ definePageMeta({
       <v-switch v-model="zoekInAlles" label="Alleen geselecteerde persoon" />
     </v-col>
     <v-col cols="3">
-      <v-menu
-        ref="datumMenu"
-        v-model="datumMenu"
-        :close-on-content-click="false"
-        transition="scale-transition"
-        offset-y
-        min-width="auto"
+      <v-input
+        prepend-icon="fas fa-calendar"
       >
-        <!-- TODO: werkend -->
-        <template v-slot:activator="{ props }">
-          <v-text-field
-            v-model="datumText"
-            label="Datum"
-            prepend-icon="mdi-calendar"
-            readonly
-            v-bind="props"
-          ></v-text-field>
-        </template>
-        <v-date-picker v-model="datum" range min="1950-01-01"></v-date-picker>
-      </v-menu>
+        <VueDatePicker v-model="datum" range min-date="1950-01-01" :enable-time-picker="false">
+          <template #input-icon></template>
+        </VueDatePicker>
+      </v-input>
     </v-col>
     <v-col cols="3">
       <v-dialog v-model="productSelectieZichtbaar">
