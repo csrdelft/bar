@@ -6,9 +6,12 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      oauth2ClientId: "bar",
-      remoteUrl: "http://localhost:8000",
+      authId: "bar",
+      remoteUrl: process.env.NODE_ENV === "development" ? process.env.NUXT_REMOTE_URL : "https://csrdelft.nl",
+      origin: process.env.NODE_ENV === "development" ? process.env.AUTH_ORIGIN : "https://bar.csrdelft.nl",
     },
+    authSecret: process.env.NUXT_AUTH_SECRET,
+    secret: process.env.NUXT_SECRET,
   },
 
   buildModules: ["nuxt-typed-router"],
