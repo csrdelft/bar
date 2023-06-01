@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { Bestelling } from "~/types/bestelling";
-import fetchAuthorized from "~/util/fetch";
+import { fetchAuthorized } from "~/composables/fetch";
 import { groupBy } from "~/util/list";
 
 export const useBestellingStore = defineStore("bestelling", () => {
@@ -14,7 +14,7 @@ export const useBestellingStore = defineStore("bestelling", () => {
     bestellingen = groupBy(bestellingen, "id");
   }
   function updateBestelling(bestelling: Bestelling) {
-    bestellingen[bestelling.id] = bestelling;
+    bestellingen.value[bestelling.id] = bestelling;
   }
   async function fetchBestellingen(data: {
     aantal: string | null;
@@ -23,18 +23,14 @@ export const useBestellingStore = defineStore("bestelling", () => {
     productType?: string[];
   }) {
     bestellingen.value = groupBy(
-      await fetchAuthorized<Bestelling[]>({
-        url: "/api/v3/bar/laadLaatste",
-        method: "POST",
+      await fetchAuthorized<Bestelling[]>("/api/v3/bar/laadLaatste", {
         body: JSON.stringify(data),
       }),
       "id"
     );
   }
   async function verwijderBestelling(bestelling: Bestelling) {
-    const response = await fetchAuthorized<boolean>({
-      url: "/api/v3/bar/verwijderBestelling",
-      method: "POST",
+    const response = await fetchAuthorized<boolean>("/api/v3/bar/verwijderBestelling", {
       body: JSON.stringify({ verwijderBestelling: bestelling.id }),
     });
 
@@ -48,9 +44,7 @@ export const useBestellingStore = defineStore("bestelling", () => {
     });
   }
   async function herstelBestelling(bestelling: Bestelling) {
-    const response = await fetchAuthorized<boolean>({
-      url: "/api/v3/bar/undoVerwijderBestelling",
-      method: "POST",
+    const response = await fetchAuthorized<boolean>("/api/v3/bar/undoVerwijderBestelling", {
       body: JSON.stringify({ undoVerwijderBestelling: bestelling.id }),
     });
 

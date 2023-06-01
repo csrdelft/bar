@@ -1,15 +1,15 @@
 import { defineStore } from "pinia";
-import { BarLocatie } from "~/types/barlocatie";
+import { fetchAuthorized } from "~/composables/fetch";
 import { Persoon } from "~/types/persoon";
 import { Product } from "~/types/product";
-import fetchAuthorized from "~/util/fetch";
 import { sum } from "~/util/list";
 import { isOudlid, SaldoError } from "~/util/util";
 
-import { useUserStore } from "./user";
+import { LocatieToken } from "~/types/token";
+import { useInvoerStore } from "./invoer";
 import { usePersoonStore } from "./persoon";
 import { useProductStore } from "./product";
-import { useInvoerStore } from "./invoer";
+import { useUserStore } from "./user";
 
 export const useMainStore = defineStore("main", () => {
   // MARK: State
@@ -26,10 +26,7 @@ export const useMainStore = defineStore("main", () => {
   async function listProducten() {
     const product = useProductStore();
 
-    const response = await fetchAuthorized<Product[]>({
-      url: "/api/v3/bar/producten",
-      method: "POST",
-    });
+    const response = await fetchAuthorized<Product[]>("/api/v3/bar/producten");
 
     const producten = Object.values(response);
     const productenRecord = Object.fromEntries(producten.map((p) => [p.id, p]));
@@ -48,9 +45,7 @@ export const useMainStore = defineStore("main", () => {
   async function vertrouwLocatie(naam: string) {
     const user = useUserStore();
 
-    const barLocatie = await fetchAuthorized<BarLocatie>({
-      url: "/api/v3/bar/trust",
-      method: "POST",
+    const barLocatie = await fetchAuthorized<LocatieToken>("/api/v3/bar/trust", {
       body: JSON.stringify({ naam }),
     });
 
@@ -98,9 +93,7 @@ export const useMainStore = defineStore("main", () => {
       if (!force && naarRood) {
         throw new SaldoError("Laat lid inleggen. Saldo wordt negatief.");
       } else {
-        await fetchAuthorized<boolean>({
-          url: "/api/v3/bar/bestelling",
-          method: "POST",
+        await fetchAuthorized<boolean>("/api/v3/bar/bestelling", {
           body: JSON.stringify({
             uid: huidigePersoon.value.uid,
             inhoud: Object.fromEntries(Object.values(invoer.inhoud).map((i) => [i.product.id, i.aantal])),

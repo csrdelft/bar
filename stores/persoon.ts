@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { Persoon } from "~/types/persoon";
-import { fetchAuthorized } from "~/util/fetch";
+import { fetchAuthorized } from "~/composables/fetch";
 
 export const usePersoonStore = defineStore("persoon", () => {
   // MARK: State
@@ -15,18 +15,15 @@ export const usePersoonStore = defineStore("persoon", () => {
   );
 
   // MARK: Actions/Mutations
-  function setPersonen(personen: Record<string, Persoon>) {
-    this.personen = personen;
+  function setPersonen(data: Record<string, Persoon>) {
+    personen.value = data;
   }
   function setPersoon(persoon: Persoon) {
-    this.personen[persoon.uid] = persoon;
+    personen.value[persoon.uid] = persoon;
   }
 
   async function listUsers() {
-    const response = await fetchAuthorized<Persoon[]>({
-      url: "/api/v3/bar/personen",
-      method: "POST",
-    });
+    const response = await fetchAuthorized<Persoon[]>("/api/v3/bar/personen");
 
     const personen = Object.values(response);
     const personenRecord = Object.fromEntries(personen.map((p, i) => [p.uid, { ...p }]));
@@ -34,14 +31,12 @@ export const usePersoonStore = defineStore("persoon", () => {
     setPersonen(personenRecord);
   }
   async function updateBijnaam({ id, name }: { id: string; name: string }) {
-    await fetchAuthorized<void>({
-      url: "/api/v3/bar/updatePerson",
-      method: "POST",
+    await fetchAuthorized<void>("/api/v3/bar/updatePerson", {
       body: JSON.stringify({ id, name }),
     });
 
     setPersoon({
-      ...this.personen[id],
+      ...personen.value[id],
       naam: name,
     });
   }

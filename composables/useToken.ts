@@ -1,4 +1,4 @@
-// import { Data, Token } from "client-oauth2";
+import { Data, Token } from "client-oauth2";
 // import { useCsrAuth } from "./useCsrAuth";
 // import { useUserStore } from "~/stores/user";
 // import { CookieOptions } from "nuxt/dist/app/composables";
