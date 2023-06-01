@@ -4,9 +4,9 @@ import BeheerVertrouw from "~/components/beheer/BeheerVertrouw.vue";
 
 const user = { rechten: { beheer: true, admin: false } };
 
-// definePageMeta({
-//   middleware: ["token"],
-// });
+definePageMeta({
+  middleware: ["token", "admin"],
+});
 </script>
 
 <template>

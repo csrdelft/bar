@@ -8,9 +8,13 @@ const change = (value: string) => {
   query.value = value;
 };
 
-// definePageMeta({
-//   middleware: ["token"],
-// });
+definePageMeta({
+  middleware: ["token"],
+});
+
+const henk = async () => {
+  const data = await fetchAuthorized("/api/v3/personen");
+};
 </script>
 
 <template>

@@ -1,9 +1,8 @@
 export default defineNuxtRouteMiddleware(async (to, from) => {
   const { session } = await useSession();
 
-  if (!session.value?.access_token) {
+  if (!session.value?.profiel.isAdmin) {
     return navigateTo("/");
   }
-  // TODO: authStore.refreshToken();
 });
 

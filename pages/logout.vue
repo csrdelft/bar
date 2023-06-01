@@ -1,10 +1,14 @@
 <script lang="ts" setup>
 import { useTypedRouter } from "~/generated";
+import { useAuthStore } from "~/stores/auth";
 
 const { router, routes } = useTypedRouter();
+const authStore = useAuthStore();
 
 const logout = () => {
-  router.push({ name: routes.authLogout });
+  authStore.signOut();
+  // router.push({ name: routes.authLogout });
+  router.push({ name: routes.index });
 };
 </script>
 

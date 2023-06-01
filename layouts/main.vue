@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 const loading = ref(true);
-const drawer = ref(true);
 const message = ref("");
 const loadingProgress = ref(0);
 const bestellingUrl = ref(undefined);
@@ -9,22 +8,14 @@ const beheer = ref(0);
 const admin = ref(0);
 
 const tijd = useDateFormat(useNow(), "HH:mm:ss", { locales: "nl-NL" });
+
+const { session } = await useSession();
 </script>
 
 <template>
   <v-layout>
-    <v-app-bar>
-      <v-toolbar-title>
-        C.S.R. Bar
-        <!-- <span v-if="user.locatieToken">- {{ user.locatieToken.naam }}</span> -->
-      </v-toolbar-title>
-
-      <v-spacer></v-spacer>
-
-      <span>{{ tijd }}</span>
-    </v-app-bar>
-
-    <v-navigation-drawer v-model="drawer" expand-on-hover rail>
+    <!-- <v-navigation-drawer v-model="drawer" permanent expand-on-hover rail> -->
+    <v-navigation-drawer v-if="session?.access_token" permanent expand-on-hover rail>
       <v-list nav>
         <v-list-item prepend-icon="fas fa-home" title="Begin" to="/"> </v-list-item>
         <v-list-item prepend-icon="fas fa-user-group" title="Personen" to="/personen"> </v-list-item>
@@ -35,6 +26,17 @@ const tijd = useDateFormat(useNow(), "HH:mm:ss", { locales: "nl-NL" });
         <v-list-item prepend-icon="fas fa-arrow-right-from-bracket" title="Uitloggen" to="logout"> </v-list-item>
       </v-list>
     </v-navigation-drawer>
+
+    <v-app-bar>
+      <v-toolbar-title>
+        C.S.R. Bar
+        <span v-if="session?.locatie">- {{ session?.locatie.naam }}</span>
+      </v-toolbar-title>
+
+      <v-spacer></v-spacer>
+
+      <span>{{ tijd }}</span>
+    </v-app-bar>
 
     <v-main>
       <v-container fluid>
