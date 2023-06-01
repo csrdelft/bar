@@ -19,6 +19,7 @@
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^6.4.0",
+    "@sidebase/nuxt-session": "^0.2.7",
     "@types/node": "^20.2.1",
     "@vueuse/core": "^10.1.2",
     "@vueuse/nuxt": "^10.1.2",
