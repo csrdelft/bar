@@ -1,6 +1,8 @@
 <script lang="ts" setup>
-import { usePersoonStore } from "~/stores/persoon";
 import { useTypedRouter } from "~/generated";
+import { Persoon } from "~/types/persoon";
+import { fetchAuthorized } from "~/composables/fetch";
+import { VDataTable } from "vuetify/lib/labs/components.mjs";
 
 interface Props {
   zoeken: string;
@@ -9,53 +11,51 @@ interface Props {
 const props = defineProps<Props>();
 
 const { bedragFormat } = useFormatter();
-
 const { router, routes } = useTypedRouter();
-const persoon = usePersoonStore();
 
-const personen = computed(() => {
-  return persoon.personenWeergave.filter(filterPersoon);
-});
-const headers = computed(() => {
-  return [
-    { text: "Bijnaam", value: "naam" },
-    { text: "Naam", value: "weergave" },
-    { text: "Saldo", value: "saldo" },
-  ];
-});
+const headers = [
+  { title: "Bijnaam", key: "naam" },
+  { title: "Naam", key: "weergave" },
+  { title: "Saldo", key: "saldo" },
+];
 
 const rowClick = (row: any) => {
-  router.push({ name: routes.invoerSlug, params: { slug: row.uid } }); // TODO: beter
+  router.push({ name: routes.invoerSlug, params: { slug: row.uid } });
 };
-const tableRowClassName = (row: any, theme: any) => {
-  const isDark = theme.getTheme(theme.current).dark;
+const filterPersoon = (persoon: Persoon) => {
+  return (
+    !persoon.deleted &&
+    (persoon.weergave.toUpperCase().match(props.zoeken) || persoon.naam.toUpperCase().match(props.zoeken))
+  );
+};
+const getColor = (bedrag: number) => {
+  if (bedrag > 10) return "success";
+  else if (bedrag >= 0) return "warning";
+  else return "error";
+};
 
-  const color = row.saldo < 0 ? "error" : "success";
-  const extra = isDark ? "darken-4" : "lighten-5";
-
-  return `${color} ${extra}`;
-};
-const filterPersoon = (persoon: any) => {
-  return persoon.weergave.toUpperCase().match(props.zoeken) || persoon.naam.toUpperCase().match(props.zoeken);
-};
+const {
+  data: personen,
+  error,
+  pending,
+} = useAsyncData("personen", async () => {
+  return await fetchAuthorized<Persoon[]>("/api/v3/bar/personen");
+});
+const filteredPersonen = computed(() => {
+  return personen.value
+    ?.sort((a, b) => a.recent - b.recent)
+    .reverse()
+    .filter(filterPersoon);
+});
 </script>
 
 <template>
-  <!-- <v-data-table
-    :headers="headers"
-    :items="personen"
-    @click:row="rowClick"
-    item-key="uid"
-    :item-class="(row: any) => 
-      //  tableRowClassName(row, $vuetify.theme)
-    "
-    :items-per-page="-1"
-    hide-default-footer
-  >
+  <v-data-table :headers="headers" :items="filteredPersonen" @click:row="rowClick" :items-per-page="100">
     <template v-slot:item.saldo="{ item }">
-      {{ bedragFormat(item.saldo) }}
+      <v-chip :color="getColor(item.columns.saldo)">
+        {{ bedragFormat(item.columns.saldo) }}
+      </v-chip>
     </template>
-  </v-data-table> -->
-  <div></div>
+  </v-data-table>
 </template>
 
