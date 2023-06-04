@@ -1,28 +1,23 @@
 <script lang="ts" setup>
 import { computed, ref } from "vue";
-import { BarLocatie } from "~/types/barlocatie";
 import { useMainStore } from "~/stores";
+import { useAuthStore } from "~/stores/auth";
 import { useUserStore } from "~/stores/user";
 
-const user = useUserStore();
-const main = useMainStore();
+const authStore = useAuthStore();
 
 const naam = ref("");
 const laden = ref(false);
 
-const vertrouwd = computed((): BarLocatie | null => {
-  return user.locatieToken;
-});
-
 const vertrouw = async () => {
   laden.value = true;
 
-  await main.vertrouwLocatie(naam.value);
+  await authStore.vertrouwLocatie(naam.value);
 
   laden.value = false;
 };
 const stopVertrouwen = async () => {
-  user.setLocatieToken(null);
+  authStore.setLocatieToken(null);
 };
 </script>
 
@@ -30,10 +25,10 @@ const stopVertrouwen = async () => {
   <v-card>
     <v-card-title>Locatie vertrouwen</v-card-title>
     <v-card-text>
-      <div v-if="vertrouwd">
+      <div v-if="authStore.locatieToken">
         <p>
-          <strong>{{ vertrouwd.naam }}</strong> is een vertrouwde locatie. Alle leden kunnen gebruik maken van het bar
-          systeem op deze locatie.
+          <strong>{{ authStore.locatieToken.naam }}</strong> is een vertrouwde locatie. Alle leden kunnen gebruik maken
+          van het bar systeem op deze locatie.
         </p>
 
         <v-btn color="primary" @click="stopVertrouwen"> Niet langer vertrouwen </v-btn>
