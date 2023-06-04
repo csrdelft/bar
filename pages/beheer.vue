@@ -10,11 +10,11 @@ definePageMeta({
 
 <template>
   <v-row>
-      <beheer-bijnaam />
     <v-col lg="4" v-if="userStore.rechten.beheer">
+      <BeheerBijnaam />
     </v-col>
-      <beheer-vertrouw />
     <v-col lg="4" v-if="userStore.rechten.admin">
+      <BeheerVertrouw />
     </v-col>
     <v-col lg="4" v-if="!userStore.rechten.beheer && !userStore.rechten.admin"> Er is niets te zien hier. </v-col>
   </v-row>

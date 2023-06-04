@@ -18,19 +18,19 @@ const userStore = useUserStore();
     <!-- <v-navigation-drawer v-model="drawer" permanent expand-on-hover rail> -->
     <v-navigation-drawer v-if="authStore.token?.accessToken" permanent expand-on-hover rail>
       <v-list nav>
-        <v-list-item prepend-icon="fas fa-home" title="Begin" to="/"> </v-list-item>
-        <v-list-item prepend-icon="fas fa-user-group" title="Personen" to="/personen"> </v-list-item>
-        <v-list-item :disabled="bestellingUrl == null" prepend-icon="fas fa-receipt" title="Invoer" :to="bestellingUrl">
+        <v-list-item prepend-icon="mdi-home" title="Begin" to="/"> </v-list-item>
+        <v-list-item prepend-icon="mdi-account-multiple" title="Personen" to="/personen"> </v-list-item>
+        <v-list-item :disabled="bestellingUrl == null" prepend-icon="mdi-receipt" title="Invoer" :to="bestellingUrl">
         </v-list-item>
-        <v-list-item prepend-icon="fas fa-list" title="Bestellingen" to="bestellingen"> </v-list-item>
+        <v-list-item prepend-icon="mdi-view-list" title="Bestellingen" to="bestellingen"> </v-list-item>
         <v-list-item
           v-if="userStore.rechten.beheer || userStore.rechten.admin"
-          prepend-icon="fas fa-wrench"
+          prepend-icon="mdi-wrench"
           title="Beheer"
           to="beheer"
         >
         </v-list-item>
-        <v-list-item prepend-icon="fas fa-arrow-right-from-bracket" title="Uitloggen" to="logout"> </v-list-item>
+        <v-list-item prepend-icon="mdi-exit-to-app" title="Uitloggen" to="logout"> </v-list-item>
       </v-list>
     </v-navigation-drawer>
 

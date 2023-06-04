@@ -15,7 +15,11 @@ export const useFormatter = () => {
       return string.replace("€-", "-€");
     },
     datumFormat: (datum: Date): string => {
-      return datum.toLocaleDateString("nl-NL");
+      // return datum.toLocaleDateString("nl-NL");
+      return Intl.DateTimeFormat("nl-NL", {
+        timeStyle: "short",
+        dateStyle: "short",
+      }).format(datum);
     },
   };
 };
