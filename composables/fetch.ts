@@ -2,24 +2,23 @@ import { useAuthStore } from "~/stores/auth";
 
 export const fetchAuthorized = async <T>(url: string, options?: RequestInit): Promise<T> => {
   const config = useRuntimeConfig();
-  const { session } = await useSession();
+  const authStore = useAuthStore();
 
-  if (!session.value?.access_token) {
+  if (!authStore.token?.accessToken) {
     throw new Error("Geen token");
   }
 
-  // FIXME:
-  // const tokenHeader: Record<string, string> = authStore.locatieToken?.sleutel
-  //   ? { "X-Bar-Token": authStore.locatieToken.sleutel }
-  //   : {};
+  const tokenHeader: Record<string, string> = authStore.locatieToken?.sleutel
+    ? { "X-Bar-Token": authStore.locatieToken.sleutel }
+    : {};
 
   const fullUrl = new URL(url, config.public.remoteUrl);
   const response = await fetch(fullUrl, {
     method: "POST",
     ...options,
     headers: {
-      // FIXME: ...tokenHeader,
-      Authorization: `Bearer ${session.value?.access_token}`,
+      ...tokenHeader,
+      Authorization: `Bearer ${authStore.token?.accessToken}`,
       "Content-Type": "application/json",
     },
   });

@@ -1,8 +1,7 @@
 <script lang="ts" setup>
-import BeheerBijnaam from "~/components/beheer/BeheerBijnaam.vue";
-import BeheerVertrouw from "~/components/beheer/BeheerVertrouw.vue";
+import { useUserStore } from "~/stores/user";
 
-const user = { rechten: { beheer: true, admin: false } };
+const userStore = useUserStore();
 
 definePageMeta({
   middleware: ["token", "admin"],
@@ -11,13 +10,13 @@ definePageMeta({
 
 <template>
   <v-row>
-    <v-col lg="4" v-if="user.rechten.beheer">
       <beheer-bijnaam />
+    <v-col lg="4" v-if="userStore.rechten.beheer">
     </v-col>
-    <v-col lg="4" v-if="user.rechten.admin">
       <beheer-vertrouw />
+    <v-col lg="4" v-if="userStore.rechten.admin">
     </v-col>
-    <v-col lg="4" v-if="!user.rechten.beheer && !user.rechten.admin"> Er is niets te zien hier. </v-col>
+    <v-col lg="4" v-if="!userStore.rechten.beheer && !userStore.rechten.admin"> Er is niets te zien hier. </v-col>
   </v-row>
 </template>
 

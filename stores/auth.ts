@@ -1,19 +1,12 @@
 import { defineStore } from "pinia";
 import { LocatieToken, Token } from "~/types/token";
 import oauthConfig from "~/util/oauth-config";
-// import { Data as OAuth2Data } from "client-oauth2";
-// import { BarLocatie } from "~/types/barLocatie";
-// import { Profiel } from "~/types/profiel";
-// import fetchAuthorized from "~/util/fetch";
-// import { useToken } from "~/composables/useToken";
+import { locatieTokenOptions, tokenOptions } from "~/util/token-options";
 
 export const useAuthStore = defineStore("auth", () => {
   // MARK: State
-  // const token = useCookie<Token | null>("token", { sameSite: "strict" });
-  // const locatieToken = useCookie<LocatieToken | null>("locatie-token", {
-  //   sameSite: "strict",
-  //   expires: new Date(+new Date() + 1000 * 24 * 60 * 60 * 1000),
-  // });
+  const token = useCookie<Token | null>("token", tokenOptions);
+  const locatieToken = useCookie<LocatieToken | null>("locatie-token", locatieTokenOptions);
 
   // MARK: Getters
 
@@ -25,7 +18,6 @@ export const useAuthStore = defineStore("auth", () => {
      */
     const params = new URLSearchParams({
       client_id: oauthConfig.clientId,
-      //   scope:'STANDAARD',
       scope: oauthConfig.scopes.join(" "),
       response_type: "code",
       redirect_uri: oauthConfig.redirectUri,
@@ -36,27 +28,20 @@ export const useAuthStore = defineStore("auth", () => {
     const url = new URL(oauthConfig.authorizeUri + "?" + params);
     window.open(url, "_self");
   };
-  // const refreshToken = async () => {
-  //   const data = await fetchAuthorized<Token>(oauthConfig.tokenUri, {
-  //     body: JSON.stringify({
-  //       grant_type: "refresh_token",
-  //       refresh_token: token.value?.refreshToken!,
-  //       client_id: oauthConfig.clientId,
-  //       client_secret: config.authSecret,
-  //       scope: oauthConfig.scopes.join(" "),
-  //     }),
-  //   });
-  //   console.log("🚀 ------------------------------🚀");
-  //   console.log("🚀 ~ refreshToken ~ data:", data);
-  //   console.log("🚀 ------------------------------🚀");
-  // };
+  const refreshToken = async () => {
+    const data = await $fetch("/api/auth/refresh-token");
+    token.value = data;
+  };
   const signOut = async () => {
-    const { remove } = await useSession();
-    await remove();
+    token.value = null;
+    locatieToken.value = null;
   };
 
   return {
+    token,
+    locatieToken,
     authorize,
+    refreshToken,
     signOut,
   };
 });

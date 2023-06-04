@@ -1,28 +1,35 @@
 <script lang="ts" setup>
+import { useAuthStore } from "~/stores/auth";
+import { useUserStore } from "~/stores/user";
+
 const loading = ref(true);
 const message = ref("");
 const loadingProgress = ref(0);
 const bestellingUrl = ref(undefined);
 
-const beheer = ref(0);
-const admin = ref(0);
-
 const tijd = useDateFormat(useNow(), "HH:mm:ss", { locales: "nl-NL" });
 
-const { session } = await useSession();
+const authStore = useAuthStore();
+const userStore = useUserStore();
 </script>
 
 <template>
   <v-layout>
     <!-- <v-navigation-drawer v-model="drawer" permanent expand-on-hover rail> -->
-    <v-navigation-drawer v-if="session?.access_token" permanent expand-on-hover rail>
+    <v-navigation-drawer v-if="authStore.token?.accessToken" permanent expand-on-hover rail>
       <v-list nav>
         <v-list-item prepend-icon="fas fa-home" title="Begin" to="/"> </v-list-item>
         <v-list-item prepend-icon="fas fa-user-group" title="Personen" to="/personen"> </v-list-item>
         <v-list-item :disabled="bestellingUrl == null" prepend-icon="fas fa-receipt" title="Invoer" :to="bestellingUrl">
         </v-list-item>
         <v-list-item prepend-icon="fas fa-list" title="Bestellingen" to="bestellingen"> </v-list-item>
-        <v-list-item v-if="beheer || admin" prepend-icon="fas fa-wrench" title="Beheer" to="beheer"> </v-list-item>
+        <v-list-item
+          v-if="userStore.rechten.beheer || userStore.rechten.admin"
+          prepend-icon="fas fa-wrench"
+          title="Beheer"
+          to="beheer"
+        >
+        </v-list-item>
         <v-list-item prepend-icon="fas fa-arrow-right-from-bracket" title="Uitloggen" to="logout"> </v-list-item>
       </v-list>
     </v-navigation-drawer>
@@ -30,7 +37,7 @@ const { session } = await useSession();
     <v-app-bar>
       <v-toolbar-title>
         C.S.R. Bar
-        <span v-if="session?.locatie">- {{ session?.locatie.naam }}</span>
+        <span v-if="authStore.locatieToken">- {{ authStore.locatieToken.naam }}</span>
       </v-toolbar-title>
 
       <v-spacer></v-spacer>

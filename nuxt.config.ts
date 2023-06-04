@@ -15,7 +15,7 @@ export default defineNuxtConfig({
   },
 
   buildModules: ["nuxt-typed-router"],
-  modules: ["@sidebase/nuxt-session", "@pinia/nuxt", "@vueuse/nuxt"],
+  modules: ["@pinia/nuxt", "@vueuse/nuxt"],
 
   css: ["@fortawesome/fontawesome-free/css/all.min.css", "vuetify/lib/styles/main.sass"],
   build: {
@@ -24,12 +24,6 @@ export default defineNuxtConfig({
   vite: {
     define: {
       "process.env.DEBUG": false,
-    },
-  },
-
-  session: {
-    session: {
-      cookieSameSite: "strict",
     },
   },
 });

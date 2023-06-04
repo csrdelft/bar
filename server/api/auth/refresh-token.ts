@@ -3,8 +3,6 @@ import { fetchToken } from "~/composables/fetch";
 import { Token } from "~/types/token";
 import { tokenOptions } from "~/util/token-options";
 
-const urldecode = (string: string) => decodeURIComponent(string.replace(/\+/g, " "));
-
 type TokenData = {
   token_type: string;
   expires_in: number;
@@ -15,30 +13,24 @@ type TokenData = {
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
 
-  const query = getQuery(event);
+  const tokenString = getCookie(event, "token");
+  const token = JSON.parse(tokenString ?? "");
 
-  // Get access_token en refresh_token
+  // Get new access_token
   const data = await fetchToken<TokenData>(oauthConfig.tokenUri, {
     body: JSON.stringify({
-      grant_type: "authorization_code",
+      grant_type: "refresh_token",
+      refresh_token: token.refreshToken,
       client_id: oauthConfig.clientId,
       client_secret: config.authSecret,
-      redirect_uri: oauthConfig.redirectUri,
-      code: urldecode(query["code"] as string),
+      scope: oauthConfig.scopes.join(" "),
     }),
   });
 
-  setCookie(
-    event,
-    "token",
-    JSON.stringify({
-      accessToken: data.access_token,
-      refreshToken: data.refresh_token,
-      expiresAt: Date.now() + data.expires_in * 1000,
-    } satisfies Token),
-    tokenOptions
-  );
-
-  return sendRedirect(event, "/");
+  return {
+    accessToken: data.access_token,
+    refreshToken: data.refresh_token,
+    expiresAt: Date.now() + data.expires_in * 1000,
+  } satisfies Token;
 });
 

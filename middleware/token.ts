@@ -1,9 +1,13 @@
-export default defineNuxtRouteMiddleware(async (to, from) => {
-  const { session } = await useSession();
+import { useAuthStore } from "~/stores/auth";
 
-  if (!session.value?.access_token) {
+export default defineNuxtRouteMiddleware(async () => {
+  const authStore = useAuthStore();
+
+  if (!authStore.token?.accessToken) {
     return navigateTo("/");
+  } else if (authStore.token?.expiresAt! < Date.now()) {
+    await authStore.refreshToken();
+    return;
   }
-  // TODO: authStore.refreshToken();
 });
 

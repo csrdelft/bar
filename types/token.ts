@@ -1,9 +1,7 @@
 export type Token = {
-  tokenType?: string;
   accessToken?: string;
   refreshToken?: string;
-  expiresIn?: string;
-  state?: string;
+  expiresAt?: number;
 };
 
 export type LocatieToken = {
