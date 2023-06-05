@@ -6,7 +6,9 @@ const authStore = useAuthStore();
 const userStore = useUserStore();
 
 onMounted(() => {
-  userStore.fetchProfiel();
+  if (authStore.token?.accessToken) {
+    userStore.fetchProfiel();
+  }
 });
 </script>
 
