@@ -1,36 +1,41 @@
 <script lang="ts" setup>
 import { useAuthStore } from "~/stores/auth";
+import { usePersoonStore } from "~/stores/persoon";
 import { useUserStore } from "~/stores/user";
 
 const loading = ref(true);
 const message = ref("");
 const loadingProgress = ref(0);
-const bestellingUrl = ref(undefined);
 
 const tijd = useDateFormat(useNow(), "HH:mm:ss", { locales: "nl-NL" });
 
 const authStore = useAuthStore();
 const userStore = useUserStore();
+const persoonStore = usePersoonStore();
 </script>
 
 <template>
   <v-layout>
-    <!-- <v-navigation-drawer v-model="drawer" permanent expand-on-hover rail> -->
     <v-navigation-drawer v-if="authStore.token?.accessToken" permanent expand-on-hover rail>
       <v-list nav>
         <v-list-item prepend-icon="mdi-home" title="Begin" to="/"> </v-list-item>
         <v-list-item prepend-icon="mdi-account-multiple" title="Personen" to="/personen"> </v-list-item>
-        <v-list-item :disabled="bestellingUrl == null" prepend-icon="mdi-receipt" title="Invoer" :to="bestellingUrl">
+        <v-list-item
+          :disabled="persoonStore.persoonSelectie == null"
+          prepend-icon="mdi-receipt"
+          title="Invoer"
+          :to="`/invoer/${persoonStore.persoonSelectie}`"
+        >
         </v-list-item>
-        <v-list-item prepend-icon="mdi-view-list" title="Bestellingen" to="bestellingen"> </v-list-item>
+        <v-list-item prepend-icon="mdi-view-list" title="Bestellingen" to="/bestellingen"> </v-list-item>
         <v-list-item
           v-if="userStore.rechten.beheer || userStore.rechten.admin"
           prepend-icon="mdi-wrench"
           title="Beheer"
-          to="beheer"
+          to="/beheer"
         >
         </v-list-item>
-        <v-list-item prepend-icon="mdi-exit-to-app" title="Uitloggen" to="logout"> </v-list-item>
+        <v-list-item prepend-icon="mdi-exit-to-app" title="Uitloggen" to="/logout"> </v-list-item>
       </v-list>
     </v-navigation-drawer>
 

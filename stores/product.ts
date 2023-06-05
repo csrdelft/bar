@@ -9,14 +9,18 @@ export const useProductStore = defineStore("product", () => {
   const zichtbareProducten = computed(() => Object.values(producten.value).filter((p) => !p.beheer && p.status === 1));
 
   // MARK: Actions/Mutations
-  function setProducten(producten: Record<string, Product>) {
-    this.producten = producten;
+  async function listProducten() {
+    const data = await fetchAuthorized<Product[]>("/api/v3/bar/producten");
+
+    const productenRecord = Object.fromEntries(data.map((p) => [p.id, p]));
+
+    producten.value = productenRecord;
   }
 
   return {
     producten,
     zichtbareProducten,
-    setProducten,
+    listProducten,
   };
 });
 

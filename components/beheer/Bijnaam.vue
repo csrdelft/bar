@@ -9,10 +9,6 @@ const huidigePersoon = ref<Persoon | null>(null);
 const bijnaam = ref("");
 const laden = ref(false);
 
-const personen = computed(() => {
-  return persoon.personenWeergave;
-});
-
 const selecteerPersoon = (uid: string) => {
   if (!uid) {
     huidigePersoon.value = null;
@@ -44,9 +40,9 @@ const opslaan = async () => {
     <v-card-text>
       <v-autocomplete
         label="Naam"
-        :items="personen"
+        :items="persoon.personenWeergave"
         item-key="uid"
-        item-text="weergave"
+        item-title="weergave"
         item-value="uid"
         @update:model-value="selecteerPersoon"
         clearable

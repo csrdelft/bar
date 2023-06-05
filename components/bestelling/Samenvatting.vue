@@ -37,15 +37,19 @@ const { bedragFormat } = useFormatter();
         </v-list-item-subtitle>
       </v-list-item>
     </v-list>
-    <v-divider />
-    <v-btn-toggle>
-      <v-btn block x-large color="success" @click="emits('plaatsBestelling')" :loading="bestellingLaden">
-        <v-icon icon="mdi-check" dark />
-      </v-btn>
-      <v-btn block color="error" @click="emits('annuleer')" :disabled="bestellingLaden" x-large>
-        <v-icon icon="mdi-close" dark />
-      </v-btn>
-    </v-btn-toggle>
+
+    <v-row justify="center">
+      <v-col cols="6">
+        <v-btn block size="x-large" color="success" @click="emits('plaatsBestelling')" :loading="bestellingLaden">
+          <v-icon icon="mdi-check" dark />
+        </v-btn>
+      </v-col>
+      <v-col cols="6">
+        <v-btn block size="x-large" color="error" @click="emits('annuleer')" :disabled="bestellingLaden">
+          <v-icon icon="mdi-close" dark />
+        </v-btn>
+      </v-col>
+    </v-row>
   </div>
 </template>
 

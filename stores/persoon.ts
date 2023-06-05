@@ -5,6 +5,7 @@ import { fetchAuthorized } from "~/composables/fetch";
 export const usePersoonStore = defineStore("persoon", () => {
   // MARK: State
   const personen = ref<Record<string, Persoon>>({});
+  const persoonSelectie = ref<string | null>(null);
 
   // MARK: Getters
   const personenWeergave = computed(() =>
@@ -13,8 +14,14 @@ export const usePersoonStore = defineStore("persoon", () => {
       .sort((a, b) => a.recent - b.recent)
       .reverse()
   );
+  const huidigePersoon = computed<Persoon | null>(() => {
+    return persoonSelectie.value ? personen.value[persoonSelectie.value] : null;
+  });
 
   // MARK: Actions/Mutations
+  function setPersoonSelectie(id: string | null) {
+    persoonSelectie.value = id;
+  }
   function setPersonen(data: Record<string, Persoon>) {
     personen.value = data;
   }
@@ -39,13 +46,17 @@ export const usePersoonStore = defineStore("persoon", () => {
       ...personen.value[id],
       naam: name,
     });
+    return;
   }
 
   return {
-    listUsers,
-    setPersoon,
     personen,
+    persoonSelectie,
     personenWeergave,
+    huidigePersoon,
+    setPersoonSelectie,
+    setPersoon,
+    listUsers,
     updateBijnaam,
   };
 });

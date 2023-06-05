@@ -1,60 +1,54 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
-import VueDatePicker from '@vuepic/vue-datepicker';
-import '@vuepic/vue-datepicker/dist/main.css'
-import { Bestelling } from "~/types/bestelling";
-import { Product } from "~/types/product";
-import { Persoon } from "~/types/persoon";
+import VueDatePicker from "@vuepic/vue-datepicker";
+import "@vuepic/vue-datepicker/dist/main.css";
+import { VDataTable } from "vuetify/lib/labs/components.mjs";
+import { useTypedRouter } from "~/generated";
 import { useBestellingStore } from "~/stores/bestelling";
 import { usePersoonStore } from "~/stores/persoon";
 import { useProductStore } from "~/stores/product";
 import { useUserStore } from "~/stores/user";
-import { useTypedRouter } from "~/generated";
+import { Bestelling } from "~/types/bestelling";
+import { Product } from "~/types/product";
 
 const { router, routes } = useTypedRouter();
+const { bedragFormat, datumFormat } = useFormatter();
 
-const { bedragFormat } = useFormatter();
+const productStore = useProductStore();
+const persoonStore = usePersoonStore();
+const bestellingStore = useBestellingStore();
 
-const user = useUserStore();
-const product = useProductStore();
-const persoon = usePersoonStore();
-const bestelling = useBestellingStore();
-
-
-// const datum = ref();
-const datum = ref([
-] as string[]);
+const startDate = new Date(Date.now() - 3600 * 1000 * 24 * 15);
+const endDate = new Date();
+const datum = ref([startDate, endDate]);
 
 const bestellingen = computed((): Bestelling[] => {
-  return Object.values(bestelling.bestellingen);
+  return Object.values(bestellingStore.bestellingen);
 });
 const producten = computed((): Product[] => {
-  return Object.values<Product>(product.producten).filter((p) => !p.beheer && p.status === 1);
+  return Object.values<Product>(productStore.producten).filter((p) => !p.beheer && p.status === 1);
 });
-const headers = computed(() => {
-  return [
-    {
-      text: "Naam",
-      value: "uid",
-    },
-    { text: "Datum en tijd", value: "moment" },
-    { text: "Totaal", value: "totaal" },
-    { text: "Bestelling", value: "inhoud" },
-    { text: "Opties", value: "opties", sortable: false },
-  ];
-});
+const headers = [
+  {
+    title: "Naam",
+    key: "uid",
+  },
+  { title: "Datum en tijd", key: "moment" },
+  { title: "Totaal", key: "totaal" },
+  { title: "Bestelling", key: "inhoud" },
+  { title: "Opties", key: "opties", sortable: false },
+];
+
 const isIndeterminate = computed((): boolean => {
   return selectedProducten.value.length > 0 && selectedProducten.value.length < producten.value.length;
 });
-const datumText = computed(() => {
-  return datum.value.join(" ~ ");
-});
+// const datumText = computed(() => {
+//   return datum.value.join(" ~ ");
+// });
 
 const verwijderLaden = ref({} as Record<string, boolean>);
 const herstelLaden = ref({} as Record<string, boolean>);
 const productSelectieZichtbaar = ref(false);
 const zoekInAlles = ref(true);
-const datumMenu = ref(false);
 const selectedProducten = ref([] as string[]);
 const checkAll = ref(false);
 const shortcuts = ref([
@@ -62,8 +56,7 @@ const shortcuts = ref([
     text: "Afgelopen week",
     value: (() => {
       const end = new Date();
-      const start = new Date();
-      start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
+      const start = new Date(Date.now() - 3600 * 1000 * 24 * 7);
       return [start, end];
     })(),
   },
@@ -81,14 +74,11 @@ const shortcuts = ref([
   },
 ]);
 
-const naamFormat = (row: Bestelling): string => {
-  return getPersoon(row.uid)?.weergave;
-};
-const getPersoon = (uid: string): Persoon => {
-  return persoon.personen[uid];
+const naamFormat = (uid: string): string => {
+  return persoonStore.personen[uid]?.weergave;
 };
 const getProduct = (id: string): Product => {
-  return product.producten[id];
+  return productStore.producten[id];
 };
 const getBestelLijstString = (bestelLijst: Record<string, string>): string[] => {
   return Object.entries(bestelLijst).map(([id, aantal]) => `${aantal} ${getProduct(id)?.beschrijving}`);
@@ -99,35 +89,35 @@ const handleCheckedProductenChange = (value: string[]) => {
 const handleCheckAllChange = (val: boolean) => {
   selectedProducten.value = val ? producten.value.map((v) => v.id) : [];
 };
-const handleEdit = (row: Bestelling) => {
+const handleEdit = (id: number, uid: string) => {
   router.push({
     name: routes.invoerSlug,
-    params: { slug: `/${row.uid}/bewerken/${row.id}` },
+    params: { slug: `/${uid}/bewerken/${id}` },
   }); // TODO: beter
 };
-const handleVerwijder = async (row: Bestelling) => {
-  verwijderLaden.value[row.id] = true;
+const handleVerwijder = async (id: number) => {
+  verwijderLaden.value[id] = true;
   try {
-    await bestelling.verwijderBestelling(row);
+    await bestellingStore.verwijderBestelling(id);
   } catch (e) {
     //this.$message.error(e.message);
     // TODO: error handling
   }
-  delete verwijderLaden.value[row.id];
+  delete verwijderLaden.value[id];
 };
-const handleHerstel = async (row: Bestelling) => {
-  herstelLaden.value[row.id] = true;
+const handleHerstel = async (id: number) => {
+  herstelLaden.value[id] = true;
   try {
-    await bestelling.herstelBestelling(row);
+    await bestellingStore.herstelBestelling(id);
   } catch (e) {
     //this.$message.error(e.message);
     // TODO: error handling
   }
-  delete verwijderLaden.value[row.id];
+  delete verwijderLaden.value[id];
 };
 const zoeken = () => {
-  bestelling.fetchBestellingen({
-    aantal: zoekInAlles.value ? "alles" : user.selectie,
+  bestellingStore.fetchBestellingen({
+    aantal: zoekInAlles.value ? "alles" : persoonStore.persoonSelectie,
     begin: datum.value[0],
     eind: datum.value[1],
     productType: selectedProducten.value,
@@ -135,17 +125,14 @@ const zoeken = () => {
 };
 
 onMounted(() => {
-  setTimeout(() => {
-    bestelling.fetchBestellingen({
-      aantal: "alles",
-      begin: "",
-      eind: "",
-    });
-  }, 1000);
+  bestellingStore.fetchBestellingen({
+    aantal: "alles",
+    begin: datum.value[0],
+    eind: datum.value[1],
+  });
 
-  const startDate = new Date(+new Date() - 3600 * 1000 * 24 * 15).toISOString().slice(0, 9);
-  const endDate = new Date().toISOString().slice(0, 9);
-  datum.value = [startDate, endDate];
+  persoonStore.listUsers();
+  productStore.listProducten();
 });
 
 definePageMeta({
@@ -159,10 +146,8 @@ definePageMeta({
       <v-switch v-model="zoekInAlles" label="Alleen geselecteerde persoon" />
     </v-col>
     <v-col cols="3">
-      <v-input
-        prepend-icon="fas fa-calendar"
-      >
-        <VueDatePicker v-model="datum" range min-date="1950-01-01" :enable-time-picker="false">
+      <v-input prepend-icon="mdi-calendar">
+        <VueDatePicker v-model="datum" range min-date="1960-01-01" :enable-time-picker="false">
           <template #input-icon></template>
         </VueDatePicker>
       </v-input>
@@ -171,7 +156,12 @@ definePageMeta({
       <v-dialog v-model="productSelectieZichtbaar">
         <!-- TODO: werkend -->
         <template v-slot:activator="{ props }">
-          <v-btn title="Filter op specifieke producten" :type="isIndeterminate ? 'primary' : 'default'" v-bind="props" prepend-icon="fas fa-sliders">
+          <v-btn
+            title="Filter op specifieke producten"
+            :type="isIndeterminate ? 'primary' : 'default'"
+            v-bind="props"
+            prepend-icon="mdi-tune"
+          >
             Producten
           </v-btn>
         </template>
@@ -202,25 +192,36 @@ definePageMeta({
       <v-btn @click="zoeken">Zoeken</v-btn>
     </v-col>
     <v-col>
-      <v-data-table :items="bestellingen" :headers="headers" sort-by="moment" sort-desc>
+      <v-data-table
+        :headers="headers"
+        :items="bestellingen"
+        :items-per-page="25"
+        :sortBy="[{ key: 'moment', order: 'desc' }]"
+      >
         <template v-slot:item.uid="{ item }">
-          {{ naamFormat(item) }}
+          {{ naamFormat(item.raw.uid) }}
         </template>
         <template v-slot:item.inhoud="{ item }">
           <ul>
-            <li v-for="el in item.inhoud" :key="el.id">{{ el.aantal }} {{ el.product.beschrijving }}</li>
+            <li v-for="el in item.raw.inhoud" :key="el.product_id">{{ el.aantal }} {{ el.product.beschrijving }}</li>
           </ul>
         </template>
         <template v-slot:item.totaal="{ item }">
-          {{ bedragFormat(item.totaal) }}
+          {{ bedragFormat(item.raw.totaal) }}
         </template>
         <template v-slot:item.moment="{ item }">
-          {{ new Date(item.moment).toLocaleString("nl") }}
+          {{ datumFormat(new Date(item.raw.moment)) }}
         </template>
         <template v-slot:item.opties="{ item }">
-          <v-icon v-if="!item.deleted" small icon="fas fa-pencil" class="mr-2" @click="handleEdit(item)" />
-          <v-icon v-if="!item.deleted" small icon="fas fa-trash" @click="handleVerwijder(item)" />
-          <v-icon v-if="item.deleted" small icon="fas fa-rotate-left" @click="handleHerstel(item)" />
+          <v-icon
+            v-if="!item.raw.deleted"
+            small
+            icon="mdi-pencil"
+            class="mr-2"
+            @click="handleEdit(item.raw.id, item.raw.uid)"
+          />
+          <v-icon v-if="!item.raw.deleted" small icon="mdi-delete" @click="handleVerwijder(item.raw.id)" />
+          <v-icon v-if="item.raw.deleted" small icon="mdi-restore" @click="handleHerstel(item.raw.id)" />
         </template>
       </v-data-table>
     </v-col>

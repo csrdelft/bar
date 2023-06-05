@@ -36,6 +36,13 @@ export const useAuthStore = defineStore("auth", () => {
     token.value = null;
     locatieToken.value = null;
   };
+  async function vertrouwLocatie(naam: string) {
+    const barLocatie = await fetchAuthorized<LocatieToken>("/api/v3/bar/trust", {
+      body: JSON.stringify({ naam }),
+    });
+
+    locatieToken.value = barLocatie;
+  }
 
   return {
     token,

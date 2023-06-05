@@ -38,6 +38,16 @@ export default defineEventHandler(async (event) => {
     } satisfies Token),
     tokenOptions
   );
+  // setCookie(
+  //   event,
+  //   "locatie-token",
+  //   JSON.stringify({
+  //     accessToken: data.access_token,
+  //     refreshToken: data.refresh_token,
+  //     expiresIn: data.expires_in,
+  //   } satisfies Token),
+  //   locatieTokenOptions
+  // );
 
   return sendRedirect(event, "/");
 });

@@ -3,10 +3,10 @@ interface Props {
   modelValue: string;
   layout?: string[];
   display?: Record<string, string>;
-  staggered: boolean;
-  keyboardClass: string;
-  placeholder: string;
-  grabFocus: boolean;
+  staggered?: boolean;
+  keyboardClass?: string;
+  placeholder?: string;
+  grabFocus?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -95,6 +95,7 @@ const handleNeg = () => {
           v-for="key in line.split(' ')"
           :key="key"
           @click="() => onKeyPress(key)"
+          size="x-large"
         >
           {{ key in display ? display[key] : key }}
         </v-btn>

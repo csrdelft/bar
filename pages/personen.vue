@@ -23,8 +23,13 @@ const headers = [
   { title: "Saldo", key: "saldo" },
 ];
 
-const rowClick = (row: any) => {
-  router.push({ name: routes.invoerSlug, params: { slug: row.uid } });
+const rowClick = (
+  _e: Event,
+  value: {
+    item: { raw: Persoon };
+  }
+) => {
+  router.push({ name: routes.invoerSlug, params: { slug: value.item.raw.uid } });
 };
 
 const getColor = (bedrag: number) => {
@@ -40,7 +45,6 @@ definePageMeta({
 
 <template>
   <Keyboard v-model="query" placeholder="Zoeken" :grab-focus="true" />
-  <!-- <LedenTable :items="filteredPersonen" :pending="pending" /> -->
   <v-data-table
     :headers="headers"
     :items="personen ?? undefined"
@@ -51,8 +55,8 @@ definePageMeta({
     :search="query"
   >
     <template v-slot:item.saldo="{ item }">
-      <v-chip :color="getColor(item.columns.saldo)">
-        {{ bedragFormat(item.columns.saldo) }}
+      <v-chip :color="getColor(item.raw.saldo)">
+        {{ bedragFormat(item.raw.saldo) }}
       </v-chip>
     </template>
   </v-data-table>

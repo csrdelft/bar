@@ -1,25 +1,13 @@
 <script lang="ts" setup>
-import { Product } from "~/types/product";
-import { Persoon } from "~/types/persoon";
-import { Bestelling, BestellingInhoud } from "~/types/bestelling";
 import { useTypedRouter } from "~/generated";
 import { useMainStore } from "~/stores";
 import { useBestellingStore } from "~/stores/bestelling";
 import { useInvoerStore } from "~/stores/invoer";
 import { usePersoonStore } from "~/stores/persoon";
 import { useProductStore } from "~/stores/product";
-import { useUserStore } from "~/stores/user";
+import { Product } from "~/types/product";
 import { sum } from "~/util/list";
 import { SaldoError } from "~/util/util";
-
-interface Props {
-  uid: string;
-  bestellingId: string;
-}
-
-const props = withDefaults(defineProps<Props>(), {
-  bestellingId: "",
-});
 
 const aantal = ref("");
 const bestellingLaden = ref(false);
@@ -29,43 +17,33 @@ const notificatieWeergeven = ref(false);
 
 const { router, routes } = useTypedRouter();
 
-const user = useUserStore();
-const bestelling = useBestellingStore();
-const invoer = useInvoerStore();
-const product = useProductStore();
-const persoon = usePersoonStore();
-const main = useMainStore();
+const bestellingStore = useBestellingStore();
+const invoerStore = useInvoerStore();
+const productStore = useProductStore();
+const persoonStore = usePersoonStore();
+const mainStore = useMainStore();
 
-const producten = (): Product[] => {
-  return product.zichtbareProducten;
-};
-const saldo = (): number => {
-  const saldo = huidigePersoon.value.saldo;
-  if (oudeBestellingInhoud.value) {
-    return saldo + sum(...oudeBestellingInhoud.value.inhoud.map((b) => b.product.prijs * b.aantal));
+const saldo = computed((): number => {
+  const saldo = persoonStore.huidigePersoon?.saldo;
+
+  if (!saldo) return 0;
+
+  if (invoerStore.oudeBestelling) {
+    return saldo + sum(...invoerStore.oudeBestelling.inhoud.map((b) => b.product.prijs * b.aantal));
   }
 
   return saldo;
-};
-const huidigePersoon = computed((): Persoon => {
-  return persoon.personen[props.uid];
 });
 const totaal = computed((): number => {
-  const inhoud = Object.values(bestellingInhoud);
+  const inhoud = Object.values(invoerStore.inhoud);
   return sum(...inhoud.map((b) => b.product.prijs * b.aantal));
-});
-const bestellingInhoud = computed((): Record<string, BestellingInhoud> => {
-  return invoer.inhoud;
-});
-const oudeBestellingInhoud = computed((): Bestelling | null => {
-  return invoer.oudeBestelling;
 });
 
 const verwijderInvoer = (id: string) => {
-  invoer.verwijderInvoer(id);
+  invoerStore.verwijderInvoer(id);
 };
 const selecteerInvoer = (product: Product): void => {
-  invoer.selecteerInvoer({
+  invoerStore.selecteerInvoer({
     product,
     aantal: aantal.value,
   });
@@ -75,7 +53,7 @@ const selecteerInvoer = (product: Product): void => {
 const bestel = async (force: boolean) => {
   bestellingLaden.value = true;
 
-  await main.plaatsBestelling({
+  await mainStore.plaatsBestelling({
     force,
   });
 
@@ -106,24 +84,28 @@ const plaatsBestelling = async () => {
 };
 
 const annuleer = (): void => {
-  invoer.clearInvoer();
+  invoerStore.clearInvoer();
   aantal.value = "";
-  user.setSelectie(null);
+  persoonStore.setPersoonSelectie(null);
   router.replace({ name: routes.personen });
 };
 
-onMounted(() => {
-  user.setSelectie(props.uid);
+onMounted(async () => {
+  const route = useRoute();
+  persoonStore.setPersoonSelectie(route.params.slug as string);
 
-  if (props.bestellingId) {
-    const oudeBestelling = bestelling.bestellingen[props.bestellingId];
+  if (route.params.bestellingId) {
+    const oudeBestelling = bestellingStore.bestellingen[route.params.bestellingId as string];
 
-    invoer.setInvoer(oudeBestelling.inhoud);
-    invoer.setOudeInvoer(oudeBestelling);
+    invoerStore.setInvoer(oudeBestelling.inhoud);
+    invoerStore.setOudeInvoer(oudeBestelling);
   } else {
     // FIXME: werkt dit?
-    invoer.setInvoer([]);
+    invoerStore.setInvoer([]);
   }
+
+  await persoonStore.listUsers();
+  await productStore.listProducten();
 });
 
 definePageMeta({
@@ -133,22 +115,25 @@ definePageMeta({
 
 <template>
   <div>
-    <div v-if="huidigePersoon">
-      <v-app-bar flat :color="huidigePersoon.saldo > 0 ? 'success' : 'error'">
-        <v-toolbar-title>{{ huidigePersoon.weergave }}</v-toolbar-title>
+    <div v-if="persoonStore.huidigePersoon">
+      <v-app-bar flat :color="persoonStore.huidigePersoon.saldo > 0 ? 'success' : 'error'">
+        <v-toolbar-title>{{ persoonStore.huidigePersoon.weergave }}</v-toolbar-title>
       </v-app-bar>
       <v-row>
         <v-col lg="9">
           <v-row class="bestelling-inhoud">
-            <v-col lg="3" v-for="bestelling in bestellingInhoud" :key="bestelling.product.id + ' ' + bestelling.aantal">
+            <v-col
+              lg="3"
+              v-for="bestelling in invoerStore.inhoud"
+              :key="bestelling.product.id + ' ' + bestelling.aantal"
+            >
               <v-card class="product" @click="verwijderInvoer(bestelling.product.id)">
                 <v-card-title class="product-title">
                   {{ bestelling.product.beschrijving }}
 
                   <v-spacer></v-spacer>
 
-                  <v-btn prepend-icon="fas fa-close">Close
-                  </v-btn>
+                  <v-btn prepend-icon="mdi-close">Close</v-btn>
                 </v-card-title>
                 <v-card-text class="text-h5">
                   {{ bestelling.aantal }}
@@ -157,7 +142,7 @@ definePageMeta({
             </v-col>
           </v-row>
 
-          <ProductWeergave :producten="producten" @selecteer="selecteerInvoer" />
+          <BestellingProductWeergave :producten="productStore.zichtbareProducten" @selecteer="selecteerInvoer" />
         </v-col>
         <v-col lg="3">
           <Numpad default-value="1" v-model="aantal" />
