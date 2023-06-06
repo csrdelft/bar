@@ -50,27 +50,22 @@ const selecteerInvoer = (product: Product): void => {
 
   aantal.value = "";
 };
-const bestel = async (force: boolean) => {
-  bestellingLaden.value = true;
-
-  await mainStore.plaatsBestelling({
-    force,
-  });
-
-  bestellingLaden.value = false;
-
-  await router.replace({ name: routes.personen });
-};
 const plaatsBestelling = async () => {
   try {
-    await bestel(false);
+    bestellingLaden.value = true;
+
+    await mainStore.plaatsBestelling({
+      force: false,
+    });
   } catch (e: any) {
     if (e instanceof SaldoError) {
       try {
         //FIXME:
         // await this.$notify.confirm({ text: e.message }, { yesText: "Doorgaan", noText: "Terug" });
 
-        await bestel(true);
+        await mainStore.plaatsBestelling({
+          force: true,
+        });
       } catch (e) {
         // confirm geannuleerd
       }
@@ -80,6 +75,8 @@ const plaatsBestelling = async () => {
     }
   } finally {
     bestellingLaden.value = false;
+
+    await router.replace({ name: routes.personen });
   }
 };
 
@@ -150,8 +147,8 @@ definePageMeta({
             :bestelling-laden="bestellingLaden"
             :saldo="saldo"
             :totaal="totaal"
-            :annuleer="annuleer"
-            :plaatsBestelling="plaatsBestelling"
+            @annuleer="annuleer"
+            @plaatsBestelling="plaatsBestelling"
           />
         </v-col>
       </v-row>

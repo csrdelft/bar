@@ -12,7 +12,7 @@ export const useMainStore = defineStore("main", () => {
   // MARK: Getters
 
   // MARK: Actions/Mutations
-  async function plaatsBestelling({ force = false }: { force: boolean }) {
+  const plaatsBestelling = async ({ force = false }: { force: boolean }) => {
     const userStore = useUserStore();
     const invoerStore = useInvoerStore();
     const persoonStore = usePersoonStore();
@@ -72,7 +72,7 @@ export const useMainStore = defineStore("main", () => {
         invoerStore.clearInvoer();
       }
     }
-  }
+  };
 
   return {
     plaatsBestelling,
