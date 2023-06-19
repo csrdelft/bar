@@ -26,7 +26,8 @@ export const useAuthStore = defineStore("auth", () => {
       "remote-login": "true",
     });
     const url = new URL(oauthConfig.authorizeUri + "?" + params);
-    window.open(url, "_self");
+    // FIXME: window.open(url, "_self");
+    window.open(url);
   };
   const refreshToken = async () => {
     const data = await $fetch("/api/auth/refresh-token");
