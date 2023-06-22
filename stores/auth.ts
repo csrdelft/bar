@@ -51,6 +51,7 @@ export const useAuthStore = defineStore("auth", () => {
     authorize,
     refreshToken,
     signOut,
+    vertrouwLocatie,
   };
 });
 

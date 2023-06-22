@@ -17,7 +17,7 @@ const vertrouw = async () => {
   laden.value = false;
 };
 const stopVertrouwen = async () => {
-  authStore.setLocatieToken(null);
+  authStore.locatieToken = null;
 };
 </script>
 
