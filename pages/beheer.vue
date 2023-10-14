@@ -1,7 +1,5 @@
 <script lang="ts" setup>
-import { useUserStore } from "~/stores/user";
-
-const userStore = useUserStore();
+const user = useAuthenticatedUser();
 
 definePageMeta({
   middleware: ["token", "admin"],
@@ -10,13 +8,14 @@ definePageMeta({
 
 <template>
   <v-row>
-    <v-col lg="4" v-if="userStore.rechten.beheer">
+    <v-col lg="4" v-if="user?.rechten.beheer">
       <BeheerBijnaam />
     </v-col>
-    <v-col lg="4" v-if="userStore.rechten.admin">
+    <v-col lg="4" v-if="user?.rechten.admin">
       <BeheerVertrouw />
     </v-col>
-    <v-col lg="4" v-if="!userStore.rechten.beheer && !userStore.rechten.admin"> Er is niets te zien hier. </v-col>
+    <v-col lg="4" v-if="!user?.rechten.beheer && !user?.rechten.admin">
+      Er is niets te zien hier.
+    </v-col>
   </v-row>
 </template>
-

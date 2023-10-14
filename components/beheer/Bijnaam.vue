@@ -48,8 +48,9 @@ const opslaan = async () => {
         clearable
       ></v-autocomplete>
       <v-text-field label="Bijnaam" v-model="bijnaam"></v-text-field>
-      <v-btn block :loading="laden" :disabled="huidigePersoon == null" @click="opslaan"> Opslaan </v-btn>
+      <v-btn block :loading="laden" :disabled="huidigePersoon == null" @click="opslaan">
+        Opslaan
+      </v-btn>
     </v-card-text>
   </v-card>
 </template>
-

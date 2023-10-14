@@ -1,10 +1,8 @@
 import { defineStore } from "pinia";
-import { fetchAuthorized } from "~/composables/fetch";
-import { sum } from "~/util/list";
-import { isOudlid, SaldoError } from "~/util/util";
+import { sum } from "~/utils/list";
+import { isOudlid, SaldoError } from "~/utils/util";
 import { useInvoerStore } from "./invoer";
 import { usePersoonStore } from "./persoon";
-import { useUserStore } from "./user";
 
 export const useMainStore = defineStore("main", () => {
   // MARK: State
@@ -13,9 +11,9 @@ export const useMainStore = defineStore("main", () => {
 
   // MARK: Actions/Mutations
   const plaatsBestelling = async ({ force = false }: { force: boolean }) => {
-    const userStore = useUserStore();
     const invoerStore = useInvoerStore();
     const persoonStore = usePersoonStore();
+    const session = useSession();
 
     if (!persoonStore.huidigePersoon) {
       throw new Error("Geen persoon geselecteerd");
@@ -43,7 +41,11 @@ export const useMainStore = defineStore("main", () => {
     let naarRood = nieuwSaldo < 0;
 
     // noinspection PointlessBooleanExpressionJS
-    if (totaal <= 0 || persoonStore.huidigePersoon.status === "S_NOBODY" || userStore.rechten.beheer) {
+    if (
+      totaal <= 0 ||
+      persoonStore.huidigePersoon.status === "S_NOBODY" ||
+      session.value?.user.rechten.beheer
+    ) {
       // Inleg waarschuwt niet.
       naarRood = false;
     }
@@ -54,10 +56,13 @@ export const useMainStore = defineStore("main", () => {
       if (!force && naarRood) {
         throw new SaldoError("Laat lid inleggen. Saldo wordt negatief.");
       } else {
-        await fetchAuthorized<boolean>("/api/v3/bar/bestelling", {
+        await $fetch("/api/bestelling", {
+          method: "POST",
           body: JSON.stringify({
             uid: persoonStore.huidigePersoon.uid,
-            inhoud: Object.fromEntries(Object.values(invoerStore.inhoud).map((i) => [i.product.id, i.aantal])),
+            inhoud: Object.fromEntries(
+              Object.values(invoerStore.inhoud).map((i) => [i.product.id, i.aantal])
+            ),
             ...(oudeInhoud ? { oudeBestelling: oudeInhoud.id } : {}),
           }),
         });
@@ -78,4 +83,3 @@ export const useMainStore = defineStore("main", () => {
     plaatsBestelling,
   };
 });
-

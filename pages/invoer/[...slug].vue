@@ -6,8 +6,8 @@ import { useInvoerStore } from "~/stores/invoer";
 import { usePersoonStore } from "~/stores/persoon";
 import { useProductStore } from "~/stores/product";
 import { Product } from "~/types/product";
-import { sum } from "~/util/list";
-import { SaldoError } from "~/util/util";
+import { sum } from "~/utils/list";
+import { SaldoError } from "~/utils/util";
 
 const aantal = ref("");
 const bestellingLaden = ref(false);
@@ -139,7 +139,10 @@ definePageMeta({
             </v-col>
           </v-row>
 
-          <BestellingProductWeergave :producten="productStore.zichtbareProducten" @selecteer="selecteerInvoer" />
+          <BestellingProductWeergave
+            :producten="productStore.zichtbareProducten"
+            @selecteer="selecteerInvoer"
+          />
         </v-col>
         <v-col lg="3">
           <Numpad default-value="1" v-model="aantal" />
@@ -157,7 +160,9 @@ definePageMeta({
     <v-snackbar v-model="notificatieWeergeven" top color="error" timeout="5000">
       {{ notificatie }}
       <template v-slot:action="{ attrs }">
-        <v-btn color="white" text v-bind="attrs" @click="notificatieWeergeven = false"> Sluiten </v-btn>
+        <v-btn color="white" text v-bind="attrs" @click="notificatieWeergeven = false">
+          Sluiten
+        </v-btn>
       </template>
     </v-snackbar>
   </div>
@@ -189,4 +194,3 @@ definePageMeta({
   white-space: nowrap;
 }
 </style>
-

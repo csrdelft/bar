@@ -1,14 +1,15 @@
 <script lang="ts" setup>
 import { useTypedRouter } from "~/generated";
-import { useAuthStore } from "~/stores/auth";
 
 const { router, routes } = useTypedRouter();
-const authStore = useAuthStore();
 
-const logout = () => {
-  authStore.signOut();
-  // router.push({ name: routes.authLogout });
-  router.push({ name: routes.index });
+const handleLogout = async (e: Event) => {
+  if (!(e.target instanceof HTMLFormElement)) return;
+  await $fetch("/api/logout", {
+    method: "POST",
+    redirect: "manual",
+  });
+  await navigateTo("/login");
 };
 </script>
 
@@ -21,7 +22,10 @@ const logout = () => {
 
       <v-row justify="center">
         <v-col cols="auto">
-          <v-btn x-large @click="logout" color="primary">Uitloggen</v-btn>
+          <form method="post" action="/api/logout" @submit.prevent="handleLogout">
+            <input type="submit" value="Sign out" />
+            <v-btn x-large type="submit" color="primary">Uitloggen </v-btn>
+          </form>
         </v-col>
         <v-col cols="auto">
           <v-btn x-large @click="router.push({ name: routes.index })">Terug</v-btn>
@@ -36,4 +40,3 @@ const logout = () => {
   text-align: center;
 }
 </style>
-

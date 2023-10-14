@@ -1,21 +1,15 @@
 <script lang="ts" setup>
-import Keyboard from "~/components/Keyboard.vue";
 import { VDataTable } from "vuetify/lib/labs/components.mjs";
-import { Persoon } from "~/types/persoon";
+import Keyboard from "~/components/Keyboard.vue";
 import { useTypedRouter } from "~/generated";
+import { Persoon } from "~/types/persoon";
 
 const { bedragFormat } = useFormatter();
 const { router, routes } = useTypedRouter();
 
 const query = ref("");
 
-const {
-  data: personen,
-  error,
-  pending,
-} = useAsyncData("personen", async () => {
-  return await fetchAuthorized<Persoon[]>("/api/v3/bar/personen");
-});
+const { data: personen, error, pending } = await useFetch("/api/personen");
 
 const headers = [
   { title: "Bijnaam", key: "naam" },
@@ -24,12 +18,12 @@ const headers = [
 ];
 
 const rowClick = (
-  _e: Event,
+  e: Event,
   value: {
-    item: { raw: Persoon };
+    item: Persoon;
   }
 ) => {
-  router.push({ name: routes.invoerSlug, params: { slug: value.item.raw.uid } });
+  router.push({ name: routes.invoerSlug, params: { slug: value.item.uid } });
 };
 
 const getColor = (bedrag: number) => {
@@ -47,16 +41,16 @@ definePageMeta({
   <Keyboard v-model="query" placeholder="Zoeken" :grab-focus="true" />
   <v-data-table
     :headers="headers"
-    :items="personen ?? undefined"
+    :items="personen ?? []"
     @click:row="rowClick"
     :items-per-page="50"
     :loading="pending"
     :sortBy="[{ key: 'recent', order: 'desc' }]"
     :search="query"
   >
-    <template v-slot:item.saldo="{ item }">
-      <v-chip :color="getColor(item.raw.saldo)">
-        {{ bedragFormat(item.raw.saldo) }}
+    <template v-slot:item.saldo="{ value }">
+      <v-chip :color="getColor(value)">
+        {{ bedragFormat(value) }}
       </v-chip>
     </template>
   </v-data-table>
@@ -89,4 +83,3 @@ a {
   background: #f0f9eb;
 }
 </style>
-

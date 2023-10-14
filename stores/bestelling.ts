@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { Bestelling } from "~/types/bestelling";
-import { fetchAuthorized } from "~/composables/fetch";
-import { groupBy } from "~/util/list";
+import { fetchAuthorized } from "~/server/utils/fetch";
+import { groupBy } from "~/utils/list";
 
 export const useBestellingStore = defineStore("bestelling", () => {
   // MARK: State
@@ -19,7 +19,12 @@ export const useBestellingStore = defineStore("bestelling", () => {
       ...data,
     };
   }
-  async function fetchBestellingen(data: { aantal: string | null; begin: Date; eind: Date; productType?: string[] }) {
+  async function fetchBestellingen(data: {
+    aantal: string | null;
+    begin: Date;
+    eind: Date;
+    productType?: string[];
+  }) {
     bestellingen.value = groupBy(
       await fetchAuthorized<Bestelling[]>("/api/v3/bar/laadLaatste", {
         body: JSON.stringify({
@@ -62,4 +67,3 @@ export const useBestellingStore = defineStore("bestelling", () => {
     verwijderBestelling,
   };
 });
-

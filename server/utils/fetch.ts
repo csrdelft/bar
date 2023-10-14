@@ -1,15 +1,18 @@
-import { useAuthStore } from "~/stores/auth";
+import { Session } from "lucia";
 
-export const fetchAuthorized = async <T>(url: string, options?: RequestInit): Promise<T> => {
+export const fetchAuthorized = async <T>(
+  session: Session,
+  url: string,
+  options?: RequestInit
+): Promise<T> => {
   const config = useRuntimeConfig();
-  const authStore = useAuthStore();
 
-  if (!authStore.token?.accessToken) {
+  if (!session.accessToken) {
     throw new Error("Geen token");
   }
 
-  const tokenHeader: Record<string, string> = authStore.locatieToken?.sleutel
-    ? { "X-Bar-Token": authStore.locatieToken.sleutel }
+  const tokenHeader: Record<string, string> = session.locatie?.token
+    ? { "X-Bar-Token": session.locatie?.token }
     : {};
 
   const fullUrl = new URL(url, config.public.remoteUrl);
@@ -18,7 +21,7 @@ export const fetchAuthorized = async <T>(url: string, options?: RequestInit): Pr
     ...options,
     headers: {
       ...tokenHeader,
-      Authorization: `Bearer ${authStore.token?.accessToken}`,
+      Authorization: `Bearer ${session.accessToken}`,
       "Content-Type": "application/json",
     },
   });
@@ -52,4 +55,3 @@ export const fetchToken = async <T>(url: string, options?: RequestInit): Promise
   }
   return (await response.json()) as T;
 };
-

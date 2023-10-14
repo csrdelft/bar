@@ -1,13 +1,10 @@
-import { useAuthStore } from "~/stores/auth";
-
 export default defineNuxtRouteMiddleware(async () => {
-  const authStore = useAuthStore();
+  const { data, error } = await useFetch("/api/session");
 
-  if (!authStore.token?.accessToken) {
+  if (!data.value?.session?.accessToken) {
     return navigateTo("/");
-  } else if (authStore.token?.expiresAt! < Date.now()) {
-    await authStore.refreshToken();
+  } else if (data.value?.session?.expiresAt! < Date.now()) {
+    await useFetch("/api/auth/refresh-token", { method: "POST" });
     return;
   }
 });
-

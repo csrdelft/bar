@@ -1,27 +1,12 @@
 <script lang="ts" setup>
-import { useAuthStore } from "~/stores/auth";
-import { useUserStore } from "~/stores/user";
-
-const authStore = useAuthStore();
-const userStore = useUserStore();
-
-onMounted(() => {
-  if (authStore.token?.accessToken) {
-    userStore.fetchProfiel();
-  }
-});
+const user = useAuthenticatedUser();
 </script>
 
 <template>
-  <v-container v-if="!authStore.token?.accessToken" class="login-main">
-    <h1>Barsysteem C.S.R.</h1>
-    <p>Welkom <span v-if="vertrouwd">terug</span> bij het barsysteem, gebruik je stek account om in te loggen.</p>
-    <v-btn x-large color="primary" @click="() => authStore.authorize()">Login </v-btn>
-  </v-container>
-  <v-container v-else class="login-main">
+  <v-container class="login-main">
     <h1>
       Welkom in het bar systeem!
-      <span v-if="userStore.profiel">{{ userStore.profiel.displayName }}</span>
+      {{ user?.name }}
     </h1>
 
     <v-alert prominent type="warning">
@@ -39,4 +24,3 @@ onMounted(() => {
   text-align: center;
 }
 </style>
-

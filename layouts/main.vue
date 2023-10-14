@@ -1,7 +1,5 @@
 <script lang="ts" setup>
-import { useAuthStore } from "~/stores/auth";
 import { usePersoonStore } from "~/stores/persoon";
-import { useUserStore } from "~/stores/user";
 
 const loading = ref(true);
 const message = ref("");
@@ -9,17 +7,17 @@ const loadingProgress = ref(0);
 
 const tijd = useDateFormat(useNow(), "HH:mm:ss", { locales: "nl-NL" });
 
-const authStore = useAuthStore();
-const userStore = useUserStore();
 const persoonStore = usePersoonStore();
+const session = useSession();
 </script>
 
 <template>
   <v-layout>
-    <v-navigation-drawer v-if="authStore.token?.accessToken" permanent expand-on-hover rail>
+    <v-navigation-drawer v-if="session?.user" permanent expand-on-hover rail>
       <v-list nav>
         <v-list-item prepend-icon="mdi-home" title="Begin" to="/"> </v-list-item>
-        <v-list-item prepend-icon="mdi-account-multiple" title="Personen" to="/personen"> </v-list-item>
+        <v-list-item prepend-icon="mdi-account-multiple" title="Personen" to="/personen">
+        </v-list-item>
         <v-list-item
           :disabled="persoonStore.persoonSelectie == null"
           prepend-icon="mdi-receipt"
@@ -27,9 +25,10 @@ const persoonStore = usePersoonStore();
           :to="`/invoer/${persoonStore.persoonSelectie}`"
         >
         </v-list-item>
-        <v-list-item prepend-icon="mdi-view-list" title="Bestellingen" to="/bestellingen"> </v-list-item>
+        <v-list-item prepend-icon="mdi-view-list" title="Bestellingen" to="/bestellingen">
+        </v-list-item>
         <v-list-item
-          v-if="userStore.rechten.beheer || userStore.rechten.admin"
+          v-if="session?.user.rechten.beheer || session?.user.rechten.admin"
           prepend-icon="mdi-wrench"
           title="Beheer"
           to="/beheer"
@@ -42,7 +41,7 @@ const persoonStore = usePersoonStore();
     <v-app-bar>
       <v-toolbar-title>
         C.S.R. Bar
-        <span v-if="authStore.locatieToken">- {{ authStore.locatieToken.naam }}</span>
+        <span v-if="session?.locatie?.token">- {{ session?.locatie?.naam }}</span>
       </v-toolbar-title>
 
       <v-spacer></v-spacer>
@@ -64,4 +63,3 @@ const persoonStore = usePersoonStore();
     </v-overlay>
   </v-layout>
 </template>
-

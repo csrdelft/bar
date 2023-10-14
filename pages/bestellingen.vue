@@ -6,7 +6,6 @@ import { useTypedRouter } from "~/generated";
 import { useBestellingStore } from "~/stores/bestelling";
 import { usePersoonStore } from "~/stores/persoon";
 import { useProductStore } from "~/stores/product";
-import { useUserStore } from "~/stores/user";
 import { Bestelling } from "~/types/bestelling";
 import { Product } from "~/types/product";
 
@@ -39,7 +38,9 @@ const headers = [
 ];
 
 const isIndeterminate = computed((): boolean => {
-  return selectedProducten.value.length > 0 && selectedProducten.value.length < producten.value.length;
+  return (
+    selectedProducten.value.length > 0 && selectedProducten.value.length < producten.value.length
+  );
 });
 // const datumText = computed(() => {
 //   return datum.value.join(" ~ ");
@@ -81,7 +82,9 @@ const getProduct = (id: string): Product => {
   return productStore.producten[id];
 };
 const getBestelLijstString = (bestelLijst: Record<string, string>): string[] => {
-  return Object.entries(bestelLijst).map(([id, aantal]) => `${aantal} ${getProduct(id)?.beschrijving}`);
+  return Object.entries(bestelLijst).map(
+    ([id, aantal]) => `${aantal} ${getProduct(id)?.beschrijving}`
+  );
 };
 const handleCheckedProductenChange = (value: string[]) => {
   checkAll.value = value.length === producten.value.length;
@@ -181,7 +184,12 @@ definePageMeta({
             <v-divider></v-divider>
             <v-row>
               <v-col cols="3" v-for="product in producten" :key="product.id">
-                <v-checkbox v-model="selectedProducten" :value="product.id" :label="product.beschrijving"> </v-checkbox>
+                <v-checkbox
+                  v-model="selectedProducten"
+                  :value="product.id"
+                  :label="product.beschrijving"
+                >
+                </v-checkbox>
               </v-col>
             </v-row>
           </v-card-text>
@@ -203,7 +211,9 @@ definePageMeta({
         </template>
         <template v-slot:item.inhoud="{ item }">
           <ul>
-            <li v-for="el in item.raw.inhoud" :key="el.product_id">{{ el.aantal }} {{ el.product.beschrijving }}</li>
+            <li v-for="el in item.raw.inhoud" :key="el.product_id">
+              {{ el.aantal }} {{ el.product.beschrijving }}
+            </li>
           </ul>
         </template>
         <template v-slot:item.totaal="{ item }">
@@ -220,8 +230,18 @@ definePageMeta({
             class="mr-2"
             @click="handleEdit(item.raw.id, item.raw.uid)"
           />
-          <v-icon v-if="!item.raw.deleted" small icon="mdi-delete" @click="handleVerwijder(item.raw.id)" />
-          <v-icon v-if="item.raw.deleted" small icon="mdi-restore" @click="handleHerstel(item.raw.id)" />
+          <v-icon
+            v-if="!item.raw.deleted"
+            small
+            icon="mdi-delete"
+            @click="handleVerwijder(item.raw.id)"
+          />
+          <v-icon
+            v-if="item.raw.deleted"
+            small
+            icon="mdi-restore"
+            @click="handleHerstel(item.raw.id)"
+          />
         </template>
       </v-data-table>
     </v-col>
@@ -237,4 +257,3 @@ definePageMeta({
   width: 140px;
 }
 </style>
-
