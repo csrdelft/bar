@@ -10,26 +10,26 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@lucia-auth/adapter-sqlite": "^2.0.0",
-    "@lucia-auth/oauth": "^3.3.1",
-    "@mdi/font": "^7.3.67",
-    "@pinia/nuxt": "^0.5.0",
-    "@vuepic/vue-datepicker": "^7.2.0",
-    "better-sqlite3": "^9.0.0",
-    "lucia": "^2.7.1",
+    "@lucia-auth/adapter-sqlite": "^3.0.0",
+    "@lucia-auth/oauth": "^3.5.3",
+    "@mdi/font": "^7.4.47",
+    "@pinia/nuxt": "^0.5.1",
+    "@vuepic/vue-datepicker": "^8.0.0",
+    "better-sqlite3": "^9.4.0",
+    "lucia": "^3.0.1",
     "pinia": "^2.1.7",
-    "sass": "^1.69.3",
-    "vuetify": "^3.3.21"
+    "sass": "^1.70.0",
+    "vuetify": "^3.5.3"
   },
   "devDependencies": {
-    "@nuxt/devtools": "^1.0.0-beta.2",
-    "@types/better-sqlite3": "^7.6.5",
-    "@types/node": "^18",
-    "@vueuse/core": "^10.5.0",
-    "@vueuse/nuxt": "^10.5.0",
-    "nuxt": "^3.7.4",
-    "nuxt-typed-router": "^3.3.1",
-    "typescript": "^5.2.2"
+    "@nuxt/devtools": "^1.0.8",
+    "@types/better-sqlite3": "^7.6.9",
+    "@types/node": "^20",
+    "@vueuse/core": "^10.7.2",
+    "@vueuse/nuxt": "^10.7.2",
+    "nuxt": "^3.10.1",
+    "nuxt-typed-router": "^3.5.1",
+    "typescript": "^5.3.3"
   }
 }
 
