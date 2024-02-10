@@ -11,7 +11,7 @@ definePageMeta({
   <v-container class="login-main">
     <h1>
       Welkom in het bar systeem!
-      {{ user?.name }}
+      {{ user?.displayName }}
     </h1>
 
     <v-alert prominent type="warning">

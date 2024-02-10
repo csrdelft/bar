@@ -2,10 +2,10 @@ export default defineNuxtRouteMiddleware(async () => {
   const user = useUser();
   const session = useSession();
 
-  const { data: userData } = await useFetch("/api/user");
-  const { data: sessionData } = await useFetch("/api/session");
-  if (userData.value && sessionData.value) {
-    user.value = userData.value;
-    session.value = sessionData.value;
+  const userData = await $fetch("/api/user");
+  const sessionData = await $fetch("/api/session");
+  if (userData && sessionData) {
+    user.value = userData;
+    session.value = sessionData;
   }
 });

@@ -160,10 +160,8 @@ definePageMeta({
 
     <v-snackbar v-model="notificatieWeergeven" top color="error" timeout="5000">
       {{ notificatie }}
-      <template v-slot:action="{ attrs }">
-        <v-btn color="white" text v-bind="attrs" @click="notificatieWeergeven = false">
-          Sluiten
-        </v-btn>
+      <template v-slot:actions>
+        <v-btn color="white" variant="text" @click="notificatieWeergeven = false">Sluiten</v-btn>
       </template>
     </v-snackbar>
   </div>

@@ -1,3 +1,5 @@
+import vuetify, { transformAssetUrls } from "vite-plugin-vuetify";
+
 export default defineNuxtConfig({
   ssr: false,
   router: {
@@ -17,7 +19,17 @@ export default defineNuxtConfig({
   },
 
   buildModules: ["nuxt-typed-router"],
-  modules: ["@pinia/nuxt", "@vueuse/nuxt"],
+  modules: [
+    (_options, nuxt) => {
+      nuxt.hooks.hook("vite:extendConfig", (config) => {
+        // @ts-expect-error
+        config.plugins.push(vuetify({ autoImport: true }));
+      });
+    },
+    "@pinia/nuxt",
+    "@vueuse/nuxt",
+  ],
+
   css: ["@mdi/font/css/materialdesignicons.css", "vuetify/lib/styles/main.sass"],
   build: {
     transpile: ["vuetify", "@vuepic/vue-datepicker"],
@@ -27,6 +39,11 @@ export default defineNuxtConfig({
   vite: {
     define: {
       "process.env.DEBUG": false,
+    },
+    vue: {
+      template: {
+        transformAssetUrls,
+      },
     },
   },
 });

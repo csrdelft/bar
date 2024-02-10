@@ -2,6 +2,9 @@ import { BetterSqlite3Adapter } from "@lucia-auth/adapter-sqlite";
 import { Lucia } from "lucia";
 import { DatabaseSession, DatabaseUser, db } from "./db";
 import { OAuth2Client } from "oslo/oauth2";
+import { webcrypto } from "node:crypto";
+
+globalThis.crypto = webcrypto as Crypto;
 
 const adapter = new BetterSqlite3Adapter(db, {
   user: "user",

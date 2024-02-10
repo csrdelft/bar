@@ -1,8 +1,7 @@
 <script lang="ts" setup>
-import { VDataTable } from "vuetify/lib/labs/components.mjs";
 import Keyboard from "~/components/Keyboard.vue";
 import { useTypedRouter } from "~/generated";
-import { Persoon } from "~/types/persoon";
+import type { Persoon } from "~/types/persoon";
 
 const { bedragFormat } = useFormatter();
 const { router, routes } = useTypedRouter();

@@ -1,8 +1,10 @@
-import { ThemeDefinition, createVuetify } from "vuetify";
+import "@mdi/font/css/materialdesignicons.css";
+import { createVuetify, type ThemeDefinition } from "vuetify";
 import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
 import { aliases, mdi } from "vuetify/iconsets/mdi";
 import { nl } from "vuetify/locale";
+import "vuetify/styles";
 
 const myDarkTheme: ThemeDefinition = {
   dark: true,
@@ -41,4 +43,3 @@ export default defineNuxtPlugin((nuxtApp) => {
 
   nuxtApp.vueApp.use(vuetify);
 });
-

@@ -29,6 +29,7 @@
     "@vueuse/nuxt": "^10.7.2",
     "nuxt": "^3.10.1",
     "nuxt-typed-router": "^3.5.1",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vite-plugin-vuetify": "^2.0.1"
   }
 }

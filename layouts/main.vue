@@ -5,7 +5,8 @@ const loading = ref(true);
 const message = ref("");
 const loadingProgress = ref(0);
 
-const user = useUser();
+const user = useAuthenticatedUser();
+const session = useSession();
 
 const tijd = useDateFormat(useNow(), "HH:mm:ss", { locales: "nl-NL" });
 const persoonStore = usePersoonStore();
@@ -41,7 +42,7 @@ const persoonStore = usePersoonStore();
     <v-app-bar>
       <v-toolbar-title>
         C.S.R. Bar
-        <span v-if="locatie?.token">- {{ locatie?.naam }}</span>
+        <span v-if="session?.locatie?.token">- {{ session?.locatie?.naam }}</span>
       </v-toolbar-title>
 
       <v-spacer></v-spacer>

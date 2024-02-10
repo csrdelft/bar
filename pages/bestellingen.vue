@@ -1,13 +1,12 @@
 <script lang="ts" setup>
 import VueDatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
-import { VDataTable } from "vuetify/lib/labs/components.mjs";
 import { useTypedRouter } from "~/generated";
 import { useBestellingStore } from "~/stores/bestelling";
 import { usePersoonStore } from "~/stores/persoon";
 import { useProductStore } from "~/stores/product";
-import { Bestelling } from "~/types/bestelling";
-import { Product } from "~/types/product";
+import type { Bestelling } from "~/types/bestelling";
+import type { Product } from "~/types/product";
 
 const { router, routes } = useTypedRouter();
 const { bedragFormat, datumFormat } = useFormatter();
@@ -89,7 +88,7 @@ const getBestelLijstString = (bestelLijst: Record<string, string>): string[] => 
 const handleCheckedProductenChange = (value: string[]) => {
   checkAll.value = value.length === producten.value.length;
 };
-const handleCheckAllChange = (val: boolean) => {
+const handleCheckAllChange = (val: boolean | null) => {
   selectedProducten.value = val ? producten.value.map((v) => v.id) : [];
 };
 const handleEdit = (id: number, uid: string) => {
@@ -208,41 +207,31 @@ definePageMeta({
         :sortBy="[{ key: 'moment', order: 'desc' }]"
       >
         <template v-slot:item.uid="{ item }">
-          {{ naamFormat(item.raw.uid) }}
+          {{ naamFormat(item.uid) }}
         </template>
         <template v-slot:item.inhoud="{ item }">
           <ul>
-            <li v-for="el in item.raw.inhoud" :key="el.product_id">
+            <li v-for="el in item.inhoud" :key="el.product.id">
               {{ el.aantal }} {{ el.product.beschrijving }}
             </li>
           </ul>
         </template>
         <template v-slot:item.totaal="{ item }">
-          {{ bedragFormat(item.raw.totaal) }}
+          {{ bedragFormat(item.totaal) }}
         </template>
         <template v-slot:item.moment="{ item }">
-          {{ datumFormat(new Date(item.raw.moment)) }}
+          {{ datumFormat(new Date(item.moment)) }}
         </template>
         <template v-slot:item.opties="{ item }">
           <v-icon
-            v-if="!item.raw.deleted"
+            v-if="!item.deleted"
             small
             icon="mdi-pencil"
             class="mr-2"
-            @click="handleEdit(item.raw.id, item.raw.uid)"
+            @click="handleEdit(item.id, item.uid)"
           />
-          <v-icon
-            v-if="!item.raw.deleted"
-            small
-            icon="mdi-delete"
-            @click="handleVerwijder(item.raw.id)"
-          />
-          <v-icon
-            v-if="item.raw.deleted"
-            small
-            icon="mdi-restore"
-            @click="handleHerstel(item.raw.id)"
-          />
+          <v-icon v-if="!item.deleted" small icon="mdi-delete" @click="handleVerwijder(item.id)" />
+          <v-icon v-if="item.deleted" small icon="mdi-restore" @click="handleHerstel(item.id)" />
         </template>
       </v-data-table>
     </v-col>
