@@ -5,15 +5,15 @@ const loading = ref(true);
 const message = ref("");
 const loadingProgress = ref(0);
 
-const tijd = useDateFormat(useNow(), "HH:mm:ss", { locales: "nl-NL" });
+const user = useUser();
 
+const tijd = useDateFormat(useNow(), "HH:mm:ss", { locales: "nl-NL" });
 const persoonStore = usePersoonStore();
-const session = useSession();
 </script>
 
 <template>
   <v-layout>
-    <v-navigation-drawer v-if="session?.user" permanent expand-on-hover rail>
+    <v-navigation-drawer v-if="user" permanent expand-on-hover rail>
       <v-list nav>
         <v-list-item prepend-icon="mdi-home" title="Begin" to="/"> </v-list-item>
         <v-list-item prepend-icon="mdi-account-multiple" title="Personen" to="/personen">
@@ -28,7 +28,7 @@ const session = useSession();
         <v-list-item prepend-icon="mdi-view-list" title="Bestellingen" to="/bestellingen">
         </v-list-item>
         <v-list-item
-          v-if="session?.user.rechten.beheer || session?.user.rechten.admin"
+          v-if="user.rechten.beheer || user.rechten.admin"
           prepend-icon="mdi-wrench"
           title="Beheer"
           to="/beheer"
@@ -41,7 +41,7 @@ const session = useSession();
     <v-app-bar>
       <v-toolbar-title>
         C.S.R. Bar
-        <span v-if="session?.locatie?.token">- {{ session?.locatie?.naam }}</span>
+        <span v-if="locatie?.token">- {{ locatie?.naam }}</span>
       </v-toolbar-title>
 
       <v-spacer></v-spacer>

@@ -11,12 +11,12 @@
   },
   "dependencies": {
     "@lucia-auth/adapter-sqlite": "^3.0.0",
-    "@lucia-auth/oauth": "^3.5.3",
     "@mdi/font": "^7.4.47",
     "@pinia/nuxt": "^0.5.1",
     "@vuepic/vue-datepicker": "^8.0.0",
     "better-sqlite3": "^9.4.0",
     "lucia": "^3.0.1",
+    "oslo": "^1.1.0",
     "pinia": "^2.1.7",
     "sass": "^1.70.0",
     "vuetify": "^3.5.3"
@@ -32,4 +32,3 @@
     "typescript": "^5.3.3"
   }
 }
-

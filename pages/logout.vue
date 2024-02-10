@@ -11,6 +11,10 @@ const handleLogout = async (e: Event) => {
   });
   await navigateTo("/login");
 };
+
+definePageMeta({
+  layout: "main",
+});
 </script>
 
 <template>

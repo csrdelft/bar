@@ -1,33 +1,40 @@
-type TokenData = {
-  token_type: string;
-  expires_in: number;
-  access_token: string;
-  refresh_token: string;
-};
+import { OAuth2RequestError } from "oslo/oauth2";
+import { oauth2Client } from "~/server/utils/auth";
 
 export default defineEventHandler(async (event) => {
-  const config = useRuntimeConfig();
-  const authRequest = auth.handleRequest(event);
+  const query = getQuery(event);
+  const code = query.code?.toString() ?? null;
 
-  // check if user is authenticated
-  const session = await authRequest.validateBearerToken();
-  if (!session) {
+  // validate state
+  if (!code) {
     throw createError({
-      message: "Unauthorized",
-      statusCode: 401,
+      statusCode: 400,
     });
   }
 
-  // Get new access_token
-  const data = await fetchToken<TokenData>(oauthConfig.tokenUri, {
-    body: JSON.stringify({
-      grant_type: "refresh_token",
-      refresh_token: session.refreshToken,
-      client_id: oauthConfig.clientId,
-      client_secret: config.authSecret,
-      scope: oauthConfig.scopes.join(" "),
-    }),
-  });
+  const config = useRuntimeConfig();
 
-  return data;
+  try {
+    const tokens = await oauth2Client.refreshAccessToken(code, {
+      credentials: config.authSecret,
+    });
+
+    return tokens;
+  } catch (e) {
+    console.error(e);
+
+    if (e instanceof OAuth2RequestError) {
+      const { request, message, description } = e;
+
+      // invalid code
+      throw createError({
+        statusCode: 400,
+        message,
+      });
+    }
+
+    throw createError({
+      statusCode: 500,
+    });
+  }
 });

@@ -5,7 +5,7 @@ import { useBestellingStore } from "~/stores/bestelling";
 import { useInvoerStore } from "~/stores/invoer";
 import { usePersoonStore } from "~/stores/persoon";
 import { useProductStore } from "~/stores/product";
-import { Product } from "~/types/product";
+import type { Product } from "~/types/product";
 import { sum } from "~/utils/list";
 import { SaldoError } from "~/utils/util";
 
@@ -106,7 +106,8 @@ onMounted(async () => {
 });
 
 definePageMeta({
-  middleware: ["token"],
+  layout: "main",
+  middleware: ["protected"],
 });
 </script>
 

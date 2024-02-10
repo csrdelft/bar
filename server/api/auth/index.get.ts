@@ -1,26 +1,23 @@
-import { createOAuth2AuthorizationUrl } from "@lucia-auth/oauth";
-import oauthConfig from "~/server/utils/oauth-config";
+import { generateCodeVerifier, generateState } from "oslo/oauth2";
+import { oauth2Client } from "~/server/utils/auth";
 
 export default defineEventHandler(async (event) => {
-  const authRequest = auth.handleRequest(event);
-  const session = await authRequest.validate();
-  if (session) {
-    return sendRedirect(event, "/");
-  }
+  const state = generateState();
+  const codeVerifier = generateCodeVerifier(); // for PKCE flow
 
-  const [url, state] = await createOAuth2AuthorizationUrl(oauthConfig.authorizeUri, {
-    clientId: oauthConfig.clientId,
-    scope: oauthConfig.scopes,
-    redirectUri: oauthConfig.redirectUri,
+  const url = await oauth2Client.createAuthorizationURL({
+    state,
+    scopes: ["BAR:NORMAAL", "BAR:BEHEER", "BAR:TRUST"],
+    // FIXME: codeVerifier,
   });
-  url.searchParams.set("remote-login", "true");
+  // url.searchParams.set("remote-login", "true"); // TODO: needed?
 
   setCookie(event, "csr_oauth_state", state, {
-    httpOnly: true,
-    secure: !process.dev,
     path: "/",
+    secure: process.env.NODE_ENV === "production",
+    httpOnly: true,
     maxAge: 60 * 60,
+    sameSite: "lax",
   });
-
   return sendRedirect(event, url.toString());
 });

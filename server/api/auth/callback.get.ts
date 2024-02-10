@@ -1,116 +1,78 @@
-import { OAuthRequestError } from "@lucia-auth/oauth";
-import oauthConfig from "~/server/utils/oauth-config";
-import { Profiel } from "~/types/profiel";
-
-type TokenData = {
-  token_type: string;
-  expires_in: number;
-  access_token: string;
-  refresh_token: string;
-};
-
-const fetchToken = async (authorizationCode: string): Promise<TokenData> => {
-  const config = useRuntimeConfig();
-
-  const body = JSON.stringify({
-    grant_type: "authorization_code",
-    client_id: oauthConfig.clientId,
-    client_secret: config.authSecret,
-    redirect_uri: oauthConfig.redirectUri,
-    code: authorizationCode,
-  });
-  const response = await fetch(oauthConfig.tokenUri, {
-    method: "POST",
-    body,
-    headers: {
-      "User-Agent": "lucia",
-      "Content-Type": "application/json",
-    },
-  });
-
-  if (response.status == 401) {
-    throw new Error("Niet ingelogd!");
-  }
-  if (!response.ok) {
-    throw new Error(await response.text());
-  }
-  return (await response.json()) as TokenData;
-};
+import { User, generateId } from "lucia";
+import { OAuth2RequestError } from "oslo/oauth2";
+import { oauth2Client } from "~/server/utils/auth";
+import { DatabaseUser } from "~/server/utils/db";
 
 export default defineEventHandler(async (event) => {
-  const authRequest = auth.handleRequest(event);
-  const session = await authRequest.validate();
-  if (session) {
-    return sendRedirect(event, "/");
-  }
-
-  const storedState = getCookie(event, "csr_oauth_state");
   const query = getQuery(event);
-  const state = query.state?.toString();
-  const code = query.code?.toString();
+  const code = query.code?.toString() ?? null;
+  const state = query.state?.toString() ?? null;
+  const storedState = getCookie(event, "csr_oauth_state") ?? null;
 
   // validate state
-  if (!storedState || !state || storedState !== state || !code) {
-    return sendError(
-      event,
-      createError({
-        statusCode: 400,
-      })
-    );
+  if (!code || !state || !storedState || state !== storedState) {
+    throw createError({
+      statusCode: 400,
+    });
   }
 
+  const config = useRuntimeConfig();
+
   try {
-    const token = await fetchToken(code);
+    const tokens = await oauth2Client.validateAuthorizationCode(code, {
+      credentials: config.authSecret,
+      authenticateWith: "request_body",
+    });
 
-    const getUser = async () => {
-      const response = await $fetch<Profiel>(oauthConfig.profileUri, {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token.access_token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      const user = await auth.createUser({
-        userId: response.id,
-        key: null,
-        attributes: {
-          name: response.displayName,
-          scopes: JSON.stringify(response.scopes),
-          slug: response.slug,
-        },
-      });
-      return user;
-    };
-
-    const user = await getUser();
-    const session = await auth.createSession({
-      userId: user.userId,
-      attributes: {
-        access_token: token.access_token,
-        refresh_token: token.refresh_token,
-        expires_in: token.expires_in,
+    const userResponse = await $fetch<User>(`${config.public.remoteUrl}/api/v3/profiel`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${tokens.access_token}`,
+        "Content-Type": "application/json",
       },
     });
-    authRequest.setSession(session);
+
+    const existingUser = db.prepare("SELECT * FROM user WHERE name = ?").get(userResponse.id) as
+      | DatabaseUser
+      | undefined;
+
+    if (existingUser) {
+      const session = await lucia.createSession(existingUser.id, {
+        access_token: tokens.access_token,
+        refresh_token: tokens.refresh_token,
+      });
+      appendHeader(event, "Set-Cookie", lucia.createSessionCookie(session.id).serialize());
+      return sendRedirect(event, "/");
+    }
+
+    const userId = generateId(15);
+    db.prepare("INSERT INTO user (id, name, slug, scopes) VALUES (?, ?, ?, ?)").run(
+      userId,
+      userResponse.displayName,
+      userResponse.slug,
+      JSON.stringify(userResponse.scopes),
+    );
+    const session = await lucia.createSession(userId, {
+      access_token: tokens.access_token,
+      refresh_token: tokens.refresh_token,
+    });
+    appendHeader(event, "Set-Cookie", lucia.createSessionCookie(session.id).serialize());
     return sendRedirect(event, "/");
   } catch (e) {
     console.error(e);
 
-    if (e instanceof OAuthRequestError) {
+    if (e instanceof OAuth2RequestError) {
+      const { request, message, description } = e;
+
       // invalid code
-      return sendError(
-        event,
-        createError({
-          statusCode: 400,
-        })
-      );
+      throw createError({
+        statusCode: 400,
+        message,
+      });
     }
-    return sendError(
-      event,
-      createError({
-        statusCode: 500,
-      })
-    );
+
+    throw createError({
+      statusCode: 500,
+    });
   }
 });

@@ -2,7 +2,8 @@
 const user = useAuthenticatedUser();
 
 definePageMeta({
-  middleware: ["token", "admin"],
+  layout: "main",
+  middleware: ["protected"],
 });
 </script>
 

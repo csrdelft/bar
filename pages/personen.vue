@@ -21,7 +21,7 @@ const rowClick = (
   e: Event,
   value: {
     item: Persoon;
-  }
+  },
 ) => {
   router.push({ name: routes.invoerSlug, params: { slug: value.item.uid } });
 };
@@ -33,7 +33,8 @@ const getColor = (bedrag: number) => {
 };
 
 definePageMeta({
-  middleware: ["token"],
+  layout: "main",
+  middleware: ["protected"],
 });
 </script>
 

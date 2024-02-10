@@ -8,13 +8,9 @@ export default defineNuxtConfig({
     public: {
       authId: "bar",
       remoteUrl:
-        process.env.NODE_ENV === "development"
-          ? process.env.NUXT_REMOTE_URL
-          : "https://csrdelft.nl",
+        process.env.NODE_ENV !== "production" ? process.env.NUXT_REMOTE_URL : "https://csrdelft.nl",
       origin:
-        process.env.NODE_ENV === "development"
-          ? process.env.AUTH_ORIGIN
-          : "https://bar.csrdelft.nl",
+        process.env.NODE_ENV !== "production" ? process.env.AUTH_ORIGIN : "https://bar.csrdelft.nl",
     },
     authSecret: process.env.NUXT_AUTH_SECRET,
     secret: process.env.NUXT_SECRET,
@@ -28,9 +24,6 @@ export default defineNuxtConfig({
   },
 
   devtools: { enabled: true },
-  nitro: {
-    moduleSideEffects: ["lucia/polyfill/node"],
-  },
   vite: {
     define: {
       "process.env.DEBUG": false,

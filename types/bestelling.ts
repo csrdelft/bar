@@ -1,4 +1,4 @@
-import { Product } from "./product";
+import type { Product } from "./product";
 
 export interface Bestelling {
   inhoud: BestellingInhoud[];
@@ -16,4 +16,3 @@ export interface BestellingInhoud {
   product: Product;
   aantal: number;
 }
-

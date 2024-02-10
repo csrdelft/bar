@@ -1,6 +1,6 @@
 /// <reference types="lucia" />
 declare namespace Lucia {
-  type Auth = import("./utils/lucia").Auth;
+  type Auth = import("./utils/auth").Auth;
   type DatabaseUserAttributes = {
     name: string;
     scopes: string;

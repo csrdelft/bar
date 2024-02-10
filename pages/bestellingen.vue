@@ -83,7 +83,7 @@ const getProduct = (id: string): Product => {
 };
 const getBestelLijstString = (bestelLijst: Record<string, string>): string[] => {
   return Object.entries(bestelLijst).map(
-    ([id, aantal]) => `${aantal} ${getProduct(id)?.beschrijving}`
+    ([id, aantal]) => `${aantal} ${getProduct(id)?.beschrijving}`,
   );
 };
 const handleCheckedProductenChange = (value: string[]) => {
@@ -139,7 +139,8 @@ onMounted(() => {
 });
 
 definePageMeta({
-  middleware: ["token"],
+  layout: "main",
+  middleware: ["protected"],
 });
 </script>
 

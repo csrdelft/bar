@@ -1,3 +1,9 @@
+<script lang="ts" setup>
+definePageMeta({
+  layout: "login",
+});
+</script>
+
 <template>
   <v-container class="login-main">
     <h1>Barsysteem C.S.R.</h1>

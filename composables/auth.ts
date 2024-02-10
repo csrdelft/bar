@@ -1,20 +1,22 @@
-import type { Session } from "lucia";
+import type { Session, User } from "lucia";
+
+export const useUser = () => {
+  const user = useState<User | null>("user", () => null);
+  return user;
+};
 
 export const useSession = () => {
-  const session = useState<Omit<Session, "activePeriodExpiresAt" | "idlePeriodExpiresAt"> | null>(
-    "session",
-    () => null
-  );
+  const session = useState<Session | null>("session", () => null);
   return session;
 };
 
 export const useAuthenticatedUser = () => {
-  const session = useSession();
+  const user = useUser();
   return computed(() => {
-    const sessionValue = unref(session);
-    if (!sessionValue) {
+    const userValue = unref(user);
+    if (!userValue) {
       throw createError("useAuthenticatedUser() can only be used in protected pages");
     }
-    return sessionValue.user;
+    return userValue;
   });
 };
